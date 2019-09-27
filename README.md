@@ -13,6 +13,11 @@ You will find:
 - ideas and discussion around potential hackathon projects in the repo [issues](https://github.com/bcgov/ds-cop-intro-to-r/issues/)
 
 
+### bcgov R geospatial hackathon
+
+Please head to the repo [issues](https://github.com/bcgov/ds-cop-intro-to-r/issues/) and add or comment on a potential project idea.
+
+
 ### Workshop Content Outline
 
 Day 1 (half day):
