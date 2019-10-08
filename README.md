@@ -39,8 +39,7 @@ Here, you will find:
 - R
   - **MANDATORY**: Install R and RStudio https://github.com/bcgov/bcgov-data-science-resources/wiki/Installing-R-&-RStudio 
   - **MANDATORY FOR R BEGINNERS**: Reproducible Scientific Analysis https://swcarpentry.github.io/r-novice-gapminder/
-  - Install R packages (preliminary list - more packages will be added) 
-``` install.packages(c("tidyverse","sf", "sp", "raster", "stars", "lwgeom", "mapview", "ggplot2", "lidR", "gdalcubes")) ```
+  - Install R packages: c("tidyverse","sf", "sp", "raster", "stars", "lwgeom", "mapview", "ggplot2", "lidR", "gdalcubes")
   - OPTIONAL: Read Reproducible Data Science https://r4ds.had.co.nz/  
   - OPTIONAL: Read Geocomputation with R https://geocompr.robinlovelace.net/  
 - Git / Github
@@ -55,12 +54,12 @@ Here, you will find:
 
 #### Day 1 - Tuesday Nov. 5 - Best Practices for Code Sharing [_Instructors: bcgov staff_]
 - **AM Optional:** Open house for software installation & troubleshooting (RStudio, R, Git) and GitHub account creation [_optional_]
-- **PM:** git + bcgov GitHub & Project Management with RStudio
+- **PM:** git + bcgov GitHub & Project Management with RStudio [teaching materials](https://github.com/bevingtona/bcgov-r-geo-workshop/tree/master/20191105_Day_1_PM_Intro)
 -	**Evening:** Social ice breaker (_self-pay_)
 
 #### Day 2 - Wednesday Nov. 6 - Introduction to Geospatial in R [_Instructors: bcgov staff_]
--	**AM:** Vector manipulation and visualization
--	**PM:** Raster manipulation and visualization
+-	**AM:** Vector manipulation and visualization [teaching materials](https://github.com/bevingtona/bcgov-r-geo-workshop/tree/master/20191106_Day_2_AM_Vector)
+-	**PM:** Raster manipulation and visualization [teaching materials](https://github.com/bevingtona/bcgov-r-geo-workshop/tree/master/20191106_Day_2_PM_Raster)
 -	**Evening:** Group dinner (_self-pay_)
 
 #### Day 3 - Thursday Nov. 7 - Geocomputation & Machine Learning in R [_Instructor: [Tomislav Hengl](https://github.com/thengl)_]
