@@ -37,16 +37,16 @@ Here, you will find:
   - **MANDATORY**: Wifi 
   - **MANDATORY**: Installation privileges
 - R
-  - **MANDATORY**: Install R and RStudio https://github.com/bcgov/bcgov-data-science-resources/wiki/Installing-R-&-RStudio 
+  - **MANDATORY**: Install R and RStudio [link](https://github.com/bcgov/bcgov-data-science-resources/wiki/Installing-R-&-RStudio)
   - **MANDATORY**: Install R packages: c("tidyverse","sf", "sp", "raster", "stars", "lwgeom", "mapview", "ggplot2", "lidR", "gdalcubes")
-  - **MANDATORY FOR R BEGINNERS**: Reproducible Scientific Analysis https://swcarpentry.github.io/r-novice-gapminder/
-  - OPTIONAL: Read Reproducible Data Science https://r4ds.had.co.nz/  
-  - OPTIONAL: Read Geocomputation with R https://geocompr.robinlovelace.net/  
+  - **MANDATORY FOR R BEGINNERS**: Reproducible Scientific Analysis [link](https://swcarpentry.github.io/r-novice-gapminder/)
+  - OPTIONAL: Read Reproducible Data Science [link](https://r4ds.had.co.nz/)
+  - OPTIONAL: Read Geocomputation with R [link](https://geocompr.robinlovelace.net/)
 - Git / Github
-  - **MANDATORY**: Install Git on the laptop you are bringing > https://git-scm.com/ 
-  - **MANDATORY**: Create GitHub account at least 1 week before the workshop > https://github.com/ 
-  - OPTIONAL: Read Getting Started with Git & GitHub https://github.com/bcgov/bcgov-data-science-resources/wiki/Getting-Started-with-Git-&-GitHub 
-  - OPTIONAL: Read Happy Git with R https://happygitwithr.com/
+  - **MANDATORY**: Install Git on the laptop you are bringing  [link](https://git-scm.com/)
+  - **MANDATORY**: Create GitHub account at least 1 week before the workshop [link](https://github.com/)
+  - OPTIONAL: Read Getting Started with Git & GitHub [link](https://github.com/bcgov/bcgov-data-science-resources/wiki/Getting-Started-with-Git-&-GitHub)
+  - OPTIONAL: Read Happy Git with R [link](https://happygitwithr.com/)
 
 ------
 
@@ -69,7 +69,7 @@ Here, you will find:
 - **PM:** Automated predictive mapping using landmap package
 -	**Evening:** Group dinner (_self-pay_)
 
-#### Day 4 - Friday "Hackathon" [_bcgov staff_]
+#### Day 4 - Friday Nov. 8 - Hackathon [_bcgov staff_]
 -	**AM:** Pick projects and separate into groups of 4. To submit a hackathon project or idea, or comment on an existing project, please submit an  [issue](https://github.com/bcgov/ds-cop-intro-to-r/issues/).
 -	**PM:** End of day -> report back to group
 -	**Evening:** No event
