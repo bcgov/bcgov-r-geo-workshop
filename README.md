@@ -3,14 +3,14 @@
 
 # bcgov-r-geo-workshop
 
-This repository contains lessons & resources supporting a FLNRO-sponsored bcgov North Area R Geospatial Workshop & Hackathon staff-driven training event in Prince George, British Columbia (November 5-8, 2019). This page expands upon the event advertisement found at the [bcgov data science cop](https://github.com/bcgov/bcgov-data-science-cop/tree/master/2019/2019-11-05_r-spatial-pg)
+This repository contains lessons & resources supporting a FLNRO-sponsored bcgov North Area R Geospatial Workshop & Hackathon staff-driven training event in Prince George, British Columbia (November 5-8, 2019). This page expands upon the event advertisement found on the [bcgov data science cop](https://github.com/bcgov/bcgov-data-science-cop/tree/master/2019/2019-11-05_r-spatial-pg) GitHub page. 
 
 Here, you will find:
 
-- fiendly workshop reminders
-- teaching material
-- resources & links to learning resources
-- ideas and discussion around potential hackathon projects in the repo [issues](https://github.com/bcgov/ds-cop-intro-to-r/issues/)
+- Fiendly workshop reminders
+- Teaching materials
+- Resources & links to learning resources
+- Hackathon project ideas and discussion via the repo [issues](https://github.com/bcgov/ds-cop-intro-to-r/issues/) 
 
 ------
 
@@ -38,8 +38,8 @@ Here, you will find:
   - **MANDATORY**: Installation privileges
 - R
   - **MANDATORY**: Install R and RStudio https://github.com/bcgov/bcgov-data-science-resources/wiki/Installing-R-&-RStudio 
+  - **MANDATORY**: Install R packages: c("tidyverse","sf", "sp", "raster", "stars", "lwgeom", "mapview", "ggplot2", "lidR", "gdalcubes")
   - **MANDATORY FOR R BEGINNERS**: Reproducible Scientific Analysis https://swcarpentry.github.io/r-novice-gapminder/
-  - Install R packages: c("tidyverse","sf", "sp", "raster", "stars", "lwgeom", "mapview", "ggplot2", "lidR", "gdalcubes")
   - OPTIONAL: Read Reproducible Data Science https://r4ds.had.co.nz/  
   - OPTIONAL: Read Geocomputation with R https://geocompr.robinlovelace.net/  
 - Git / Github
