@@ -10,7 +10,7 @@ Here, you will find:
 - Friendly workshop reminders
 - Teaching materials
 - Resources & links to learning resources
-- Hackathon project ideas and discussion via the repo [issues](https://github.com/bcgov/ds-cop-intro-to-r/issues/) 
+- Hackathon project ideas and discussion via the repo [issues](https://github.com/bcgov/bcgov-r-geo-workshop/issues) 
 
 ------
 
@@ -54,12 +54,12 @@ Here, you will find:
 
 #### Day 1 - Tuesday Nov. 5 - Best Practices for Code Sharing [_Instructors: bcgov staff_]
 - **AM Optional:** Open house for software installation & troubleshooting (RStudio, R, Git) and GitHub account creation [_optional_]
-- **PM:** git + bcgov GitHub & Project Management with RStudio [teaching materials](https://github.com/bevingtona/bcgov-r-geo-workshop/tree/master/20191105_Day_1_PM_Intro)
+- **PM:** git + bcgov GitHub & Project Management with RStudio [teaching materials](https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/20191105_Day_1_PM_Intro)
 -	**Evening:** Social ice breaker (_self-pay_)
 
 #### Day 2 - Wednesday Nov. 6 - Introduction to Geospatial in R [_Instructors: bcgov staff_]
--	**AM:** Vector manipulation and visualization [teaching materials](https://github.com/bevingtona/bcgov-r-geo-workshop/tree/master/20191106_Day_2_AM_Vector)
--	**PM:** Raster manipulation and visualization [teaching materials](https://github.com/bevingtona/bcgov-r-geo-workshop/tree/master/20191106_Day_2_PM_Raster)
+-	**AM:** Vector manipulation and visualization [teaching materials](https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/20191106_Day_2_AM_Vector)
+-	**PM:** Raster manipulation and visualization [teaching materials](https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/20191106_Day_2_PM_Raster)
 -	**Evening:** Group dinner (_self-pay_)
 
 #### Day 3 - Thursday Nov. 7 - Geocomputation & Machine Learning in R [_Instructor: [Tomislav Hengl](https://github.com/thengl)_]
