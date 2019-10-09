@@ -7,7 +7,7 @@ This repository contains lessons & resources supporting a FLNRO-sponsored bcgov 
 
 Here, you will find:
 
-- Fiendly workshop reminders
+- Friendly workshop reminders
 - Teaching materials
 - Resources & links to learning resources
 - Hackathon project ideas and discussion via the repo [issues](https://github.com/bcgov/ds-cop-intro-to-r/issues/) 
