@@ -70,7 +70,7 @@ Here, you will find:
 -	**Evening:** Group dinner (_self-pay_)
 
 #### Day 4 - Friday Nov. 8 - Hackathon [_bcgov staff_]
--	**AM:** Pick projects and separate into groups of 4. To submit a hackathon project or idea, or comment on an existing project, please submit an  [issue](https://github.com/bcgov/ds-cop-intro-to-r/issues/).
+-	**AM:** Pick projects and separate into groups of 4. To submit a hackathon project or idea, or comment on an existing project, please submit an  [issue](https://github.com/bcgov/bcgov-r-geo-workshop/issues).
 -	**PM:** End of day -> report back to group
 -	**Evening:** No event
  
