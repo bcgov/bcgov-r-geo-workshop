@@ -1,0 +1,37 @@
+---
+title: "Outline"
+author: "G Perkins"
+date: "10/10/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Outline
+
+Basics (1-1:45pm) 
+Presentation (15 min) Gen
+Main packages and history
+Loading raster (TRIM DEM)
+Checking Projections/extends/cell size/NA’s
+Summary stats (histogram)
+Raster calculations
+Plots (mapview, ggplot)
+Exercise 1 (30 min) Alex
+DEM hillshade and differencing, bonus: contours 
+
+30 min break 
+
+Manipulation (1:45-2:30)
+Presentation (15 min) Gen
+Aggregate/disaggregate 
+Cropping to vector
+Mask to value 
+Stack
+Rasterize
+Extract 
+Exercise 2 (30 min) Gen 
+Stack land cover, BEC and DEM 
+
