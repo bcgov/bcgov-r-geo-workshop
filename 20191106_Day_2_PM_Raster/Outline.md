@@ -1,7 +1,49 @@
-<a id="devex-badge" rel="Exploration" href="https://github.com/BCDevExchange/assets/blob/master/README.md"><img alt="Being designed and built, but in the lab. May change, disappear, or be buggy." style="border-width:0" src="https://assets.bcdevexchange.org/images/badges/exploration.svg" title="Being designed and built, but in the lab. May change, disappear, or be buggy." /></a>
 
 
-# bcgov-r-geo-workshop
+# Outline: Raster and Remote Sensed Data
+
+
+
+This session is expect to run from 1:00 pm  to 12:00 pm November 6th, 2019.
+
+
+
+| Topic         |  Details                   | Approx Time   |
+|:---------------:|:----------------:|:---------------------------:|
+| Raster Basics |                |                 1 - 1:45pm    | 
+|                |  Main packages and history              |    |
+|      | Loading raster (TRIM DEM)  |
+| | Checking Projections/extends/cell size/NA’s | | 
+|  | Summarising  | | 
+|  | Raster calculations | 
+|  | Plotting and Visualising Raster Data   | 
+|    | Exercise 1   |    |
+|    Coffee Break    |   |  1:45 - 2:15pm |
+| Raster Manipulation   |   | 
+|   | Aggregate/disaggregate  |  | 
+|  | Cropping to Vectors   |   | 
+| | Mask to value    |   | 
+| | Stacks and Bricks   |  | 
+| | Rasterize   |   | 
+|  | Extract   |  |
+|   |  Exercise 2 | 2:30 - 3:00pm |
+
+
+
+Manipulation (1:45-2:30)
+Presentation (15 min) Gen
+Aggregate/disaggregate 
+Cropping to vector
+Mask to value 
+Stack
+Rasterize
+Extract 
+Exercise 2 (30 min) Gen 
+Stack land cover, BEC and DEM 
+
+
+
+
 
 
 ------
