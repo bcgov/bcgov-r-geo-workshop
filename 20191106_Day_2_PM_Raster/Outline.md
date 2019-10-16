@@ -27,8 +27,6 @@ This session is expect to run from 1:00 pm  to 6:00 pm November 6th, 2019.
 | | Rasterize   |   | 
 |  | Extract   |  |
 |   |  Exercise 2 | 2:30 - 3:00pm |
-
-
 | Remote sensed data | |  3:00-4:00 pm |
 |Exercise 3: Satellite image analysis |   |
 |   |  Spectral indices (NDVI) |
