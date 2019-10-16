@@ -1,43 +1,9 @@
-
-## Outline : Raster and Remote Sensing 
-
-
-This session is expect to run from 1:00 pm  to 12:00 pm November 6th, 2019.
+<a id="devex-badge" rel="Exploration" href="https://github.com/BCDevExchange/assets/blob/master/README.md"><img alt="Being designed and built, but in the lab. May change, disappear, or be buggy." style="border-width:0" src="https://assets.bcdevexchange.org/images/badges/exploration.svg" title="Being designed and built, but in the lab. May change, disappear, or be buggy." /></a>
 
 
+# bcgov-r-geo-workshop
 
-| Topic         |  Details                   | Approx Time   |
-|:---------------:|:----------------:|:---------------------------:|
-| Raster Basics |                |                 1 - 1:45pm    | 
-|                |  Main packages and history              |    |
-|      | Loading raster (TRIM DEM)  |
-| | Checking Projections/extends/cell size/NA’s | | 
-|  | Summarising  | | 
-|  | Raster calculations | 
-|  | Plotting and Visualising Raster Data   | 
-|    | Exercise 1   |    |
-|    Coffee Break    |   |  1:45 - 2:15pm |
-| Raster Manipulation   |   | 
-|   | Aggregate/disaggregate  |  | 
-|  | Cropping to Vectors   |   | 
-| | Mask to value    |   | 
-| | Stacks and Bricks   |  | 
-| | Rasterize   |   | 
-|  | Extract   |  |
-|   |  Exercise 2 | 2:30 - 3:00pm |
-
-
-
-Manipulation (1:45-2:30)
-Presentation (15 min) Gen
-Aggregate/disaggregate 
-Cropping to vector
-Mask to value 
-Stack
-Rasterize
-Extract 
-Exercise 2 (30 min) Gen 
-Stack land cover, BEC and DEM 
+This repository contains lessons & resources supporting a [FLNRO-sponsored bcgov North Area R Geospatial Workshop & Hackathon](https://github.com/bcgov/bcgov-data-science-cop/tree/master/2019/2019-11-05_r-spatial-pg) staff-driven training event in Prince George, British Columbia (November 5-8, 2019).
 
 
 Here, you will find:
@@ -49,17 +15,19 @@ Here, you will find:
 
 ------
 
-### Event details 
-- Who: Current intermediate B.C. Government R users who would like to do more geospatial analysis in R
-- What: Workshop & Hackathon to learn about geospatial tools in R
-- Where: Aleza Room, Plaza 400, 1011 4th Ave, Prince George, BC V2L 3H9
-- When: 1 PM Tuesday November 5th to 5 PM Friday November 8th, 2019
-- Cost: Free
+### Event Details 
+- _Who_: Current intermediate B.C. Government R users who would like to do more geospatial analysis in R
+- _What_: Workshop & Hackathon to learn about geospatial tools in R
+- _Where_: Aleza Room, Plaza 400, 1011 4th Ave, Prince George, BC V2L 3H9
+- _When_: 1 PM Tuesday November 5th to 5 PM Friday November 8th, 2019
+- _Cost_: Free for participants
+
 
 ------
 
-### Workshop difficulty level
-- We expect attendees to have at least the following level of experience
+### Workshop Difficulty Level
+We expect attendees to have at least the following level of experience:
+
   - Intermediate **R & RStudio** (e.g. package management, write functions, tidyverse syntax, troubleshooting, ...)
   - Intermediate **GIS** 
   - Basic or intermediate **statistics**
@@ -67,44 +35,44 @@ Here, you will find:
   
 ------
 
-### Pre-Workshop Requirements (Read carefully)
+### Pre-Workshop Requirements (_Please Read Carefully_)
 - Laptop 
-  - **MANDATORY**: Wifi 
-  - **MANDATORY**: Installation privileges
+  - **Mandatory**: Wifi 
+  - **Mandatory**: Installation privileges
 - R
-  - **MANDATORY**: Install R and RStudio [link](https://github.com/bcgov/bcgov-data-science-resources/wiki/Installing-R-&-RStudio)
-  - **MANDATORY**: Install R packages: c("tidyverse","sf", "sp", "raster", "stars", "lwgeom", "mapview", "ggplot2", "lidR", "gdalcubes")
-  - **MANDATORY FOR R BEGINNERS**: Reproducible Scientific Analysis [link](https://swcarpentry.github.io/r-novice-gapminder/)
-  - OPTIONAL: Read Reproducible Data Science [link](https://r4ds.had.co.nz/)
-  - OPTIONAL: Read Geocomputation with R [link](https://geocompr.robinlovelace.net/)
-- Git / Github
-  - **MANDATORY**: Install Git on the laptop you are bringing  [link](https://git-scm.com/)
-  - **MANDATORY**: Create GitHub account at least 1 week before the workshop [link](https://github.com/)
-  - OPTIONAL: Read Getting Started with Git & GitHub [link](https://github.com/bcgov/bcgov-data-science-resources/wiki/Getting-Started-with-Git-&-GitHub)
-  - OPTIONAL: Read Happy Git with R [link](https://happygitwithr.com/)
+  - **Mandatory**: Install R and RStudio [link](https://github.com/bcgov/bcgov-data-science-resources/wiki/Installing-R-&-RStudio)
+  - **Mandatory**: Install R packages: `c("tidyverse", "sf", "sp", "raster", "stars", "lwgeom", "mapview", "ggplot2", "lidR", "gdalcubes")`
+  - **Mandatory for R Beginners**: Reproducible Scientific Analysis [link](https://swcarpentry.github.io/r-novice-gapminder/)
+  - Optional: Read Reproducible Data Science [link](https://r4ds.had.co.nz/)
+  - Optional: Read Geocomputation with R [link](https://geocompr.robinlovelace.net/)
+- Git + Github
+  - **Mandatory**: Install Git on the laptop you are bringing  [link](https://git-scm.com/)
+  - **Mandatory**: Create a GitHub account at least 1 week before the workshop [link](https://github.com/)
+  - Optional: Read Getting Started with Git & GitHub [link](https://github.com/bcgov/bcgov-data-science-resources/wiki/Getting-Started-with-Git-&-GitHub)
+  - Optional: Read Happy Git with R [link](https://happygitwithr.com/)
 
 ------
 
 ### Workshop Schedule
 
-#### Day 1 - Tuesday Nov. 5 - Best Practices for Code Sharing [_Instructors: bcgov staff_]
-- **AM Optional:** Open house for software installation & troubleshooting (RStudio, R, Git) and GitHub account creation [_optional_]
-- **PM:** git + bcgov GitHub & Project Management with RStudio [teaching materials](https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/20191105_Day_1_PM_Intro)
+#### Day 1 - Tuesday Nov. 5 - _Some_ Best Practices for Code Sharing
+- **AM Optional:** Open house for software installation & troubleshooting (RStudio, R, Git) and GitHub account creation
+- **PM:** Git + bcgov GitHub & Project Management with RStudio [teaching materials](https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/20191105_Day_1_PM_Intro) [_Instructor: [Steph Hazlitt](https://github.com/stephhazlitt)_]
 -	**Evening:** Social ice breaker (_self-pay_)
 
-#### Day 2 - Wednesday Nov. 6 - Introduction to Geospatial in R [_Instructors: bcgov staff_]
--	**AM:** Vector manipulation and visualization [teaching materials](https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/20191106_Day_2_AM_Vector)
--	**PM:** Raster manipulation and visualization [teaching materials](https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/20191106_Day_2_PM_Raster)
+#### Day 2 - Wednesday Nov. 6 - Introduction to Geospatial in R 
+-	**AM:** Vector manipulation and visualization [teaching materials](https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/20191106_Day_2_AM_Vector) [_Instructors: [Sam Albers](https://github.com/boshek) & [Andy Teucher](https://github.com/ateucher)_]
+-	**PM:** Raster manipulation and visualization [teaching materials](https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/20191106_Day_2_PM_Raster) [_Instructors: [Alex Bevington](https://github.com/bevingtona) & [Gen Perkins](https://github.com/gcperk)_]
 -	**Evening:** Group dinner (_self-pay_)
 
-#### Day 3 - Thursday Nov. 7 - Geocomputation & Machine Learning in R [_Instructor: [Tomislav Hengl](https://github.com/thengl)_]
+#### Day 3 - Thursday Nov. 7 - Geocomputation & Machine Learning in R [_Instructor: [Tomislav Hengl](https://github.com/thengl)_] 
 -	**AM:** Trends and new opportunities in processing spatial and Earth Observation data in R
 - **AM:** Five key steps to processing large rasters in R
 - **PM:** Ensemble Machine Learning as a general framework for predictive mapping 
 - **PM:** Automated predictive mapping using landmap package
 -	**Evening:** Group dinner (_self-pay_)
 
-#### Day 4 - Friday Nov. 8 - Hackathon [_bcgov staff_]
+#### Day 4 - Friday Nov. 8 - Hackathon
 -	**AM:** Pick projects and separate into groups of 4. To submit a hackathon project or idea, or comment on an existing project, please submit an  [issue](https://github.com/bcgov/bcgov-r-geo-workshop/issues).
 -	**PM:** End of day -> report back to group
 -	**Evening:** No event
@@ -123,7 +91,7 @@ In the interest of ensuring a safe environment for all,  all attendees, speakers
 
 ### Getting Help or Reporting an Issue
 
-To report bugs/issues/feature requests, please file an [issue](https://github.com/bcgov/ds-cop-intro-to-r/issues/).
+To report bugs/issues/feature requests, please file an [issue](https://github.com/bcgov/bcgov-r-geo-workshop/issues/).
 
 
 ### How to Contribute
