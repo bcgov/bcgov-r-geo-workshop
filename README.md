@@ -15,7 +15,7 @@ Here, you will find:
 
 ------
 
-### Event details 
+### Event Details 
 - _Who_: Current intermediate B.C. Government R users who would like to do more geospatial analysis in R
 - _What_: Workshop & Hackathon to learn about geospatial tools in R
 - _Where_: Aleza Room, Plaza 400, 1011 4th Ave, Prince George, BC V2L 3H9
@@ -25,7 +25,7 @@ Here, you will find:
 
 ------
 
-### Workshop difficulty level
+### Workshop Difficulty Level
 We expect attendees to have at least the following level of experience:
 
   - Intermediate **R & RStudio** (e.g. package management, write functions, tidyverse syntax, troubleshooting, ...)
@@ -35,7 +35,7 @@ We expect attendees to have at least the following level of experience:
   
 ------
 
-### Pre-Workshop Requirements (Please read carefully)
+### Pre-Workshop Requirements (_Please Read Carefully_)
 - Laptop 
   - **Mandatory**: Wifi 
   - **Mandatory**: Installation privileges
