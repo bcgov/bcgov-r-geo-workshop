@@ -30,27 +30,8 @@ This session is expect to run from 1:00 pm  to 12:00 pm November 6th, 2019.
 
 
 
-Manipulation (1:45-2:30)
-Presentation (15 min) Gen
-Aggregate/disaggregate 
-Cropping to vector
-Mask to value 
-Stack
-Rasterize
-Extract 
-Exercise 2 (30 min) Gen 
-Stack land cover, BEC and DEM 
 
 
-
-
-
-
-------
-
-### Registration
-
-Registration is closed. Please contact alexandre.bevington [at] gov.bc.ca  for questions or concerns. 
 
 
 ### Code of Conduct
