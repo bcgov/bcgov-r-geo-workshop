@@ -1,0 +1,99 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+# Download MODIS NDVI
+
+```{r}
+
+# install.packages("MODIStsp")
+# library(MODIStsp)
+# MODIStsp()
+
+```
+
+# Import MODIS NDVI
+
+```{r}
+
+library(raster)
+
+files <- list.files("F:/Dropbox/FLNRO_p1/!_Presentations/2019 11 05 R Geospatial/bcgov-r-geo-workshop/20191106_Day_2_PM_Raster/NDVI", full.names = T)
+
+s <- stack(files)
+sp <- projectRaster(s,crs = "+proj=aea +lat_1=50 +lat_2=58.5 +lat_0=45 +lon_0=-126 +x_0=1000000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs")
+
+plot(sp)
+
+```
+
+# Make a nice plot
+
+```{r}
+# library(RStoolbox)
+library(sf)
+library(ggplot2)
+# library(tidyverse)
+library(bcmaps)
+
+# Import AOI 
+  bc <- bc_bound()
+
+# Clip MODIS to AOI extent
+  spc <- crop(sp, extent(bc))
+
+# Plotting function
+  myplot <- 
+    function(raster, index){
+      ggR(raster[[index]]) +
+        geom_sf(data = bc, fill = NA, color = "red") + 
+        labs(x = "", y = "", title = names(raster)[index])
+        theme_minimal()
+    
+    print(paste0("saving plot ", index))
+    ggsave(filename = paste0("F:/Dropbox/FLNRO_p1/!_Presentations/2019 11 05 R Geospatial/bcgov-r-geo-workshop/20191106_Day_2_PM_Raster/",index,".png"),
+           width = 8,height=8,dpi = 150)
+    }
+
+# Loop plot export
+  seq(from = 1, to=nlayers(spc), by=1) %>% 
+    map_df(myplot)
+
+# Convert plotted png files to a gif animation 
+  library(magick)
+  exported_png <- list.files(path = "F:/Dropbox/FLNRO_p1/!_Presentations/2019 11 05 R Geospatial/bcgov-r-geo-workshop/20191106_Day_2_PM_Raster/", 
+                             pattern = "*.png", full.names = T) 
+  exported_png %>% map(image_read) %>% # reads each path file
+  image_join() %>% # joins image
+  image_animate(fps=2) %>% # animates, can opt for number of loops
+  image_write("F:/Dropbox/FLNRO_p1/!_Presentations/2019 11 05 R Geospatial/bcgov-r-geo-workshop/20191106_Day_2_PM_Raster/ndwi_aug_hgm.gif") # wr
+
+```
+
+```{r}
+
+cities <- bcmaps::bc_cities() %>% 
+  filter(LONG_TYPE == "CITY") 
+
+cities_modis <- raster::extract(spc, cities, sp = T) %>% as_tibble()
+
+
+cities_modis %>% 
+  filter(!is.na(MYD13A3_NDVI_2019_001)) %>% 
+  gather("MODIS","Values",contains("MYD")) %>% 
+  mutate(MODIS_DATE = as.Date.character(sub(pattern = "MYD13A3_NDVI_", replacement = "", x = MODIS), format = "%Y_%j")) %>% 
+  ggplot() + 
+    geom_point(aes(MODIS_DATE, Values, shape = NAME)) + 
+    scale_shape_manual(values = seq(1,11,1))
+
+```
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
