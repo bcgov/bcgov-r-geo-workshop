@@ -1,7 +1,6 @@
 ---
-title: "Outline"
-author: "G Perkins"
-date: "10/10/2019"
+title: "Outline : Rasters and Remote Sensing "
+
 output: html_document
 ---
 
@@ -10,20 +9,29 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```
 
-## Outline
+This session is expect to run from 1:00 pm  to 12:00 pm November 6th, 2019.
 
-Basics (1-1:45pm) 
-Presentation (15 min) Gen
-Main packages and history
-Loading raster (TRIM DEM)
-Checking Projections/extends/cell size/NA’s
-Summary stats (histogram)
-Raster calculations
-Plots (mapview, ggplot)
-Exercise 1 (30 min) Alex
-DEM hillshade and differencing, bonus: contours 
+| Topic         |  Details                   | Approx Time   |
+|:---------------:|:----------------:|:---------------------------:|
+| Raster Basics |                |                 1 - 1:45pm    | 
+|                |  Main packages and history              |    |
+|      | Loading raster (TRIM DEM)  |
+| | Checking Projections/extends/cell size/NA’s | | 
+|  | Summarising  | | 
+|  | Raster calculations | 
+|  | Plotting and Visualising Raster Data   | 
+|    | Exercise 1   |    |
+|    Coffee Break    |   |  1:45 - 2:15pm |
+| Raster Manipulation   |   | 
+|   | Aggregate/disaggregate  |  | 
+|  | Cropping to Vectors   |   | 
+| | Mask to value    |   | 
+| | Stacks and Bricks   |  | 
+| | Rasterize   |   | 
+|  | Extract   |  |
+|   |  Exercise 2 | 2:30 - 3:00pm |
 
-30 min break 
+
 
 Manipulation (1:45-2:30)
 Presentation (15 min) Gen
