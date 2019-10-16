@@ -1,0 +1,37 @@
+---
+title: "Raster Basics"
+author: "G Perkins"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+## Overview 
+
+- Raster Basics
+- Manipulating Rasters 
+- Remote Sensed data 
+- ??
+
+
+
+
+## Packages history and tools : 
+
+- `raster` (first released in 2010 Hijman)
+- `sp` including  `SpatialGridDataFrame` & `SpatialPixalsDataFrame` data structure
+- `stars` : Spatiotemporal Arrays, Raster and Vector Data Cubes (Pebesma).
+- helper packages : `fasterize`, `rgdal`, `mapview` 
+- tools and bridges (RSAGA, RQGIS, RPYGeon)
+
+
+
+## Using Rasters in R : Work flow 
+
+- Rasters cover all types of data - digital elevation model, remote sensed data, lidar and many others. 
+- Often switch between raster and vector data sets. 
+
+
