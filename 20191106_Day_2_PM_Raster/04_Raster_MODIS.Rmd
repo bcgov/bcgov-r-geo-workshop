@@ -1,11 +1,16 @@
 ---
-title: "R Notebook"
-output: html_notebook
+title: "Raster Exercise 04 - MODIS"
+author: "Alexandre Bevington"
+date: "10/10/2019"
+output: html_document
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
-
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+To do list (2019-10-16):
+- redirect to data/zip folder
+- improve flow
+- comment
+- debug
+- test speed/functionality on gov laptop
 
 # Download MODIS NDVI
 

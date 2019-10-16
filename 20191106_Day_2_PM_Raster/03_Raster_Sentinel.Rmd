@@ -5,6 +5,11 @@ date: "10/10/2019"
 output: html_document
 ---
 
+To do list (2019-10-16):
+- comment
+- debug
+- test speed/functionality on gov laptop
+
 ```{r libraries, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
