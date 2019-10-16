@@ -40,7 +40,7 @@ This session is expect to run from 1:00 pm  to 6:00 pm November 6th, 2019.
 |  | Plot timeseries  |  |
 |  |Export timelapse video |  | 
 
-
+---------
 
 ### Code of Conduct
 
