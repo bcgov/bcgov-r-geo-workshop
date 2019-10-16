@@ -2,9 +2,24 @@
 title: "01 Raster Basics"
 output: 
   html_document:
-    toc_float: FALSE
+    toc: TRUE
+    toc_float: TRUE
 
 ---
+<!--
+Copyright 2019 Province of British Columbia
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and limitations under the License.
+-->
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -14,7 +29,6 @@ This document outlines some basic operations for rasters. You can follow along r
 
 
 ### Load packages and unzip data files
-
 
 ```{r set-up , echo = TRUE, message= FALSE}
 
@@ -47,10 +61,13 @@ dem <- raster(file.path(data.dir, "DEM.tif"))
 
 ```
 
+## Check Raster 
+
 Unlike vectors, Rasters are defined by the location of grid extents. 
 We can look at the key information for rasters; dimension, resolution (cell size), extents, crs, min and max. 
 
-```{r}
+
+```{r, echo = T, include = T}
 dem 
 
 res (dem)
@@ -59,33 +76,52 @@ res (dem)
 
 We can look at the spread of the data (distribution of values)
 
-```{r}
-summary(dem) 
-# Note this throws an error 
-
+```{r, echo = TRUE, include = TRUE, message = FALSE}
+summary(dem) # Note this throws an error 
+ 
 summary(dem, maxsamp = ncell(dem)) # forces to check all raster 
 
 ```
 
-# explore the data a little - we have lots of NAs
+We can do a quick check of the datasets using standard functions 
+
+```{r, explore the data , echo = T, include = TRUE, results = "hide"}
+
 head(dem) 
 values(dem)
 unique(values(dem))
 
+```
 
-# dealing with NA data
-dem <- setMinMax(dem) 
 
-# set NA values 
+```{r}
+plot(dem)
+
+```
+
+We can format NAs within our data sets 
+
+```{r}
+
+dem <- setMinMax(dem)  
 NAvalue(dem) = -9999
 
-# set NA values 
+```
 
+Again check the minimum numbers 
+
+```{r}
 minValue(dem)
 maxValue(dem)
 
+```
+
+We can define a range of values which we want to keep 
+
+```{r}
 # subset to only include the peaks 
 dem.peaks <- clamp(dem, lower = 1000, useValues = TRUE )
+
 
 #or only view the 
 dem.peaks  <- reclassify(dem , cbind(0 , 1000 , NA), right=FALSE)
@@ -93,42 +129,146 @@ dem.peaks  <- reclassify(dem , cbind(0 , 1000 , NA), right=FALSE)
 ```
 
 
-# read in a single raster 
-dem <- raster(file.path(data.dir, "DEM.tif"))
+## Visualise Rasters 
 
-# look at the fundamental raster information : 
-# dimensions, cell size, crs , min and max
+We can do quick plots of rasters with both interactive and static maps
+
+```{r}
+#quick check of the raster 
+plot(dem)
+
+# more fancy exploring 
+library(rasterVis)
+histogram(dem)
+plot3D(dem)
+
+library(mapview)
+mapview(dem)
+
+# convert to data frame and plot 
+library(ggplot2)
+dem_df <- as.data.frame(dem, xy = TRUE)
+str(dem_df)
+
+# ggspatial # layer_spatial 
+
+ggplot() +
+    geom_raster(data = dem_df , aes(x = x, y = y, fill = DEM)) +
+    scale_fill_viridis_c() +
+    coord_quickmap()
+
+#...... much more time consuming
+
+```
+
+## Check projections, assign and transform projections
+
+Coordinate Reference System (CRS). We can have CRS in three formats (ESPG, Proj4string, WKT) in proj4string the "+" seperates each element (similar to csv is seperated with a comma)
+
+```{r}
 dem
+crs(dem)
+```
 
-# check resolution 
-res(dem)
-
-# check a summary of the data distribution 
-summary(dem) # throws an error 
-summary(dem, maxsamp = ncell(dem)) # force to check all raster 
-
-# explore the data a little - we have lots of NAs
-head(dem) 
-values(dem)
-unique(values(dem))
+dem
+crs(dem)
 
 
-# dealing with NA data
-dem <- setMinMax(dem) 
+# Questions: what units are the data in ? 
+# units = m (meters)
 
-# set NA values 
-NAvalue(dem) = -9999
+#proj=aea +lat_1=50 +lat_2=58.5 +lat_0=45 +lon_0=-126 + x_0=1000000 + y_0=0 
+#ellps=GRS80 
+#towgs84=0,0,0,0,0,0,0
+#units=m 
+#no_defs 
 
-# set NA values 
+# we can check the information on our ESPG:3005
+CRS("+init=epsg:3005")
 
-minValue(dem)
-maxValue(dem)
+projection(dem)  # gives us the string version proj4string
 
-# subset to only include the peaks 
-dem.peaks <- clamp(dem, lower = 1000, useValues = TRUE )
+# what about projected data ? 
+# lets read in another raster 
 
-#or only view the 
-dem.peaks  <- reclassify(dem , cbind(0 , 1000 , NA), right=FALSE)
+ndvi <- raster(file.path(data.dir, "NDVI.tif"))
+ndvi 
+
+# what is the cell size of the raster? 
+# what is the projection? 
+
+projection(ndvi) # what is the crs for this raster - is it the same as the dem layer?
+
+#[1] "+proj=utm +zone=9 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0"
+
+# transform a projection to match our dem 
+ndvi.3005 <- projectRaster(ndvi, dem) 
+
+ndvi.3005
+
+summary(ndvi.3005)
+#              NDVI
+#Min.    -0.2097639
+#1st Qu.  0.5884543
+#Median   0.6328611
+#3rd Qu.  0.6891333
+#Max.     0.8716997
+#NA's     0.0000000
+
+
+# What if we want to reclassify our rater and summarise the results 
+library(dplyr)
+
+dem.class <- reclassify (dem, c(-Inf, 800, 1,
+                                700, 1000, 2, 
+                                1000, 1250, 3, 
+                                1250, Inf, 4))
+
+plot(dem.class)
+
+
+dem.class <- as.data.frame(dem.class) %>%
+  filter(!is.na(DEM))
+
+dem.class <- dem.class %>%
+  group_by(DEM) %>%
+  summarise(count = n())
+
+
+```
+
+
+# Raster Calculation
+
+```{r}
+
+# Raster Calculations 
+
+# for small sized rasters 
+rasters.out <- dem - ndvi.3005
+
+# for larger sized rasters (processing intensive)
+overlay() # for single layers
+calc() # for stacks 
+
+
+outputRaster <- overlay(dem, ndvi.3000, fun = functionName)
+
+
+CHM_ov_HARV <- overlay(dem,
+                       ndvi.3000,
+                       fun = function(r1, r2) { return( r1 - r2) })
+
+
+# write raster out 
+# write out geotiff. 
+
+writeRaster(CHM_ov_HARV, "CHM_HARV.tiff",
+            format="GTiff",
+            overwrite=TRUE,
+            NAflag=-9999)
+
+```
 
 
 
