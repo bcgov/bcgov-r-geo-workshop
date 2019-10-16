@@ -1,0 +1,154 @@
+---
+title: "01 Raster Basics"
+output: 
+  html_document:
+    toc_float: FALSE
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This document outlines some basic operations for rasters. You can follow along running the code or refer to the html version. 
+
+
+### Load packages and unzip data files
+
+
+```{r set-up , echo = TRUE, message= FALSE}
+
+library(raster)
+library(usethis)
+
+# set up the data location --------------------------------------
+
+## still need to fix this 
+#usethis::use_course("https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/data/20191106_Day_2_PM_Raster/data1.zip") 
+
+#usethis::use_course("https://github.com/bcgov/bcgov-r-geo-workshop/data/20191106_Day_2_PM_Raster/data1.zip")
+#usethis::use_zip("https://github.com/bcgov/bcgov-r-geo-workshop/data/20191106_Day_2_PM_Raster/data1.zip")
+
+
+
+data.dir <- "C:/Training/R_intermediate/data" #change to common location
+
+# see what goodies are in the folder 
+list.files(data.dir)
+
+```
+We can see files with a variety of file types (tif, zip etc.)
+
+## Load Rasters 
+
+```{r load Raster}
+# read in a single raster 
+dem <- raster(file.path(data.dir, "DEM.tif"))
+
+```
+
+Unlike vectors, Rasters are defined by the location of grid extents. 
+We can look at the key information for rasters; dimension, resolution (cell size), extents, crs, min and max. 
+
+```{r}
+dem 
+
+res (dem)
+
+```
+
+We can look at the spread of the data (distribution of values)
+
+```{r}
+summary(dem) 
+# Note this throws an error 
+
+summary(dem, maxsamp = ncell(dem)) # forces to check all raster 
+
+```
+
+# explore the data a little - we have lots of NAs
+head(dem) 
+values(dem)
+unique(values(dem))
+
+
+# dealing with NA data
+dem <- setMinMax(dem) 
+
+# set NA values 
+NAvalue(dem) = -9999
+
+# set NA values 
+
+minValue(dem)
+maxValue(dem)
+
+# subset to only include the peaks 
+dem.peaks <- clamp(dem, lower = 1000, useValues = TRUE )
+
+#or only view the 
+dem.peaks  <- reclassify(dem , cbind(0 , 1000 , NA), right=FALSE)
+
+```
+
+
+# read in a single raster 
+dem <- raster(file.path(data.dir, "DEM.tif"))
+
+# look at the fundamental raster information : 
+# dimensions, cell size, crs , min and max
+dem
+
+# check resolution 
+res(dem)
+
+# check a summary of the data distribution 
+summary(dem) # throws an error 
+summary(dem, maxsamp = ncell(dem)) # force to check all raster 
+
+# explore the data a little - we have lots of NAs
+head(dem) 
+values(dem)
+unique(values(dem))
+
+
+# dealing with NA data
+dem <- setMinMax(dem) 
+
+# set NA values 
+NAvalue(dem) = -9999
+
+# set NA values 
+
+minValue(dem)
+maxValue(dem)
+
+# subset to only include the peaks 
+dem.peaks <- clamp(dem, lower = 1000, useValues = TRUE )
+
+#or only view the 
+dem.peaks  <- reclassify(dem , cbind(0 , 1000 , NA), right=FALSE)
+
+
+
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
