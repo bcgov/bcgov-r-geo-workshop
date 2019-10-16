@@ -1,0 +1,168 @@
+---
+title: "Introduction to Vector Data with R"
+subtitle: "Practical Examples Using sf, ggplot2 and dplyr"
+author: "Andy Teucher <br> Ministry of Environment and Climate Change Strategy <br><br> Sam Albers <br> Ministry of Citizens' Services <br><br> "
+date: 2019-11-06
+output:
+  xaringan::moon_reader:
+    keep_md: true
+    lib_dir: libs
+    css: ["default", "default-fonts", "hygge"]
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      beforeInit: "https://platform.twitter.com/widgets.js"
+      ratio: '16:9'
+---
+
+layout: true
+
+---
+
+```{r, include=FALSE}
+# Copyright 2019 Province of British Columbia
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+# http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and limitations under the License.
+```
+
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+options(width = 90)
+options(max_print = 5)
+
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  echo = FALSE,
+  comment = "#>",
+  fig.path = "graphics/prod/figs"
+)
+
+options(scipen = 10)
+```
+
+```{r, pck-load, warning=FALSE, message=FALSE}
+library(knitr)
+library(sf)
+library(dplyr)
+library(ggplot2)
+```
+
+
+```{r, theme, warning=FALSE, echo=FALSE}
+bg_black <- "#272822"
+
+theme_set(theme_void() %+replace%
+            theme(legend.text = element_text(colour = "white", size = 18),
+                  legend.title = element_text(colour = "white", size = 18),
+                  plot.background = element_rect(fill = bg_black, color = bg_black),
+                  axis.text = element_text(colour = "white", size = 16),
+                  axis.title = element_text(colour = "white", size = 18),
+                  axis.title.y = element_text(angle = 90, vjust = 1),
+                  plot.title = element_text(colour = "white", size = 22, hjust = 0)))
+
+
+scale_colour_continuous <- scale_colour_viridis_c
+scale_fill_continuous <- scale_fill_viridis_c
+scale_colour_discrete <- scale_colour_viridis_d
+scale_fill_discrete <- scale_fill_viridis_d
+```
+
+
+
+## Outline
+
+.VeryLarge[
+- Some outline text
+]
+
+
+---
+class: inverse, left, middle
+## Including an image
+
+<center><img src="https://www.r-project.org/logo/Rlogo.png" alt="Drawing" style="width: 450px;" /></center>
+
+---
+
+.pull-left[
+## The Problem
+- Many tasks when analyzing environmental data are repetitive yet interactive
+- Typically environmental scientists aren't computer scientists
+- Helpful to abstract away unneeded complexity when possible
+- A clean and easy to remember syntax reduces your cognitive load when doing analysis
+
+
+
+<center><img src="https://www.herocollector.com/Content/ArticleImages/7a716739-72cb-40d5-acfc-dfc35783d8a5.jpg" style="width: 450px;"/></center>
+
+
+
+]
+
+--
+
+.pull-right[
+## Enter `dplyr`
+> a consistent set of verbs that help you solve the most common data manipulation challenges
+
+- Independent of the data source
+- Designed for data science
+
+<center><img src="https://raw.githubusercontent.com/rstudio/hex-stickers/master/PNG/dplyr.png" style="width: 300px;"/></center>
+
+]
+
+
+---
+
+##`dplyr` verbs
+
+Functions with English meanings that map directly to the action being taken when that function is called
+
+Installation: `install.packages("dplyr")`
+
+
+.pull-left[
+- `%>%` a special symbol to chain operations. Read it as "then"
+- `select()` picks variables based on their names.
+- `filter()` picks cases based on their values.
+- `summarise()` reduces multiple values down to a single summary.
+- `arrange()` changes the ordering of the rows.
+- `mutate()` adds new variables that are functions of existing variables
+
+For a offline tutorial: http://swcarpentry.github.io/r-novice-gapminder/13-dplyr/index.html
+]
+
+
+.pull-right[
+<center><img src="https://raw.githubusercontent.com/allisonhorst/stats-illustrations/master/rstats-artwork/dplyr_wrangling.png" style="width: 450px;"/></center>
+
+Artwork by [@allison_horst](https://twitter.com/allison_horst)
+] 
+
+---
+class: inverse, left, middle
+# a slide to demark a code break
+
+---
+
+## Resources for R
+
+<a href = "https://stackoverflow.com/"><img src="https://cdn.sstatic.net/Sites/stackoverflow/company/img/logos/so/so-logo.svg?v=2bb144720a66" alt="Drawing" style="width: 400px;" />
+
+
+<img src="https://www.rstudio.com/wp-content/uploads/2017/11/logoRStudioCommunity.svg" alt="Drawing" style="width: 400px;" />
+
+<img src="https://www.r-project.org/logo/Rlogo.png" alt="Drawing" style="width: 300px;" />
+
+
