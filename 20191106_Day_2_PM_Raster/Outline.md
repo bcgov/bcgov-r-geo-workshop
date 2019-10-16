@@ -3,8 +3,7 @@
 # Outline: Raster and Remote Sensed Data
 
 
-
-This session is expect to run from 1:00 pm  to 6:00 pm November 6th, 2019.
+This session is expect to run from 1:00 pm  to 4:30 pm November 6th, 2019.
 
 
 
@@ -31,7 +30,6 @@ This session is expect to run from 1:00 pm  to 6:00 pm November 6th, 2019.
 |Exercise 3: Satellite image analysis |   |
 |   |  Spectral indices (NDVI) |
 |   | Quick classification (kmeans)|
-
 |Exercise 4: Time series with gdalcubes |  | 4:00-4:30|
 |  | MODIS NDVI Stack (pre-package) |  |   |
 |  | Linear trend over time |  | 
