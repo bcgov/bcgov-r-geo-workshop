@@ -4,7 +4,7 @@
 
 
 
-This session is expect to run from 1:00 pm  to 12:00 pm November 6th, 2019.
+This session is expect to run from 1:00 pm  to 6:00 pm November 6th, 2019.
 
 
 
@@ -30,27 +30,21 @@ This session is expect to run from 1:00 pm  to 12:00 pm November 6th, 2019.
 
 
 
-Manipulation (1:45-2:30)
-Presentation (15 min) Gen
-Aggregate/disaggregate 
-Cropping to vector
-Mask to value 
-Stack
-Rasterize
-Extract 
-Exercise 2 (30 min) Gen 
-Stack land cover, BEC and DEM 
+| Remote sensed data | |  3:00-4:00 pm |
+|Exercise 3: Satellite image analysis |   |
+|   |  Spectral indices (NDVI) |
+|   | Quick classification (kmeans)|
+
+
+|Exercise 4: Time series with gdalcubes |  | 4:00-4:30|
+|  | MODIS NDVI Stack (pre-package) |  |   |
+|  | Linear trend over time |  | 
+|  | Plot timeseries  |  |
+|  |Export timelapse video |  | 
 
 
 
 
-
-
-------
-
-### Registration
-
-Registration is closed. Please contact alexandre.bevington [at] gov.bc.ca  for questions or concerns. 
 
 
 ### Code of Conduct
