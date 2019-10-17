@@ -109,7 +109,7 @@ plot(dem)
 It is also important to check how NA's are being treated. In this case our `NA`'s are correctly assigned as we see the min and max values do not include NA's. If we read in a raster as see `NA`'s in the min and max values summary we can assign `NA` or reassign to a specific value. For example we can assign all `NA` values a value of 0 or -9999
 
 
-```{r}
+```{r, include = TRUE, results = "hide"}
 dem <- setMinMax(dem)  
 
 NAvalue(dem) = -9999
@@ -121,7 +121,7 @@ NAvalue(dem) = -9999
 
 We can have CRS in three formats (`ESPG`, `proj4string`, `WKT`) in `proj4string` the `+` seperates each element (similar to csv is seperated with a comma). Tip: Mapping with leaflet and other web-mapping requires data to be in geographic CRS WGS84 (`EPSG: 4326`).
 
-```{r projections, include = TRUE}
+```{r projections, include = TRUE,  results = "hide"}
 dem
 crs(dem)
 
@@ -132,25 +132,24 @@ This is important to understand when looking at area calculations and cell resol
 
 In many cases we use BCAlbers (`ESPG:3005`) as it is an equal area projection with units in meters. 
 
-```{r}
+```{r, include = TRUE, results = "hide"}
 
 # we can check the information on our ESPG:3005
 CRS("+init=epsg:3005")
 
 projection(dem)  # gives us the string version proj4string
 
-
 ```
 
 
-### Reprojecting Rasters
+#### Reprojecting Rasters
 
 Reprojecting is different between rasters and vectors. In Vectors each co-ordinate is projected seperately, however as rasters are based on a grid of cells the same size this method is not applicable. Raster projection involves creating a new raster onto which the attributes are re-estimated allowing the new pixal to be assigned with the appropraite value. 
 
 We can use the `projectRaster()` function which takes a raster and a `crs` argument. This function only accepts `proj4string` definitions of a CRS rather than EPSG codes. Note the number of columns and rows will be likely to be different from the original raster. 
 
 
-```{r reproject rasters, include = TRUE, results = "hide"}
+```{r reproject rasters, include = TRUE, eval = FALSE}
 crs(dem)
 
 wgs84 <- "+init=epsg:4326"
@@ -173,12 +172,12 @@ res(dem.wgs84)
 
 
 
-### Visualise Rasters 
+### 4. Visualise Rasters 
 
 We can do quick visualisations of our rasters using the `plot()`. We can also use other packages to make this view interactive such as `mapview` or `rasterVis`. Another option to take advantage of the `ggplot2` package is to covert our raster into a data.frame and plot the xy variables. This however can be more time consuming as we see from the code below.
 
 
-```{r raster viz, include = TRUE, results = "hide", warning= FALSE,  message = FALSE}
+```{r raster viz, include = TRUE, eval = FALSE, warning= FALSE,  message = FALSE}
 # Option 1: quick check of the raster 
 plot(dem)
 
@@ -188,7 +187,7 @@ mapview(dem)
 
 # Option 3: more fancy exploring 
 library(rasterVis)
-plot3D(dem)
+#plot3D(dem)
 
 # Option 4: convert to data frame and plot 
 library(ggplot2)
@@ -207,21 +206,33 @@ We can check the spread of the data. For example we can create a histogram to lo
 ```{r histogram, include = TRUE, eval = FALSE}
 histogram(dem)
 
+
 ```
 
 
-### Raster Calculator
+### Raster Calculations 
+
+We can do very fast calculation on raster objects as they do not contain explicit spatial projections. For example two rasters with the same extent, resolution and projection we can think of them as two matrices. we can perfomr calculations based at difference scales; Local (per cell), Focal (neighbourhood), Zonal (neighburhood with iregular size and shape), Global (per raster calcualtions). 
+
+
+```{r, results="hide"}
+# Raster Calculations - per cell 
+dem + dem 
+log(dem)
+
+```
+
+we can reclass values within the raster 
 
 ```{r}
+minValue(dem)
+maxValue(dem)
 
 
+# reclasss a raster 
+rcl <- matrix(c(0, 1000, 1, 1000.0001, 1600, 2), ncol = 3, byrow = TRUE)
+recl.dem <- reclassify(dem, rcl = rcl)
 
-
-```
-
-
-What if we want to reclassify our rater and summarise the results 
-library(dplyr)
 
 dem.class <- reclassify (dem, c(-Inf, 800, 1,
                                 700, 1000, 2, 
@@ -231,12 +242,45 @@ dem.class <- reclassify (dem, c(-Inf, 800, 1,
 plot(dem.class)
 
 
-dem.class <- as.data.frame(dem.class) %>%
-  filter(!is.na(DEM))
-
-dem.class <- dem.class %>%
-  group_by(DEM) %>%
-  summarise(count = n())
-
 
 ```
+
+
+Focal operations take into account a cell and its neighbours. Typically these include a 3 x 3 cells. This operation applied an aggregate function to all cells within the neighbourhood with the result being the central cell value. 
+
+We need to define the shape of a moving window with a matrix with corresponding weights. This is commonly summary functions, ie sum(), mean(), var()
+
+```{r, include = TRUE, results="hide"}
+
+#Focal operations
+
+r_focal = focal(dem, w = matrix (1,nrow = 3, ncol = 3), fun = min)
+
+plot(dem)
+plot(r_focal)
+
+
+# create the terrain layers from a dem based on neighbourhood
+
+slope <- terrain(dem, opt='slope', unit='radians',  neighbors=8)
+plot(slope)
+
+aspect <- terrain(dem, opt='aspect', unit='radians',  neighbors=8)
+plot(aspect)
+
+
+#Create a hill shade 
+hs <- hillShade(slope, aspect, angle=30, direction=270)
+
+plot(hs)
+
+```
+
+
+```{r, results = "hide"}
+#zonal calculations 
+
+dem.zone <- zonal(dem, dem.class, fun= "mean")
+
+```
+
