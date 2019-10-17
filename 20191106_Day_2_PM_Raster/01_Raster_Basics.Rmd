@@ -28,9 +28,10 @@ knitr::opts_chunk$set(echo = TRUE)
 This document outlines some basic operations for rasters. You can follow along running the code or refer to the html version. 
 
 
-### Load packages and unzip data files
+### 1. Set up 
+Firstly we want to set up our work session by reading in required libraries and dataset. We can also take a look to see what data types we have.  
 
-```{r set-up , echo = TRUE, message= FALSE}
+```{r set-up , echo = TRUE, message= FALSE, results = "hide"}
 
 library(raster)
 library(usethis)
@@ -40,182 +41,186 @@ library(usethis)
 ## still need to fix this 
 #usethis::use_course("https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/data/20191106_Day_2_PM_Raster/data1.zip") 
 
-#usethis::use_course("https://github.com/bcgov/bcgov-r-geo-workshop/data/20191106_Day_2_PM_Raster/data1.zip")
-#usethis::use_zip("https://github.com/bcgov/bcgov-r-geo-workshop/data/20191106_Day_2_PM_Raster/data1.zip")
-
-
-
 data.dir <- "C:/Training/R_intermediate/data" #change to common location
 
 # see what goodies are in the folder 
 list.files(data.dir)
 
 ```
-We can see files with a variety of file types (tif, zip etc.)
 
-## Load Rasters 
+### 2. Loading and checking rasters 
 
-```{r load Raster}
+We will read in the raster data using the `raster` package. Unlike vectors, Rasters are defined by the location of grid extents. We can look at the key information for rasters; dimension, resolution (cell size), extents, min and max values, and CRS. 
+
+```{r load Raster, echo = TRUE, message= FALSE, include = T, results = "hide"}
 # read in a single raster 
+
 dem <- raster(file.path(data.dir, "DEM.tif"))
 
 ```
 
-## Check Raster 
+We can take a look at our `dem` raster to check the basic parameters.
 
-Unlike vectors, Rasters are defined by the location of grid extents. 
-We can look at the key information for rasters; dimension, resolution (cell size), extents, crs, min and max. 
+```{r, echo = T, include = T,results = "hide"}
+# dimension 
+dim(dem)
 
+#resolution 
+res(dem)
 
-```{r, echo = T, include = T}
-dem 
-
-res (dem)
+# extent
+extent(dem)
 
 ```
 
-We can look at the spread of the data (distribution of values)
+We can also look at the spread of the data (ie. the distribution of values)
 
-```{r, echo = TRUE, include = TRUE, message = FALSE}
+```{r, echo = TRUE, include = TRUE, message = FALSE, eval = FALSE, results = "hide"}
 summary(dem) # Note this throws an error 
  
 summary(dem, maxsamp = ncell(dem)) # forces to check all raster 
 
 cellStats(dem, sd)
 
-```
-
-We can do a quick check of the datasets using standard functions 
-
-```{r, explore the data , echo = T, include = TRUE, results = "hide"}
-
-head(dem) 
-values(dem)
-unique(values(dem))
-
-```
-
-
-```{r}
-plot(dem)
-
-```
-
-We can format NAs within our data sets 
-
-```{r}
-
-dem <- setMinMax(dem)  
-NAvalue(dem) = -9999
-
-```
-
-Again check the minimum numbers 
-
-```{r}
 minValue(dem)
+
 maxValue(dem)
 
 ```
 
-We can define a range of values which we want to keep 
+We can do a quick check of the datasets using standard functions. 
 
-```{r}
-# subset to only include the peaks 
-dem.peaks <- clamp(dem, lower = 1000, useValues = TRUE )
+```{r, explore the data , echo = T, include = TRUE, results = "hide"}
+head(dem)           # not very useful
 
+values(dem)
 
-#or only view the 
-dem.peaks  <- reclassify(dem , cbind(0 , 1000 , NA), right=FALSE)
+unique(values(dem))
 
 ```
 
+We also want to take a look to see if the raster data is what we expect. We can do this with a simple `plot()` function. 
 
-## Visualise Rasters 
-
-We can do quick plots of rasters with both interactive and static maps
-
-```{r}
-#quick check of the raster 
+```{r basic plot, results = "hide"}
 plot(dem)
 
-# more fancy exploring 
-library(rasterVis)
-histogram(dem)
-plot3D(dem)
-
-library(mapview)
-mapview(dem)
-
-# convert to data frame and plot 
-library(ggplot2)
-dem_df <- as.data.frame(dem, xy = TRUE)
-str(dem_df)
-
-# ggspatial # layer_spatial 
-
-ggplot() +
-    geom_raster(data = dem_df , aes(x = x, y = y, fill = DEM)) +
-    scale_fill_viridis_c() +
-    coord_quickmap()
-
-#...... much more time consuming
-
 ```
 
-## Check projections, assign and transform projections
+It is also important to check how NA's are being treated. In this case our `NA`'s are correctly assigned as we see the min and max values do not include NA's. If we read in a raster as see `NA`'s in the min and max values summary we can assign `NA` or reassign to a specific value. For example we can assign all `NA` values a value of 0 or -9999
 
-Coordinate Reference System (CRS). We can have CRS in three formats (ESPG, Proj4string, WKT) in proj4string the "+" seperates each element (similar to csv is seperated with a comma)
 
 ```{r}
-dem
-crs(dem)
+dem <- setMinMax(dem)  
+
+NAvalue(dem) = -9999
+
 ```
 
 
-# Questions: what units are the data in ? 
-# units = m (meters)
+### 3. Co-ordinate Reference System (CRS)
 
-#proj=aea +lat_1=50 +lat_2=58.5 +lat_0=45 +lon_0=-126 + x_0=1000000 + y_0=0 
-#ellps=GRS80 
-#towgs84=0,0,0,0,0,0,0
-#units=m 
-#no_defs 
+We can have CRS in three formats (`ESPG`, `proj4string`, `WKT`) in `proj4string` the `+` seperates each element (similar to csv is seperated with a comma). Tip: Mapping with leaflet and other web-mapping requires data to be in geographic CRS WGS84 (`EPSG: 4326`).
+
+```{r projections, include = TRUE}
+dem
+crs(dem)
+
+```
+
+We can tell from the CRS what units the data is in. For example the data above is in meters (m). 
+This is important to understand when looking at area calculations and cell resolution. 
+
+In many cases we use BCAlbers (`ESPG:3005`) as it is an equal area projection with units in meters. 
+
+```{r}
 
 # we can check the information on our ESPG:3005
 CRS("+init=epsg:3005")
 
 projection(dem)  # gives us the string version proj4string
 
-# what about projected data ? 
-# lets read in another raster 
 
-ndvi <- raster(file.path(data.dir, "NDVI.tif"))
-ndvi 
-
-# what is the cell size of the raster? 
-# what is the projection? 
-
-projection(ndvi) # what is the crs for this raster - is it the same as the dem layer?
-
-#[1] "+proj=utm +zone=9 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0"
-
-# transform a projection to match our dem 
-ndvi.3005 <- projectRaster(ndvi, dem) 
-
-ndvi.3005
-
-summary(ndvi.3005)
-#              NDVI
-#Min.    -0.2097639
-#1st Qu.  0.5884543
-#Median   0.6328611
-#3rd Qu.  0.6891333
-#Max.     0.8716997
-#NA's     0.0000000
+```
 
 
-# What if we want to reclassify our rater and summarise the results 
+### Reprojecting Rasters
+
+Reprojecting is different between rasters and vectors. In Vectors each co-ordinate is projected seperately, however as rasters are based on a grid of cells the same size this method is not applicable. Raster projection involves creating a new raster onto which the attributes are re-estimated allowing the new pixal to be assigned with the appropraite value. 
+
+We can use the `projectRaster()` function which takes a raster and a `crs` argument. This function only accepts `proj4string` definitions of a CRS rather than EPSG codes. Note the number of columns and rows will be likely to be different from the original raster. 
+
+
+```{r reproject rasters, include = TRUE, results = "hide"}
+crs(dem)
+
+wgs84 <- "+init=epsg:4326"
+
+dem.wgs84 = projectRaster(dem, crs = wgs84)
+
+plot(dem)
+plot(dem.wgs84)
+
+nrow(dem)
+nrow(dem.wgs84)
+
+extent(dem)
+extent(dem.wgs84)
+
+res(dem)
+res(dem.wgs84)
+
+```
+
+
+
+### Visualise Rasters 
+
+We can do quick visualisations of our rasters using the `plot()`. We can also use other packages to make this view interactive such as `mapview` or `rasterVis`. Another option to take advantage of the `ggplot2` package is to covert our raster into a data.frame and plot the xy variables. This however can be more time consuming as we see from the code below.
+
+
+```{r raster viz, include = TRUE, results = "hide", warning= FALSE,  message = FALSE}
+# Option 1: quick check of the raster 
+plot(dem)
+
+# Option 2: interactive mapping 
+library(mapview)
+mapview(dem)
+
+# Option 3: more fancy exploring 
+library(rasterVis)
+plot3D(dem)
+
+# Option 4: convert to data frame and plot 
+library(ggplot2)
+dem_df <- as.data.frame(dem, xy = TRUE)
+str(dem_df)
+
+ggplot() +
+    geom_raster(data = dem_df , aes(x = x, y = y, fill = DEM)) +
+    scale_fill_viridis_c() +
+    coord_quickmap()
+
+```
+
+We can check the spread of the data. For example we can create a histogram to look for any anomolies.
+
+```{r histogram, include = TRUE, eval = FALSE}
+histogram(dem)
+
+```
+
+
+### Raster Calculator
+
+```{r}
+
+
+
+
+```
+
+
+What if we want to reclassify our rater and summarise the results 
 library(dplyr)
 
 dem.class <- reclassify (dem, c(-Inf, 800, 1,
