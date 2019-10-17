@@ -206,7 +206,6 @@ We can check the spread of the data. For example we can create a histogram to lo
 ```{r histogram, include = TRUE, eval = FALSE}
 histogram(dem)
 
-
 ```
 
 
@@ -224,7 +223,8 @@ log(dem)
 
 we can reclass values within the raster 
 
-```{r, results="hide"}
+```{r, results = 'hide'}
+
 minValue(dem)
 maxValue(dem)
 
@@ -241,14 +241,12 @@ dem.class <- reclassify (dem, c(-Inf, 800, 1,
 
 plot(dem.class)
 
-
-
 ```
 
 
 Focal operations take into account a cell and its neighbours. Typically these include a 3 x 3 cells. This operation applied an aggregate function to all cells within the neighbourhood with the result being the central cell value. 
 
-We need to define the shape of a moving window with a matrix with corresponding weights. This is commonly summary functions, ie sum(), mean(), var()
+We need to define the shape of a moving window with a matrix with corresponding weights. This is commonly summary functions, ie sum(), mean(), var().
 
 ```{r, include = TRUE, results= "hide"}
 
