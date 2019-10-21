@@ -73,7 +73,7 @@ We expect attendees to have at least the following level of experience:
 -	**Evening:** Group dinner (_self-pay_)
 
 #### Day 4 - Friday Nov. 8 - Hackathon
--	**AM:** Pick projects and separate into groups of 4. To submit a hackathon project or idea, or comment on an existing project, please submit an  [issue](https://github.com/bcgov/bcgov-r-geo-workshop/issues).
+-	**AM:** Pick projects and separate into groups of 4. To submit a hackathon project or idea, or comment on an existing project, please submit an  [issue](https://github.com/bcgov/bcgov-r-geo-workshop/issues?q=is%3Aissue+is%3Aopen+label%3A%22geospatial+hackathon%22).
 -	**PM:** End of day -> report back to group
 -	**Evening:** No event
  
