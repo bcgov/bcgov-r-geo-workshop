@@ -57,7 +57,7 @@ We expect attendees to have at least the following level of experience:
     - [Introduction to Data Science](https://rafalab.github.io/dsbook/)
     - [Predictive Soil Mapping with R](https://soilmapper.org/)
     - [Interpretable Machine Learning](https://christophm.github.io/interpretable-ml-book/)
-  
+    - [OpenGeoHub 2019 Summer School](https://www.youtube.com/playlist?list=PLXUoTpMa_9s1npXD6S9M0_2pUgnTd6cqV) [Videos]
 - Git + Github
   - **Mandatory**: Install Git on the laptop you are bringing  [link](https://git-scm.com/)
   - **Mandatory**: Create a GitHub account at least 1 week before the workshop [link](https://github.com/)
@@ -73,27 +73,27 @@ We expect attendees to have at least the following level of experience:
 
 ### Workshop Schedule
 
-#### Day 1 - Tuesday Nov. 5 - _Some_ Best Practices for Code Sharing
-- **AM Optional:** Open house for software installation & troubleshooting (RStudio, R, Git) and GitHub account creation
-- **PM:** Git + bcgov GitHub & Project Management with RStudio [teaching materials](https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/20191105_Day_1_PM_Intro) [_Instructor: [Steph Hazlitt](https://github.com/stephhazlitt)_]
--	**Evening:** Social ice breaker (_self-pay_)
+- **_Some_ Best Practices for Code Sharing** - Tuesday Nov. 5 (1pm - 5pm)
+  - **AM Optional:** Open house for software installation & troubleshooting (RStudio, R, Git) and GitHub account creation
+  - **PM:** Git + bcgov GitHub & Project Management with RStudio [teaching materials](https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/20191105_Day_1_PM_Intro) [_Instructor: [Steph Hazlitt](https://github.com/stephhazlitt)_]
+  -	**Evening:** Social ice breaker (_self-pay_)
 
-#### Day 2 - Wednesday Nov. 6 - Introduction to Geospatial in R 
--	**AM:** Vector manipulation and visualization [teaching materials](https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/20191106_Day_2_AM_Vector) [_Instructors: [Sam Albers](https://github.com/boshek) & [Andy Teucher](https://github.com/ateucher)_]
--	**PM:** Raster manipulation and visualization [teaching materials](https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/20191106_Day_2_PM_Raster) [_Instructors: [Alex Bevington](https://github.com/bevingtona) & [Gen Perkins](https://github.com/gcperk)_]
--	**Evening:** Group dinner (_self-pay_)
+- **Introduction to Geospatial in R** - Wednesday Nov. 6 (8:30am - 4:30pm)
+  -	**AM:** Vector manipulation and visualization [teaching materials](https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/20191106_Day_2_AM_Vector) [_Instructors: [Sam Albers](https://github.com/boshek) & [Andy Teucher](https://github.com/ateucher)_]
+  -	**PM:** Raster manipulation and visualization [teaching materials](https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/20191106_Day_2_PM_Raster) [_Instructors: [Alex Bevington](https://github.com/bevingtona) & [Gen Perkins](https://github.com/gcperk)_]
+  -	**Evening:** Group dinner (_self-pay_)
 
-#### Day 3 - Thursday Nov. 7 - Geocomputation & Machine Learning in R [_Instructor: [Tomislav Hengl](https://github.com/thengl)_] 
--	**AM:** Trends and new opportunities in processing spatial and Earth Observation data in R
-- **AM:** Five key steps to processing large rasters in R
-- **PM:** Ensemble Machine Learning as a general framework for predictive mapping 
-- **PM:** Automated predictive mapping using landmap package
--	**Evening:** Group dinner (_self-pay_)
+- **Geocomputation & Machine Learning in R** - Thursday Nov. 7 (8:30am - 4:30pm):  [_Instructor: [Tomislav Hengl](https://github.com/thengl)_]
+  -	**AM:** Trends and new opportunities in processing spatial and Earth Observation data in R
+  - **AM:** Five key steps to processing large rasters in R
+  - **PM:** Ensemble Machine Learning as a general framework for predictive mapping 
+  - **PM:** Automated predictive mapping using landmap package
+  -	**Evening:** Group dinner (_self-pay_)
 
-#### Day 4 - Friday Nov. 8 - Hackathon 
--	**AM:** Pick projects and separate into groups of 4. To submit a hackathon project or idea, or comment on an existing project, please submit an  [issue](https://github.com/bcgov/bcgov-r-geo-workshop/issues?q=is%3Aissue+is%3Aopen+label%3A%22geospatial+hackathon%22).
--	**PM:** End of day -> report back to group
--	**Evening:** No event
+- **Hackathon** - Friday Nov. 8 (8:30am - 4:30pm)
+  -	**AM:** Pick projects and separate into groups of 4. Hands on collaboration for all levels of users. To submit a hackathon project or idea, or comment on an existing project, please submit an  [issue](https://github.com/bcgov/bcgov-r-geo-workshop/issues?q=is%3Aissue+is%3Aopen+label%3A%22geospatial+hackathon%22).
+  -	**PM:** End of day -> report back to group
+  -	**Evening:** No event
  
 ------
 
