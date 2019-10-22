@@ -41,16 +41,34 @@ We expect attendees to have at least the following level of experience:
   - **Mandatory**: Installation privileges
 - R
   - **Mandatory**: Install R and RStudio [link](https://github.com/bcgov/bcgov-data-science-resources/wiki/Installing-R-&-RStudio)
-  - **Mandatory**: Install R packages: `c("tidyverse", "sf", "sp", "raster", "stars", "lwgeom", "mapview", "ggplot2", "lidR", "gdalcubes")`
-  - **Mandatory for R Beginners**: Reproducible Scientific Analysis [link](https://swcarpentry.github.io/r-novice-gapminder/)
-  - Optional: Read Reproducible Data Science [link](https://r4ds.had.co.nz/)
-  - Optional: Read Geocomputation with R [link](https://geocompr.robinlovelace.net/)
+  - **Mandatory**: Install R packages (more to come): <br>
+      `c("tidyverse", "sf", "sp","raster",`<br>
+      `"stars", "lwgeom", "mapview", "ggplot2",`<br>
+      `"lidR", "gdalcubes")`
+  - **Mandatory for R Beginners**: 
+    - [Reproducible Scientific Analysis](https://swcarpentry.github.io/r-novice-gapminder/)
+  - Recommended Reading (Beginner): 
+    - [RStudio for Beginners](https://education.rstudio.com/learn/beginner/)
+    - [Getting Started with Data in R](https://moderndive.com/1-getting-started.html)
+    - [RStudio Hotkeys, Tips and Tricks](https://appsilon.com/r-studio-shortcuts-and-tips-part-2/)
+  - Recommended Reading (Intermediate): 
+    - [Reproducible Data Science](https://r4ds.had.co.nz/)
+    - [Geocomputation with R](https://geocompr.robinlovelace.net/)
+    - [Introduction to Data Science](https://rafalab.github.io/dsbook/)
+    - [Predictive Soil Mapping with R](https://soilmapper.org/)
+    - [Interpretable Machine Learning](https://christophm.github.io/interpretable-ml-book/)
+  
 - Git + Github
   - **Mandatory**: Install Git on the laptop you are bringing  [link](https://git-scm.com/)
   - **Mandatory**: Create a GitHub account at least 1 week before the workshop [link](https://github.com/)
-  - Optional: Read Getting Started with Git & GitHub [link](https://github.com/bcgov/bcgov-data-science-resources/wiki/Getting-Started-with-Git-&-GitHub)
-  - Optional: Read Happy Git with R [link](https://happygitwithr.com/)
-
+  - Recommended Reading: 
+    - [Read Getting Started with Git & GitHub](https://github.com/bcgov/bcgov-data-science-resources/wiki/Getting-Started-with-Git-&-GitHub)
+    - [Read Happy Git with R](https://happygitwithr.com/)
+- GIS Tools (For Day 3 with T. Hengl)
+  - **Mandatory**: QGIS [link](https://qgis.org/en/site/forusers/download.html)
+  - **Mandatory**: SAGA [link](https://sourceforge.net/projects/saga-gis/)
+  - **Mandatory**: Google Earth [link](https://support.google.com/earth/answer/21955?hl=en)
+  
 ------
 
 ### Workshop Schedule
@@ -72,7 +90,7 @@ We expect attendees to have at least the following level of experience:
 - **PM:** Automated predictive mapping using landmap package
 -	**Evening:** Group dinner (_self-pay_)
 
-#### Day 4 - Friday Nov. 8 - Hackathon
+#### Day 4 - Friday Nov. 8 - Hackathon 
 -	**AM:** Pick projects and separate into groups of 4. To submit a hackathon project or idea, or comment on an existing project, please submit an  [issue](https://github.com/bcgov/bcgov-r-geo-workshop/issues?q=is%3Aissue+is%3Aopen+label%3A%22geospatial+hackathon%22).
 -	**PM:** End of day -> report back to group
 -	**Evening:** No event
@@ -106,7 +124,7 @@ Please note that this project is released with a [Contributor Code of Conduct](C
 [![Creative Commons License](https://i.creativecommons.org/l/by/4.0/88x31.png)](http://creativecommons.org/licenses/by/4.0/)
 
 ```
-Copyright 2019 Province of British Columbia
+Unless otherwise stated within this repository, Copyright 2019 Province of British Columbia
 
 This work is licensed under the Creative Commons Attribution 4.0 International License.
 To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/.
