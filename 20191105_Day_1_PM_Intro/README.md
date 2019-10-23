@@ -27,8 +27,8 @@ This session is expected to run from 1:45 pm to 5:00 pm November 5th, 2019.
 
 Much of this instruction material is sourced and adapted from the [Software Carpentry Foundation](http://software-carpentry.org/) (now The Carpenties). All Software Carpentry, Data Carpentry, and Library Carpentry instructional material is Copyright © Software Carpentry and made available under the [Creative Commons Attribution licence](https://creativecommons.org/licenses/by/4.0/legalcode).
 
-[**Version Control with Git**](http://swcarpentry.github.io/git-novice/): Daisie Huang and Ivan Gonzalez (eds): "Software Carpentry: Version
-Control with Git."  Version 2016.06, June 2016,
+[**Version Control with Git**](http://swcarpentry.github.io/git-novice/): Daisie Huang and Ivan Gonzalez (eds): _Software Carpentry: Version
+Control with Git_.  Version 2016.06, June 2016,
 https://github.com/swcarpentry/git-novice, 10.5281/zenodo.57467.
 
 [**R for Reproducible Scientific Analysis**](http://swcarpentry.github.io/r-novice-gapminder/): Thomas Wright and Naupaka Zimmerman (eds): _Software Carpentry: R for
