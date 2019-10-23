@@ -2,7 +2,7 @@
 
 The following is an outline for the vector portion of R Geospatial Workshop to be held in Prince George, British Columbia on November 5 to 8, 2019. 
 
-This session is expect to run from 8:30 am to 12:00 pm November 6th, 2019.
+This session is expected to run from 8:30 am to 12:00 pm November 6th, 2019.
 
 | Lesson                   |  Timing (minutes) | Time  | Instructor | Packages Used          | Short Learning Outcome                                                                         |
 |--------------------------|-------------------|-------|------------|------------------------|------------------------------------------------------------------------------------------------|
