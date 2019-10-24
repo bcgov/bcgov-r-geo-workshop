@@ -25,11 +25,11 @@ See the License for the specific language governing permissions and limitations 
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-This document outlines some basic operations for rasters. You can follow along running the code or refer to the html version. 
+This document outlines some basic operations for rasters. You can follow along running the code or refer to the html version. This modual will primarily be usng the `raster` package, however it is worth noting there are a number of other packages currently being developed to handle raster data efficiently. These include;  `stars` and `terra`.  
 
 
 ### 1. Set up 
-Firstly we want to set up our work session by reading in required libraries and dataset. We can also take a look to see what data types we have.  
+Firstly we want to set up our work session by reading in required libraries and dataset. We can use `list.files` to take a look at what file types are available.  
 
 ```{r set-up , echo = TRUE, message= FALSE, results = "hide"}
 
@@ -50,7 +50,9 @@ list.files(data.dir)
 
 ### 2. Loading and checking rasters 
 
-We will read in the raster data using the `raster` package. Unlike vectors, Rasters are defined by the location of grid extents. We can look at the key information for rasters; dimension, resolution (cell size), extents, min and max values, and CRS. 
+We can read in raster data using the `raster` package. Unlike vectors, Rasters are defined by the location of grid extents, rather than individual vertices. This has some advantages and disadvantages as we will see.  
+
+
 
 ```{r load Raster, echo = TRUE, message= FALSE, include = T, results = "hide"}
 # read in a single raster 
@@ -59,9 +61,9 @@ dem <- raster(file.path(data.dir, "DEM.tif"))
 
 ```
 
-We can take a look at our `dem` raster to check the basic parameters.
+Once we have read in the raster we can look at the key information; dimension (`dem`), resolution (cell size)(`res`), extents (`extent`), and Co-ordinate Reference System (CRS).
 
-```{r, echo = T, include = T,results = "hide"}
+```{r, echo = T, include = T,eval = FALSE}
 # dimension 
 dim(dem)
 
@@ -73,9 +75,9 @@ extent(dem)
 
 ```
 
-We can also look at the spread of the data (ie. the distribution of values)
+Secondly we can look in detail at the data values. For example we can review the minimum, maximum values and spread of the data (ie. the distribution of values)
 
-```{r, echo = TRUE, include = TRUE, message = FALSE, eval = FALSE, results = "hide"}
+```{r, echo = TRUE, include = TRUE, message = FALSE, eval = FALSE}
 summary(dem) # Note this throws an error 
  
 summary(dem, maxsamp = ncell(dem)) # forces to check all raster 
@@ -88,14 +90,15 @@ maxValue(dem)
 
 ```
 
-We can do a quick check of the datasets using standard functions. 
+As with any `r` object we can do a quick check of the datasets using standard functions (`head`). 
 
-```{r, explore the data , echo = T, include = TRUE, results = "hide"}
+```{r, explore the data , echo = T, include = TRUE, eval = FALSE}
+
 head(dem)           # not very useful
 
-values(dem)
+values(dem)         # a little more useful 
 
-unique(values(dem))
+unique(values(dem)) # much more useful 
 
 ```
 
@@ -106,7 +109,7 @@ plot(dem)
 
 ```
 
-It is also important to check how NA's are being treated. In this case our `NA`'s are correctly assigned as we see the min and max values do not include NA's. If we read in a raster as see `NA`'s in the min and max values summary we can assign `NA` or reassign to a specific value. For example we can assign all `NA` values a value of 0 or -9999
+When reading in rasters it is also important to check how NA's are treated. In this case our `NA`'s are correctly assigned as we see the min and max values do not include NA's. If we read in a raster as see `NA`'s in the min and max values summary we can assign `NA` or reassign to a specific value. For example we can assign all `NA` values a value of 0 or -9999.
 
 
 ```{r, include = TRUE, results = "hide"}
@@ -119,7 +122,7 @@ NAvalue(dem) = -9999
 
 ### 3. Co-ordinate Reference System (CRS)
 
-We can have CRS in three formats (`ESPG`, `proj4string`, `WKT`) in `proj4string` the `+` seperates each element (similar to csv is seperated with a comma). Tip: Mapping with leaflet and other web-mapping requires data to be in geographic CRS WGS84 (`EPSG: 4326`).
+Coordinate Reference Systems come in three formats (`ESPG`, `proj4string`, `WKT`). Raster data commonly relies on `proj4string` type. In this case the `+` seperates each element (similar to csv is seperated with a comma). Tip: Mapping with leaflet and other web-mapping requires data to be in geographic CRS WGS84 (`EPSG: 4326`).
 
 ```{r projections, include = TRUE,  results = "hide"}
 dem
@@ -127,10 +130,10 @@ crs(dem)
 
 ```
 
-We can tell from the CRS what units the data is in. For example the data above is in meters (m). 
+The `crs` gives us important information as to what units the data is in, and as a consequence the cell size. For example our `dem` raster is measured in meters (m). This means out resolution is 25m x 25m cell size. 
 This is important to understand when looking at area calculations and cell resolution. 
 
-In many cases we use BCAlbers (`ESPG:3005`) as it is an equal area projection with units in meters. 
+In many cases we use BCAlbers (`EPSG:3005`) as it is an equal area projection with units in meters. 
 
 ```{r, include = TRUE, results = "hide"}
 
@@ -144,9 +147,9 @@ projection(dem)  # gives us the string version proj4string
 
 #### Reprojecting Rasters
 
-Reprojecting is different between rasters and vectors. In Vectors each co-ordinate is projected seperately, however as rasters are based on a grid of cells the same size this method is not applicable. Raster projection involves creating a new raster onto which the attributes are re-estimated allowing the new pixal to be assigned with the appropraite value. 
+Reprojecting is different between rasters and vectors. In vectors, each co-ordinate is projected seperately, however as rasters are based on a grid of cells the same size this method is not possible. Raster projections involves creating a new raster of the desired outputs on which the attributes are re-estimated allowing the new pixal to be assigned with the appropriate value. Note the number of columns and rows will be likely to be different from the original raster. 
 
-We can use the `projectRaster()` function which takes a raster and a `crs` argument. This function only accepts `proj4string` definitions of a CRS rather than EPSG codes. Note the number of columns and rows will be likely to be different from the original raster. 
+We can use the `projectRaster()` function. This require a `raster` object and a `crs` argument. This function only accepts `proj4string` definitions of a CRS rather than EPSG codes. 
 
 
 ```{r reproject rasters, include = TRUE, eval = FALSE}
@@ -172,7 +175,7 @@ res(dem.wgs84)
 
 
 
-### 4. Visualise Rasters 
+### 4. Visualise Rasters and Raster Data
 
 We can do quick visualisations of our rasters using the `plot()`. We can also use other packages to make this view interactive such as `mapview` or `rasterVis`. Another option to take advantage of the `ggplot2` package is to covert our raster into a data.frame and plot the xy variables. This however can be more time consuming as we see from the code below.
 
@@ -201,7 +204,7 @@ ggplot() +
 
 ```
 
-We can check the spread of the data. For example we can create a histogram to look for any anomolies.
+We can also do a plot of the raster values. For example we can create a histogram to look for any anomolies.
 
 ```{r histogram, include = TRUE, eval = FALSE}
 histogram(dem)
@@ -209,31 +212,30 @@ histogram(dem)
 ```
 
 
-### Raster Calculations 
+### 5. Raster Calculations 
 
-We can do very fast calculation on raster objects as they do not contain explicit spatial projections. For example two rasters with the same extent, resolution and projection we can think of them as two matrices. we can perfomr calculations based at difference scales; Local (per cell), Focal (neighbourhood), Zonal (neighburhood with iregular size and shape), Global (per raster calcualtions). 
+We can do very fast calculation on raster objects as they do not contain explicit spatial projections. For example two rasters with the same extent, resolution and projection we can think of them as two matrices. we can perform calculations based at difference scales; Local (per cell), Focal (neighbourhood), Zonal (neighburhood with iregular size and shape), Global (per raster calcualtions). 
 
 
-```{r, results="hide"}
+```{r, eval = FALSE}
 # Raster Calculations - per cell 
 dem + dem 
+
 log(dem)
 
 ```
 
-we can reclass values within the raster 
+We can reclassify values within the raster. This is useful if we want to bin values into catergories or define a subset of data. Using our `dem` data we can reclassify our values into groups by creating a matrix with defined range and assigned value. We know our minimum value is `r minValue(dem)` and maximum value is `r maxValue(dem)`. 
 
-```{r, results = 'hide'}
-
-minValue(dem)
-maxValue(dem)
-
-
-# reclasss a raster 
+```{r reclass raster, results = 'hide'}
+# reclasss a raster to above or below 1000
 rcl <- matrix(c(0, 1000, 1, 1000.0001, 1600, 2), ncol = 3, byrow = TRUE)
+rcl 
+
 recl.dem <- reclassify(dem, rcl = rcl)
+plot(recl.dem)
 
-
+# reclassify into 4 groups. 
 dem.class <- reclassify (dem, c(-Inf, 800, 1,
                                 700, 1000, 2, 
                                 1000, 1250, 3, 
@@ -246,9 +248,9 @@ plot(dem.class)
 
 Focal operations take into account a cell and its neighbours. Typically these include a 3 x 3 cells. This operation applied an aggregate function to all cells within the neighbourhood with the result being the central cell value. 
 
-We need to define the shape of a moving window with a matrix with corresponding weights. This is commonly summary functions, ie sum(), mean(), var().
+We need to define the shape of a moving window with a matrix with corresponding weights. This is commonly summary functions, ie `sum()`, `mean()`, `var()`.
 
-```{r, include = TRUE, results= "hide"}
+```{r focal , eval = FALSE, include = TRUE}
 
 #Focal operations
 
@@ -257,7 +259,13 @@ r_focal = focal(dem, w = matrix (1,nrow = 3, ncol = 3), fun = min)
 plot(dem)
 plot(r_focal)
 
+```
 
+
+Using our dem and functions within the raster package, we can apply focal operations to generate slope and aspect. 
+
+
+```{r create a hillshade map, eval = T , results="hide"}
 # create the terrain layers from a dem based on neighbourhood
 
 slope <- terrain(dem, opt='slope', unit='radians',  neighbors=8)
@@ -266,19 +274,60 @@ plot(slope)
 aspect <- terrain(dem, opt='aspect', unit='radians',  neighbors=8)
 plot(aspect)
 
+```
 
+We can use these outputs to create a hillshade 
+
+```{r hillshade, results = "hide"} 
 #Create a hill shade 
 hs <- hillShade(slope, aspect, angle=30, direction=270)
-
 plot(hs)
 
 ```
 
+Bonus:  We can plot hillshade and dem to create nice feature maps.  
 
-```{r, results = "hide"}
+```{rggplot mapping, eval = FALSE}
+hs_df <- as.data.frame(hs, xy = TRUE) 
+dem_df <- as.data.frame(dem, xy = TRUE)
+  
+ggplot() +
+  geom_raster(data = dem_df , 
+              aes(x = x, y = y, 
+                  fill = DEM)) + 
+  geom_raster(data = hs_df,
+              aes(x = x, y = y, alpha = layer)) + 
+  scale_fill_gradientn(colours = terrain.colors(10)) +  
+  scale_alpha(range = c(0.15, 0.65), guide = "none") +  
+  ggtitle("Elevation with hillshade") +
+  coord_quickmap()
+
+```
+
+
+Raster calculator also allows for zonal statistics, for example we can calculating mean, max values per grouping or type. The output is in tabular format. As a demonstration we can use out reclassed raster from above as a quick demonstration. 
+
+```{r zonal stats demo, eval = FALSE}
 #zonal calculations 
+
+plot(dem.class) 
 
 dem.zone <- zonal(dem, dem.class, fun= "mean")
 
+dem.zone
 ```
+
+We will talk more about zonal statistics for remote sensed datasets. 
+
+
+
+
+### Credits & Licensing
+
+The contents presented here is drawn from a number of sources including: 
+
+* [Data Carpentary](https://datacarpentry.org/) - Licensed under CC-BY 4.0 2018–2019 by The Carpentries
+
+* [Geocomputation in R](https://geocompr.robinlovelace.net/) - Licences under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
+
 

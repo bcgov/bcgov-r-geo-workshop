@@ -7,15 +7,15 @@ This session is expect to run from 1:00 pm  to 4:30 pm November 6th, 2019.
 
 
 
-| Topic         |  Details                   | Approx Time   |
-|:---------------:|:----------------:|:---------------------------:|
-| Raster Basics |                |                 1 - 1:45pm    | 
-|                |  Main packages and history              |    |
-|      | Loading raster (TRIM DEM)  |
+| Topic         |  Details                   | Approx Time   |   Packages   |
+|:---------------:|:----------------:|:---------------------------:|:-----:|
+| Raster Basics |                |                 1 - 1:45pm    |        |
+|                |  Main packages and history              |    |     |
+|      | Loading raster (TRIM DEM)  |    |    `raster`   | 
 | | Checking Projections/extends/cell size/NA’s | | 
 |  | Summarising  | | 
 |  | Raster calculations | 
-|  | Plotting and Visualising Raster Data   | 
+|  | Plotting and Visualising Raster Data   |    |  `mapview`, `rasterVis`, `ggplot2` |
 |    | Exercise 1   |    |
 |    Coffee Break    |   |  1:45 - 2:15pm |
 | Raster Manipulation   |   | 
