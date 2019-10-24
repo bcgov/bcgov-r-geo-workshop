@@ -63,7 +63,7 @@ dem <- raster(file.path(data.dir, "DEM.tif"))
 
 Once we have read in the raster we can look at the key information; dimension (`dem`), resolution (cell size)(`res`), extents (`extent`), and Co-ordinate Reference System (CRS).
 
-```{r, echo = T, include = T,results = "hide"}
+```{r, echo = T, include = T,eval = FALSE}
 # dimension 
 dim(dem)
 
@@ -77,7 +77,7 @@ extent(dem)
 
 Secondly we can look in detail at the data values. For example we can review the minimum, maximum values and spread of the data (ie. the distribution of values)
 
-```{r, echo = TRUE, include = TRUE, message = FALSE, eval = FALSE, results = "hide"}
+```{r, echo = TRUE, include = TRUE, message = FALSE, eval = FALSE}
 summary(dem) # Note this throws an error 
  
 summary(dem, maxsamp = ncell(dem)) # forces to check all raster 
@@ -92,7 +92,7 @@ maxValue(dem)
 
 As with any `r` object we can do a quick check of the datasets using standard functions (`head`). 
 
-```{r, explore the data , echo = T, include = TRUE, results = "hide"}
+```{r, explore the data , echo = T, include = TRUE, eval = FALSE}
 
 head(dem)           # not very useful
 
@@ -212,12 +212,12 @@ histogram(dem)
 ```
 
 
-### Raster Calculations 
+### 5. Raster Calculations 
 
 We can do very fast calculation on raster objects as they do not contain explicit spatial projections. For example two rasters with the same extent, resolution and projection we can think of them as two matrices. we can perform calculations based at difference scales; Local (per cell), Focal (neighbourhood), Zonal (neighburhood with iregular size and shape), Global (per raster calcualtions). 
 
 
-```{r, results="hide"}
+```{r, eval = FALSE}
 # Raster Calculations - per cell 
 dem + dem 
 
@@ -227,7 +227,7 @@ log(dem)
 
 We can reclassify values within the raster. This is useful if we want to bin values into catergories or define a subset of data. Using our `dem` data we can reclassify our values into groups by creating a matrix with defined range and assigned value. We know our minimum value is `r minValue(dem)` and maximum value is `r maxValue(dem)`. 
 
-```{r, results = 'hide'}
+```{r reclass raster, results = 'hide'}
 # reclasss a raster to above or below 1000
 rcl <- matrix(c(0, 1000, 1, 1000.0001, 1600, 2), ncol = 3, byrow = TRUE)
 rcl 
@@ -250,7 +250,7 @@ Focal operations take into account a cell and its neighbours. Typically these in
 
 We need to define the shape of a moving window with a matrix with corresponding weights. This is commonly summary functions, ie `sum()`, `mean()`, `var()`.
 
-```{r, include = TRUE, results= "hide"}
+```{r focal , eval = FALSE, include = TRUE}
 
 #Focal operations
 
@@ -265,7 +265,7 @@ plot(r_focal)
 Using our dem and functions within the raster package, we can apply focal operations to generate slope and aspect. 
 
 
-```{r create a hillshade map, results = "hide"}
+```{r create a hillshade map, eval = T , results="hide"}
 # create the terrain layers from a dem based on neighbourhood
 
 slope <- terrain(dem, opt='slope', unit='radians',  neighbors=8)
@@ -278,7 +278,7 @@ plot(aspect)
 
 We can use these outputs to create a hillshade 
 
-```{r hillshade results = "hide"} 
+```{r hillshade, results = "hide"} 
 #Create a hill shade 
 hs <- hillShade(slope, aspect, angle=30, direction=270)
 plot(hs)
@@ -287,8 +287,7 @@ plot(hs)
 
 Bonus:  We can plot hillshade and dem to create nice feature maps.  
 
-```{r}
-
+```{rggplot mapping, eval = FALSE}
 hs_df <- as.data.frame(hs, xy = TRUE) 
 dem_df <- as.data.frame(dem, xy = TRUE)
   
@@ -297,7 +296,8 @@ ggplot() +
               aes(x = x, y = y, 
                   fill = DEM)) + 
   geom_raster(data = hs_df,
-              aes(x = x, y = y, alpha = layer)) +  scale_fill_gradientn(colours = terrain.colors(10)) +  
+              aes(x = x, y = y, alpha = layer)) + 
+  scale_fill_gradientn(colours = terrain.colors(10)) +  
   scale_alpha(range = c(0.15, 0.65), guide = "none") +  
   ggtitle("Elevation with hillshade") +
   coord_quickmap()
@@ -307,7 +307,7 @@ ggplot() +
 
 Raster calculator also allows for zonal statistics, for example we can calculating mean, max values per grouping or type. The output is in tabular format. As a demonstration we can use out reclassed raster from above as a quick demonstration. 
 
-```{r zonal stats demo, results = "hide"}
+```{r zonal stats demo, eval = FALSE}
 #zonal calculations 
 
 plot(dem.class) 
@@ -322,8 +322,9 @@ We will talk more about zonal statistics for remote sensed datasets.
 
 
 
-Credits & Licensing
-The content presented here is drawn from a number of sources including: 
+### Credits & Licensing
+
+The contents presented here is drawn from a number of sources including: 
 
 * [Data Carpentary](https://datacarpentry.org/) - Licensed under CC-BY 4.0 2018–2019 by The Carpentries
 
