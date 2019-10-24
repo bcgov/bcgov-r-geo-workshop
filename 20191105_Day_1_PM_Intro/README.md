@@ -20,8 +20,8 @@ This session is expected to run from 1:45 pm to 5:00 pm November 5th, 2019.
 |-------------------------------|-------------------|-------|----------------------------------------|------------------------------------------------------------------------------------------------------------|
 | version control w/ git        | 90                | 1:45  |  git, Terminal/Bash                    | configure git, create local git repository, track & explore changes, ignore things                         |
 | coffee break                  | 15                | 3:15  |  mug                                   | ☕                                                                                                         | 
-| using git w/ GitHub           | 30                | 3:30  |  git, Terminal/Bash, GitHub            | what is a remote, push & pull to a remote, demo collaboration using a common remote repository             |
-| project management w/ RStudio | 45                | 4:00  |  R, RStudio                            | create self-contained projects in RStudio, understand how to use Git from RStudio                          |
+| using git w/ GitHub           | 45                | 3:30  |  git, Terminal/Bash, GitHub            | what is a remote, push & pull to a remote, demo collaboration using a common remote repository             |
+| project management w/ RStudio | 30                | 4:15  |  R, RStudio                            | create self-contained projects in RStudio, understand how to use Git from RStudio                          |
 | bcgov GitHub & bcgovr         | 15                | 4:45  |  R, RStudio, GitHub,  bcgovr R 📦      | introduce bcgov GitHub organization, auto-populate a bcgov GitHub repo with mandatory files (e.g. licence) |
                                                                                                                                                     
 
