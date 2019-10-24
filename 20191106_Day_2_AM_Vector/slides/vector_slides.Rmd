@@ -42,9 +42,13 @@ options(max_print = 5)
 
 knitr::opts_chunk$set(
   collapse = TRUE,
-  echo = FALSE,
+  #echo = FALSE,
   comment = "#>",
-  fig.path = "graphics/prod/figs"
+  warning = FALSE,
+  message = FALSE,
+  fig.path = "graphics/prod/figs",
+  fig.width = 8,
+  fig.height = 5
 )
 
 options(scipen = 10)
@@ -55,20 +59,12 @@ library(knitr)
 library(sf)
 library(dplyr)
 library(ggplot2)
+library(bcdata)
 ```
 
 
 ```{r, theme, warning=FALSE, echo=FALSE}
-bg_black <- "#272822"
-
-theme_set(theme_void() %+replace%
-            theme(legend.text = element_text(colour = "white", size = 18),
-                  legend.title = element_text(colour = "white", size = 18),
-                  plot.background = element_rect(fill = bg_black, color = bg_black),
-                  axis.text = element_text(colour = "white", size = 16),
-                  axis.title = element_text(colour = "white", size = 18),
-                  axis.title.y = element_text(angle = 90, vjust = 1),
-                  plot.title = element_text(colour = "white", size = 22, hjust = 0)))
+theme_set(theme_void())
 
 
 scale_colour_continuous <- scale_colour_viridis_c
@@ -153,6 +149,76 @@ Artwork by [@allison_horst](https://twitter.com/allison_horst)
 ---
 class: inverse, left, middle
 # a slide to demark a code break
+
+
+---
+class: inverse, left, middle
+# Spatial Operations
+---
+
+## bcdata
+```{r, cache=TRUE}
+ridings <- bcdc_query_geodata('050ec630-47dd-476b-b773-28b2f8d8bc98') %>%
+  filter(ED_NAME %in% c("Cariboo North")) %>%
+  collect()
+
+big_fire <- bcdc_query_geodata("fire-perimeters-historical") %>%
+  filter(FIRE_NUMBER == "C10784") %>%
+  collect()
+
+(p <- ggplot() +
+  geom_sf(data = ridings, fill = "purple", alpha = 0.5) +
+  geom_sf(data = big_fire, fill = "orange", alpha = 0.5))
+```
+
+
+---
+## geometry generating logical operators
+### `st_union`
+
+```{r}
+unionized <- st_union(ridings, big_fire)
+p + geom_sf(data = unionized, size = 2, fill = NA)
+```
+
+---
+## geometry generating logical operators
+### `st_intersection`
+
+```{r}
+intersected <- st_intersection(ridings, big_fire)
+p + geom_sf(data = intersected, size = 2, fill = NA)
+```
+---
+## geometry generating logical operators
+### `st_difference`
+```{r}
+differenced <- st_difference(ridings, big_fire)
+p + geom_sf(data = differenced, size = 2, fill = NA)
+```
+
+---
+## geometry generating logical operators
+### `st_sym_difference`
+```{r}
+sym_differenced <- st_sym_difference(ridings, big_fire)
+p + geom_sf(data = sym_differenced, size = 2, fill = NA)
+```
+---
+
+## logical binary geometry predicates
+
+```{r}
+st_intersects(ridings, big_fire)
+```
+
+
+---
+## higher-level operations: summarise, interpolate, aggregate, st_join
+
+
+---
+## manipulating geometries
 
 ---
 
