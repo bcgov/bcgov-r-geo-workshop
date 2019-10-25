@@ -10,23 +10,83 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+We have now covered the basics of how to read in raster data, check the basic parameters and do some basic data visualisation. For most analysis however, we typically work with more than one raster and in most cases we are working with raster from different sources and as a consequence are not aligned due to differences in resolution, CRS or extent. We also commonly work with both raster and vector data in an analysis workflow. 
 
-Now we have learnt how to read in data and assess the key information and trouble shoot NA and values. 
-In normal workflow, howver we will be dealing with multiple rasters which need to be stacked of aligned. 
-
-- What about if we want to stack multiple raster layers and extract values ? 
-- How to we match up rasters with different extents and sizes? 
+In this section we will work through a typical workflow to preparing multiple rasters, manipulating them to get an common raster alignment, then values from corresponding point dataset.
 
 
-## Aggregate/disaggregate 
+Within the [raster](https://cran.r-project.org/web/packages/raster/raster.pdf) package there are a number of functions to change the resolution and extent of a raster. 
 
-```{r}
+
+| Function         |  Details                   | 
+|:---------------|:----------------|
+| `merge`    |  Combine Raster* objects with different extents (but same origin and resolution)              | |  `mosaic`   |  Combine RasterLayers with different extents and a function for overlap areas         | 
+|   `crop`    |  Select a geographic subset of a Raster* object |
+|  `extend`  |extend Enlarge a Raster* object
+| `trim `   |Trim a Raster* object by removing exterior rows and/or columns that only have NAs |
+|  `aggregate`  |  Combine cells of a Raster* object to create larger cells|
+|  `disaggregate`  | Subdivide cells |
+|  `resample`     |  Warp values to a Raster* object with a different origin or resolution |
+| `projectRaster`  |  project values to a raster with a different coordinate reference system |
+| `shift`     |   shift Move the location of Raster   |
+| `flip`    |  Flip values horizontally or vertically   |
+|  `rotate`   |  Rotate values around the date-line (for lon/lat data)  |
+|  `t`  |   Transpose a Raster* object   |
+
+
+
+## 1. Aggregate & Disaggregate 
+
+Commonly we work with rasters with different resolution. In order to stack rasters on top of each other they need to be aligned with the same resolution and extents. Commonly we will read in rasters with multiple scales, this is important in remote sensing when bands often have a range of scales . For example Sentinel contains 60m and 30m bands. 
+
+```{r read in raster, echo = F, messages = FALSE, results = "hide"}
+
+library(raster)
+
+data.dir <- "C:/Training/R_intermediate/data" #change to common location
+data.dir <- "TO BE FILLED IN "
+
+# Get data
+unzip("data/20191106_Day_2_PM_Raster/raster_basics.zip", exdir = file.path(data.dir,"raster_basics"))
+
+list.files("data/20191106_Day_2_PM_Raster/")
+
+```
+
+Lets read in a slope layer and build a stack with out `dem` raster. Firstly we need to compare the resolution, extents and crs for each raster. 
+
+```{r  crop example, results = "hide", echo = T}
 
 dem <- raster(file.path(data.dir, "DEM.tif"))
 
-aspect <- raster(file.path(data.dir, "aspect_5m.tif"))
+slope <- raster(file.path(data.dir, "slope.tif"))
 
+# check the resolution 
+res(slope)
+res (dem) 
 
+# check the extents : dont match
+extent(dem)
+extent(slope)
+
+# try to stack - error 
+#stack(dem, slope)
+
+# As extents match we can crop our slope raster to match the Dem 
+sl <- crop(slope, dem)
+
+extent(sl)
+extent(dem)
+
+```
+
+In this example we used crop to match the extents of the rasters. What about when we have rasters with different resolutions? 
+
+```{r dissagregation part1, include = T, results = "hide"}
+
+aspect <- raster(file.path(data.dir, "aspect.tif"))
+
+res(dem)
 res(aspect) # different extents
 
 # we now know our raster objects are in the same crs
@@ -38,219 +98,167 @@ extent(dem)
 extent(aspect)
 
 # If we try to stack these they wont stack 
-stack(dem,aspect)
+#stack(dem, aspect)
+
 ```
 
-```{r}
-re <- crop(aspect, dem) # 
+When we try to stack theses two rasters we get an error message. 
+First we need to manipulate the raters to ensure the resolution and extents match. We can use the `aggregate` function to increase the resolution, or `dissagrate` to resample the raster. These functions also allow us to define the method we use to aggregate. This will depend on if our data is catergorical or continuous.
+
+In this case as the data is continuous we can define the function using `mean`, `max`, `min`, etc. 
+
+```{r aggregate to larger resolution , echo = TRUE, results = "hide"}
+# We can firstly crop the aspect raster to match the dem
+re <- crop(aspect, dem)
+
+# we then aggregate up by a factor of 5. This means search 5 cells 
 re <- aggregate(re, fac = 5, fun = mean, expand = TRUE) # Factor 10m * 2.5 25m.
+
+# we can then check the resolution 
 re
-stack(dem, re)
-res <- resample(re, dem,  fun = mean, expand = TRUE)
+
+# now everything looks good we can stack the rasters together
+rstack <- stack(dem, re)
+
+rstack 
+```
+
+In this example we used `mean` from the surrounding cells to determine the value for our new cell with a larger resolution. The other options include "ngb" nearest neighbour. 
 
 
-# read in slope 
-slope <- raster(file.path(data.dir, "slope.tif"))
-res(slope)
-
-extent(dem)
-extent(slope)
-
-stack(dem, slope)
-
-sl <- crop(slope, dem)
-stack(dem, sl, re)
+We can also use `resample` to transfer values between non matching raster objects. However it is better practice to explore `aggregate` , `disaggregate`, `crop`, `extend` or `merge` before using `resample`.
 
 
+```{r}  
+# # FIX THIS
+# 
+# re1 <- crop(aspect, dem)
+# res1 <- resample(re1, dem )
+# res1
+# re
+# 
+# # note these are difference min values
+# 
+# res2 <- resample(re1, dem, method = 'bilinear')
+# 
+# 
+# res <- resample(re, dem,  fun = mean, expand = TRUE)
+# re
+# res1
+# res2
+# restack <- stack(dem, res)
 
 ```
 
-# Cropping Raster (by vector)
+We now have a raster stack which we can work with. 
 
-Lets crop the raster to a specific Bec zone. We can get Bec data from the bcmaps package 
 
-```{r}
+## 2.  Cropping Raster (by vector)
+
+Another common workflow we use is to crop a raster by a vector layer. This may be a study area or catergorical layers such as a BEC zone. To crop a raster we need a raster and a spatial object to which we want to crop to. 
+
+In this example we can use an area of interest will get the BEC zone data from BC maps and use it as an areas of interest to crop our raster stack. Firstly we will create and aoi using out raster extent then read in and filter out vector layer 
+
+```{r crop by vector, echo = T, results = "hide"}
 library(sf)
 library(dplyr)
+library(bcmaps)
 
 # first read in our area of interest polygon 
-
-aoi<- st_read(dsn = data.dir,layer = "CanyonCreekBoundary", quiet = TRUE) %>%
-   st_transform(3005) 
-
-# read in the bec data 
-library(bcmaps)
+aoi <- st_as_sfc(st_bbox(dem)) %>%
+  st_transform(3005)
 
 #available_layers()
 
 bec <- get_layer("bec", class = "sf")
 
 # check CRS
-
-st_crs(bec)
+st_crs(bec)  
 st_crs(aoi)
 
-# Crop to area of interest 
+# Intersect with out area of interest and specify type as "multipolygon"
 bec_aoi <- st_intersection(bec, aoi)
+
 bec_aoi <- st_cast(bec_aoi, "MULTIPOLYGON")
+
 plot(bec_aoi)
 
-
-# Extract the SBSmc2 Bec zone and convert to a raster 
-bec_aoi <- bec_aoi %>%
-  mutate(id = seq(1,length(bec_aoi$MAP_LABEL),1))
-
-bec.r <- fasterize(bec_aoi, dem, field = "id") ###convert to raster
-
-# Extract the SBSmc2 Bec zone and convert to a raster 
+# Lets saw we are only interested in the SBSmc2 area 
 sbsmc2 <- bec_aoi %>%
-  filter(MAP_LABEL == "SBSmc2") %>%
+  filter(MAP_LABEL == "ESSFmcp") %>%
   mutate(id = 1) 
 
+```
+
+We can use our vector to crop the extent of our raster 
+
+```{r}
+
+dem.c <- crop(x = dem, y = as(sbsmc2 , "Spatial"))
+plot(dem)
+plot(dem.c, col = "red", add = T)
+
+
+# we can do this on our raster stack 
+dem.c <- crop (x = rstack , y = as(sbsmc2, "Spatial"))
+plot(dem.c)
+
+
+```
+
+Another helpful function is to convert vectors into rasters to use as a mask or for analysis which we will show below. 
+
+```{r polygon to raster, echo = T, results = "hide"}
 
 library(fasterize)
 
 # convert to a raster 
-
-sbsmc2.r <- fasterize(sbsmc2, dem, field = "id") ###convert to raster
+sbsmc2.r <- fasterize(sbsmc2, dem, field = "id")   ###convert to 
 
 plot(dem)
 plot(sbsmc2, add = T)
 
-# crop a single raster 
-dem.sbsmc2 <- crop(dem, sbsmc2)
-
-# crop a single raster 
-dem.sbsmc2 <- crop(dem, sbsmc2.r)
-
-
-
-# lets see what is looks like 
-plot(dem)
-plot(dem.c, add = T, col = "red")
-
-
-```
-
-# Raster Calculations 
-
-We can do very fast calculation on raster objects as they do not contain explicit spatial projections. For example two rasters with the same extent, resolution and projection we can think of them as two matrices. we can perfomr calculations based at difference scales; Local (per cell), Focal (neighbourhood), Zonal (neighburhood with iregular size and shape), Global (per raster calcualtions). 
-
-
-```{r}
-
-# Raster Calculations - per cell 
-
-dem + dem 
-log(slope)
-
-# for small sized rasters 
-rasters.out <- sl - re
-
-
-# for larger sized rasters (processing intensive)
-overlay() # for single layers
-calc() # for stacks 
-
-outputRaster <- overlay(dem, sl, fun = mean) 
-
-
-
-
 
 ```
 
 
 
-```{r}
-minValue(dem)
-maxValue(dem)
-
-# 709.151 , 1557.41 
-# 709.151 , 1000, 1250, 1557.41 
 
 
-# reclasss a raster 
-rcl <- matrix(c(0, 1000, 1, 1000.0001, 1600, 2), ncol = 3, byrow = TRUE)
-recl.dem <- reclassify(dem, rcl = rcl)
+## Mask Value 
+
+This function created a new raster that has the same values as a defined raster, except for the cells that are NA. These cells will become NA. This works with either another raster or vector data as a sp object. 
 
 
-```
-
-Focal operations take into account a cell and its neighbours. Typically these include a 3 x 3 cells. This operation applied an aggregate function to all cells within the neighbourhood with the result being the central cell value. 
-
-We need to define the shape of a moving window with a matrix with corresponding weights. This is commonly summary functions, ie sum(), mean(), var()
-
-```{r}
-
-#Focal operations
-
-
-r_focal = focal(sl, w = matrix (1,nrow = 3, ncol = 3), fun = min)
-
-plot(sl)
-plot(r_focal)
-
-
-
-# create the terrain layers from a dem based on neighbourhood
-
-slope <- terrain(dem, opt='slope', unit='radians',  neighbors=8)
-plot(slope)
-
-aspect <- terrain(dem, opt='aspect', unit='radians',  neighbors=8)
-plot(aspect)
-
-# in radians
-xr <- terrain(dem, opt=c('slope', 'aspect'), unit='radians',  neighbors=8)
-plot(xr)
-
-#Create a hill shade 
-hs <- hillShade(slope,aspect, angle=30, direction=270)
-
-
-
-```
-
-
-```{r}
-#zonal calculations 
-
-bec.r # bex zones we generated before. 
-
-
-dem.zone <- zonal(dem, bec.r, fun= "mean")
-
-```
-
-
-
-# Mask Value 
-
-For rasters with logical or NA values we can subset using a mask
-
-```{r}
+```{r mask, echo = T}
 # create raster mask
 rmask = dem 
-values(rmask) = sample(NA, 36, replace = TRUE)
+#values(rmask) = sample(NA, 36, replace = TRUE)
 
 
 # spatial subsetting
-dem.m <- dem[rmask, drop = FALSE]           # with [ operator
-mask(elev, rmask)                   # with mask()
-overlay(elev, rmask, fun = "max")   # with overlay
+#dem.m <- dem[rmask, drop = FALSE]           # with [ operator
+#mask(elev, rmask)                   # with mask()
+#overlay(elev, rmask, fun = "max")   # with overlay
 
 ```
 
 
-## Stack Raster 
+
+https://geocompr.robinlovelace.net/geometric-operations.html#geo-ras
+
+
+
+
+## 1. Raster stacks and Bricks 
 
 So far we have been working with raster layers or single rasters. We can combine these into RasterStacks or RasterBricks. Both of these can hangle multiple layers. 
 Raster Bricks are typically correspond to single multispectral satellite image. We will use these later in remote sensing rasters data sets. 
 
 A `RasterStack` is similar in that it contains multiple layers, however all the layers have the same extent and resolution. 
 
-```{r}
+
+```{r }
 
 # Raster stacks and Bricks 
 raster.s <- stack(dem, sl, re)
@@ -268,19 +276,40 @@ cellStats(raster.s, mean)
 ```
 
 
+We can define a range of values which we want to keep 
+
+```{r}
+# subset to only include the peaks 
+dem.peaks <- clamp(dem, lower = 1000, useValues = TRUE )
 
 
-https://geocompr.robinlovelace.net/geometric-operations.html#geo-ras
+#or only view the 
+dem.peaks  <- reclassify(dem , cbind(0 , 1000 , NA), right=FALSE)
+
+
+dem.class <- reclassify (dem, c(-Inf, 800, 1,
+                                700, 1000, 2, 
+                                1000, 1250, 3, 
+                                1250, Inf, 4))
+
+plot(dem.class)
+
+
+```
 
 
 
 
 
+# extract values from XY from a stack of rasters 
 
 
 
 
+### Credits & Licensing
 
+The contents presented here is drawn from a number of sources including: 
 
+* [Data Carpentary](https://datacarpentry.org/) - Licensed under CC-BY 4.0 2018–2019 by The Carpentries
 
-
+* [Geocomputation in R](https://geocompr.robinlovelace.net/) - Licences under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
