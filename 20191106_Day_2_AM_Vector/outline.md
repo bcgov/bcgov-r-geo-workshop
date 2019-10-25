@@ -32,7 +32,11 @@
 
 *** Coffee Break (15 min) ***
 
-3. Spatial operations (45 min):
+3. Plotting part 2 (10 min):
+
+    - multiple layers
+
+4. Spatial operations (35 min):
 
     1. geometry generating logical operators
 
@@ -76,9 +80,8 @@
         * `st_make_valid`: tries to make an invalid geometry valid (requires lwgeom)
         * `st_boundary`: return the boundary of a geometry
 
-4. Plotting part 2 (30 min):
+5. Plotting part 3 (30 min):
 
-    - multiple layers
     - transforming, coord_sf
     - making nice maps
     - ggspatial for north arrow and scale bar

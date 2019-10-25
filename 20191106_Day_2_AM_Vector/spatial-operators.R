@@ -24,20 +24,28 @@ library(ggforce)
 # Load Data ---------------------------------------------------------------
 
 
-ridings <- bcdc_query_geodata('050ec630-47dd-476b-b773-28b2f8d8bc98') %>%
-  filter(ED_NAME %in% c("Cariboo North")) %>%
-  collect()
+nr_regions <- bcdc_query_geodata('dfc492c0-69c5-4c20-a6de-2c9bc999301f') %>% collect()
 
+nr_district <- bcdc_get_data('natural-resource-nr-district')
+
+quesnel_district <- nr_district %>%
+  filter(DISTRICT_NAME == "Quesnel Natural Resource District")
+
+fire_districts <- nr_district %>%
+  filter(DISTRICT_NAME %in% paste0(c("Stuart Nechako", "Quesnel", "Cariboo-Chilcotin"), " Natural Resource District"))
 
 big_fire <- bcdc_query_geodata("fire-perimeters-historical") %>%
   filter(FIRE_NUMBER == "C10784") %>%
   collect()
 
 
+
+
+
 # Viz ---------------------------------------------------------------------
 
 p <- ggplot() +
-  geom_sf(data = ridings, fill = "purple", alpha = 0.5) +
+  geom_sf(data = quesnel_district, fill = "purple", alpha = 0.5) +
   geom_sf(data = big_fire, fill = "orange", alpha = 0.5)
 
 p
@@ -46,19 +54,25 @@ p
 
 # geometry generating logical operators -----------------------------------
 
-unionized <- st_union(ridings, big_fire)
+unionized <- st_union(quesnel_district, big_fire)
 
 p + geom_sf(data = unionized, size = 2, fill = NA)
 
-intersected <- st_intersection(ridings, big_fire)
+intersected <- st_intersection(quesnel_district, big_fire)
 
 p + geom_sf(data = intersected, size = 2, fill = NA)
 
-differenced <- st_difference(ridings, big_fire)
+differenced <- st_difference(quesnel_district, big_fire)
 
 p + geom_sf(data = differenced, size = 2, fill = NA)
 
-sym_differenced <- st_sym_difference(ridings, big_fire)
+sym_differenced <- st_sym_difference(quesnel_district, big_fire)
 
 p + geom_sf(data = sym_differenced, size = 2, fill = NA)
+
+
+
+# logical binary geometry predicates --------------------------------------
+
+st_intersects
 
