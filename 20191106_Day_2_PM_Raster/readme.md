@@ -20,7 +20,7 @@ This session is expect to run from 1:00 pm  to 4:30 pm November 6th, 2019.
 |    Coffee Break    |   |  1:45 - 2:15pm |
 | Raster Manipulation   |   | 
 |   | Aggregate/disaggregate  |  | 
-|  | Cropping to Vectors   |   | 
+|  | Cropping to Vectors   |  `sf`, `dplyr`, `bcmaps`, `fasterize` | 
 | | Mask to value    |   | 
 | | Stacks and Bricks   |  | 
 | | Rasterize   |   | 
