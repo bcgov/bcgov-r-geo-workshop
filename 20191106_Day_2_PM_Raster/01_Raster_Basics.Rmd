@@ -1,5 +1,6 @@
 ---
 title: "01 Raster Basics"
+author: G.Perkins
 output: 
   html_document:
     toc: TRUE
@@ -51,7 +52,6 @@ list.files(data.dir)
 ### 2. Loading and checking rasters 
 
 We can read in raster data using the `raster` package. Unlike vectors, Rasters are defined by the location of grid extents, rather than individual vertices. This has some advantages and disadvantages as we will see.  
-
 
 
 ```{r load Raster, echo = TRUE, message= FALSE, include = T, results = "hide"}
