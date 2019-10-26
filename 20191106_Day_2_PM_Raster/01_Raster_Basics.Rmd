@@ -42,10 +42,13 @@ library(usethis)
 ## still need to fix this 
 #usethis::use_course("https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/data/20191106_Day_2_PM_Raster/data1.zip") 
 
-data.dir <- "C:/Training/R_intermediate/data" #change to common location
+zip.file <- "../data/20191106_Day_2_PM_Raster/raster_basics.zip"
+data.dir <-"../data/20191106_Day_2_PM_Raster/raster_basics"
+unzip(zipfile = zip.file, 
+      exdir=data.dir)
 
 # see what goodies are in the folder 
-list.files(data.dir)
+file = list.files(data.dir, "DEM.tif", recursive = T, full.names = T)
 
 ```
 
@@ -57,7 +60,7 @@ We can read in raster data using the `raster` package. Unlike vectors, Rasters a
 ```{r load Raster, echo = TRUE, message= FALSE, include = T, results = "hide"}
 # read in a single raster 
 
-dem <- raster(file.path(data.dir, "DEM.tif"))
+dem <- raster(file)
 
 ```
 
@@ -190,7 +193,7 @@ mapview(dem)
 
 # Option 3: more fancy exploring 
 library(rasterVis)
-#plot3D(dem)
+# plot3D(dem)
 
 # Option 4: convert to data frame and plot 
 library(ggplot2)
@@ -281,13 +284,13 @@ We can use these outputs to create a hillshade
 ```{r hillshade, results = "hide"} 
 #Create a hill shade 
 hs <- hillShade(slope, aspect, angle=30, direction=270)
-plot(hs)
+plot(hs, col=gray.colors(20))
 
 ```
 
 Bonus:  We can plot hillshade and dem to create nice feature maps.  
 
-```{rggplot mapping, eval = FALSE}
+```{r ggplot mapping, eval = FALSE}
 hs_df <- as.data.frame(hs, xy = TRUE) 
 dem_df <- as.data.frame(dem, xy = TRUE)
   
