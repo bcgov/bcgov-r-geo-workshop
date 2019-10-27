@@ -1,104 +1,163 @@
 ---
-title: "Raster Exercise 04 - MODIS"
+title: "Raster Exercise - MODIS Satellite Imagery"
 author: "Alexandre Bevington"
-date: "10/10/2019"
+date: "October 27, 2019"
 output: html_document
 ---
 
-To do list (2019-10-16):
-- redirect to data/zip folder
-- improve flow
-- comment
-- debug
-- test speed/functionality on gov laptop
+<!--
 
-# Download MODIS NDVI
+  Copyright 2019 Province of British Columbia
 
-```{r}
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
 
-# install.packages("MODIStsp")
-# library(MODIStsp)
-# MODIStsp()
+  http://www.apache.org/licenses/LICENSE-2.0
 
-```
+  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and limitations under the License.
 
-# Import MODIS NDVI
+-->
 
-```{r}
 
-library(raster)
-
-files <- list.files("F:/Dropbox/FLNRO_p1/!_Presentations/2019 11 05 R Geospatial/bcgov-r-geo-workshop/20191106_Day_2_PM_Raster/NDVI", full.names = T)
-
-s <- stack(files)
-sp <- projectRaster(s,crs = "+proj=aea +lat_1=50 +lat_2=58.5 +lat_0=45 +lon_0=-126 +x_0=1000000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs")
-
-plot(sp)
-
-```
-
-# Make a nice plot
+## Load libraries
 
 ```{r}
-# library(RStoolbox)
+
+library(magick)
+library(RStoolbox)
 library(sf)
-library(ggplot2)
-# library(tidyverse)
+library(tidyverse)
 library(bcmaps)
+library(raster)
+```
+
+## Import MODIS NDVI
+
+```{r}
+# Get data
+  unzip("../data/20191106_Day_2_PM_Raster/raster_modis.zip", exdir = "../data/20191106_Day_2_PM_Raster")
+
+# Make a list of the "TIF" files in a directory of interest (only one in this case)
+  files <- list.files(path = "../data/20191106_Day_2_PM_Raster/raster_modis/ndvi", pattern = ".tif$", full.names = T)
+  files
+
+# Raster stack
+  modis <- stack(files)
+  names(modis)
+
+# Plot
+  plot(modis[[1]])
+
+```
+
+
+## Clip stack to BC boundary
+
+```{r rastermask}
 
 # Import AOI 
-  bc <- bc_bound()
+  bc <- bc_bound() %>% st_transform(crs(modis)) 
 
-# Clip MODIS to AOI extent
-  spc <- crop(sp, extent(bc))
+# Crop MODIS to AOI extent
+  modis_crop <- crop(modis, extent(bc))
+
+# Mask to bc_bound
+  modis_mask <- mask(modis_crop, bc)
+
+# Plot first band
+  plot(modis_mask[[1]])
+  
+```
+
+## Plot raster with using a function
+
+```{r plotting-loop}
 
 # Plotting function
-  myplot <- 
-    function(raster, index){
-      ggR(raster[[index]]) +
-        geom_sf(data = bc, fill = NA, color = "red") + 
-        labs(x = "", y = "", title = names(raster)[index])
-        theme_minimal()
-    
-    print(paste0("saving plot ", index))
-    ggsave(filename = paste0("F:/Dropbox/FLNRO_p1/!_Presentations/2019 11 05 R Geospatial/bcgov-r-geo-workshop/20191106_Day_2_PM_Raster/",index,".png"),
-           width = 8,height=8,dpi = 150)
+  myplot <- function(raster, maxpix = 1e5, outdpi = 150)
+    {
+      # for debugging
+        # raster <- modis_mask[[1]] 
+      
+      # Name and Date
+        name <- sub("X", "", names(raster))
+        date <- format(as.Date.character(name, "%Y%m%d"), "%d %b %Y")
+      
+      # Plotting
+        final.plot <- ggR(raster, geom_raster = T, maxpixels = maxpix, ) + 
+          geom_sf(data = bc, fill = NA, color = "black") + 
+          labs(x = "", y = "", title = date) +
+          scale_fill_gradientn(colors=RColorBrewer::brewer.pal(n = 9, name = "BuGn"), guide = FALSE, na.value = NA) +
+          theme_minimal(); 
+        
+      # Print Status
+        print(paste0("saving plot ", names(raster)))
+      
+      # Export 
+        ggsave(plot = final.plot, filename = paste0("../data/20191106_Day_2_PM_Raster/raster_modis/",name,"_",as.character(maxpix),"_",outdpi,"_","out.png"),
+           width = 8, height=8, dpi = outdpi, device = "png")
+
     }
 
+  myplot(modis_mask[[1]], maxpix = 1e4, outdpi = 150)
+  
+```
+
+## Loop the plot function for all rasters
+
+```{r loopplots, eval=F}
+
 # Loop plot export
-  seq(from = 1, to=nlayers(spc), by=1) %>% 
-    map_df(myplot)
+  for(i in names(modis_mask)){myplot(modis_mask[[i]], maxpix = 1e4, outdpi = 150)}
+    
+```
 
-# Convert plotted png files to a gif animation 
-  library(magick)
-  exported_png <- list.files(path = "F:/Dropbox/FLNRO_p1/!_Presentations/2019 11 05 R Geospatial/bcgov-r-geo-workshop/20191106_Day_2_PM_Raster/", 
+## Create a GIF animation
+
+```{r plots-to-gif, eval=F}
+
+# List png iles
+  exported_png <- list.files(path = "../data/20191106_Day_2_PM_Raster/raster_modis/", 
                              pattern = "*.png", full.names = T) 
-  exported_png %>% map(image_read) %>% # reads each path file
-  image_join() %>% # joins image
-  image_animate(fps=2) %>% # animates, can opt for number of loops
-  image_write("F:/Dropbox/FLNRO_p1/!_Presentations/2019 11 05 R Geospatial/bcgov-r-geo-workshop/20191106_Day_2_PM_Raster/ndwi_aug_hgm.gif") # wr
+  exported_png
+  
+# Export GIF (can be slow)
+  exported_png %>% 
+    map(image_read) %>%
+    image_join() %>% 
+    image_animate(fps=3) %>% 
+    image_write( "../data/20191106_Day_2_PM_Raster/raster_modis/ndvi_timelapse.gif")
 
 ```
 
-```{r}
+## Plot time series data for 2 cities
 
-cities <- bcmaps::bc_cities() %>% 
-  filter(LONG_TYPE == "CITY") 
+```{r timeseries}
 
-cities_modis <- raster::extract(spc, cities, sp = T) %>% as_tibble()
+# Import points for Prince George and Victoria
+  cities <- bcmaps::bc_cities() %>% 
+    filter(NAME %in% c("Prince George", "Victoria"))
 
+# Extract raster values for each point 
+  cities_modis <- raster::extract(modis_mask, cities, sp = T) %>% as_tibble()
 
-cities_modis %>% 
-  filter(!is.na(MYD13A3_NDVI_2019_001)) %>% 
-  gather("MODIS","Values",contains("MYD")) %>% 
-  mutate(MODIS_DATE = as.Date.character(sub(pattern = "MYD13A3_NDVI_", replacement = "", x = MODIS), format = "%Y_%j")) %>% 
-  ggplot() + 
-    geom_point(aes(MODIS_DATE, Values, shape = NAME)) + 
-    scale_shape_manual(values = seq(1,11,1))
+# Gather the values and correct the formate the dates
+  cities_modis_clean <- cities_modis %>% 
+    gather("MODIS","Values",contains("MODIS")) %>% 
+    dplyr::select(NAME, MODIS, Values) %>% 
+    mutate(MODIS_DATE = as.Date.character(sub("_MODIS", "", sub("X","",MODIS)), format = "%Y%m%d"))
+
+# Plot the time series
+  ggplot(cities_modis_clean, aes(MODIS_DATE, Values/10000, group = NAME)) + 
+    geom_line(linetype = 2, aes(color = NAME)) +
+    geom_hline(yintercept = 0.4) +
+    geom_point(aes(shape = NAME, color = NAME), size = 3) +
+    scale_x_date() +
+    scale_color_manual(values = c("red","blue")) + 
+    theme_bw() + 
+    labs(x = "Date", y = "NDVI")
 
 ```
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
-
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
-
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.

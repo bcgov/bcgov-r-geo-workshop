@@ -1,11 +1,8 @@
 ---
-title: "Raster Exercise 03 - Sentinel-2 Satellite Imagery"
+title: "Raster Exercise - Sentinel-2 Satellite Imagery"
 author: "Alexandre Bevington"
-output: 
-  html_document:
-    toc: TRUE
-    toc_float: TRUE
-
+date: "October 27, 2019"
+output: html_document
 ---
 <!--
 
@@ -48,9 +45,6 @@ library(ggspatial)
 ```
 
 ## Import a Sentinel-2 satellite image 
-
-We start by reading a multispectral Sentinel-2 satellite image usting `raster::stack`. Sentinel-2 acquires imagery using 13 bands, or wavelength groups, resulting in 13 distinct images. Some of these images are 10, 20 and 60 m resolution. Because the `raster::stack` function requires images to have the same spatial resolution, I resampled the red, green, blue and nir bands from 10 to 20 m. We will not use the 60 m bands.  
-
 
 ```{r import, echo = TRUE, message= FALSE}
 
@@ -114,7 +108,7 @@ We start by reading a multispectral Sentinel-2 satellite image usting `raster::s
   ndvi <- normalized_difference(img, "nir", "red")
   plot(ndvi)
   
-# Calculate NDVI using built in RStoolbox function
+# Calculate NDVI using bu in RStoolbox function
 
   ndvi <- spectralIndices(img, red = "red", nir = "nir", indices = "NDVI")
   ggR(ndvi)
@@ -293,9 +287,5 @@ water_class <- as_tibble(zonal_means) %>%
     geom_line() +
     geom_smooth(method = "loess", span = 0.05)
 
-# Plot with OpenStreetMap (Slow first time)  
-  # ggR(ndvi_t) + 
-  #   annotation_map_tile(zoom = 10, cachedir = system.file("rosm.cache", package = "ggspatial")) +
-  #   geom_sf(data = line)
-  
+
 ````
