@@ -1,17 +1,26 @@
 ---
-title: "Raster Exercise 05 - Lidar"
+title: "Raster Exercise - Lidar"
 author: "Alexandre Bevington"
-date: "10/10/2019"
+date: "October 27, 2019"
 output: html_document
 ---
 
-To do list (2019-10-16):
-- redirect to data/zip folder
-- add some steps - hillshade, etc.
-- improve flow
-- comment
-- debug
-- test speed/functionality on gov laptop
+<!--
+
+  Copyright 2019 Province of British Columbia
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and limitations under the License.
+
+-->
+
 
 
 ```{r cars}
@@ -19,36 +28,77 @@ To do list (2019-10-16):
 
 library(lidR)
 library(rlas)
+library(raster)
+library(sf)
+  
 # library(rLiDAR)
 
-setwd("N:/Data_Lidar/15245_LowerKiskatinaw_BC_Government/Las_v12_ASPRS")
+```
 
-files <- list.files()
+## Get Data from OpenTopo
 
+```{r}
+# Get data from OpenTopography (http://opentopo.sdsc.edu)
+# download.file("https://cloud.sdsc.edu/v1/AUTH_opentopography/PC_Bulk/USBR_UCRB_East/Okanogan/CAN/49119-A4-nw-BB.laz", 
+#               destfile = "../data/20191106_Day_2_PM_Raster/l.laz")
 
-las <- lidR::readLAS(files[1])#, select = "xyz", filter = "keep_first")
-las
-las@data
-las@header
-las@bbox
-las@proj4string
-lascheck(las)
+# OR 
 
-plot(las)
+  unzip("../data/20191106_Day_2_PM_Raster/raster_lidar.zip", exdir = "../data/20191106_Day_2_PM_Raster")
 
-e <- extent(las@bbox)
-e <- e + 1000 # add this as all y's are the same
+  las <- readLAS("../data/20191106_Day_2_PM_Raster/raster_lidar/49119-A4-nw-BB.laz")
+  
+  las
+  las@data
+  las@header
+  las@bbox
+  las@proj4string
+  lascheck(las)
 
-xmin = e[1]
-xmax = e[2]
-ymin = e[3]
-ymax = e[4]
+  plot(las)
 
-f <- 2
-r <- raster(e, ncol=(xmax-xmin)/f, nrow=(ymax - ymin)/f)
-x <- rasterize(las@data[, 1:2], r, las@data[,3], fun=min)
+```
 
-writeRaster(x = x, filename = sub(x = files[1], pattern = ".las", replacement = ".tif"))
+## Where is this lidar
+  
+```{r}
+  
+  e <- extent(las@bbox)
+
+  esf <- e %>% as('SpatialPolygons') %>% 
+    st_as_sf() %>% 
+    st_set_crs(crs(las))
+
+  mapview::mapview(esf)
+  
+```
+
+## Rasterize the data
+
+```{r}
+
+# Create empty raster
+  xmin = e[1]
+  xmax = e[2]
+  ymin = e[3]
+  ymax = e[4]
+
+  cellsize <- 2
+  r <- raster(e, ncol=(xmax-xmin)/cellsize, nrow=(ymax - ymin)/cellsize)
+
+# .Las to .Tif
+  r_min <- rasterize(las@data[, 1:2], r, las@data[,3], fun=min)
+  r_max <- rasterize(las@data[, 1:2], r, las@data[,3], fun=max)
+  r_dif <- r_max-r_min
+
+  crs(r_dif) <- crs(las)
+
+# Reclassify Canopy height model (r_max - r_min) to drop <5m as NA
+  r_dif_cl <-reclassify(r_dif, rcl = c(-Inf,5,NA))
+
+# View and Export
+  mapview::mapview(r_dif_cl)
+  writeRaster(x = r_dif_cl, filename = "../data/20191106_Day_2_PM_Raster/49119-A4-nw-BB_conpyGt5m.tif")
 
 ```
 
