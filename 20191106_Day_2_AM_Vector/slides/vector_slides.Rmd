@@ -148,42 +148,111 @@ Artwork by [@allison_horst](https://twitter.com/allison_horst)
 ] 
 
 ---
+
+```{r,message=FALSE}
+library("dplyr")
+```
+
+## Using select()
+
+```{r}
+select(starwars, name, height, hair_color, homeworld)
+```
+
+---
+
+## Using filter()
+
+To select on some subset of rows:
+```{r}
+filter(starwars,  homeworld == "Tatooine")
+```
+
+
+---
+class: inverse, left, middle
+# The pipe 
+
+<center><blockquote class="twitter-tweet"><p lang="en" dir="ltr">This is how I explain the &#39;pipe&#39; to <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> newbies... <a href="https://t.co/VdAFTLzijy">pic.twitter.com/VdAFTLzijy</a></p>&mdash; We are R-Ladies (@WeAreRLadies) <a href="https://twitter.com/WeAreRLadies/status/1172576445794803713?ref_src=twsrc%5Etfw">September 13, 2019</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</center>
+---
+## Combining two statements
+
+```{r}
+starwars %>% 
+  select(name, height, hair_color, homeworld) %>% 
+  filter(homeworld == "Tatooine")
+```
+
+---
+
+## Using group_by()
+
+
+```{r}
+starwars %>% 
+  select(name, height, hair_color, homeworld) %>% 
+  filter(homeworld == "Tatooine") %>% 
+  group_by(hair_color)
+```
+---
+
+## Using summarize()
+```{r}
+starwars %>% 
+  select(name, height, hair_color, homeworld) %>% 
+  filter(homeworld == "Tatooine") %>% 
+  group_by(hair_color) %>% 
+  summarise(sd_height = sd(height, na.rm = TRUE))
+```
+
+---
+
+class: inverse, left, middle
+# Your turn
+
+.Large[
+- Using the `starwars` data set and `dplyr` syntax find the average mass of humans by homeworld
+]
+---
+
+## Solution
+```{r}
+starwars %>% 
+  filter(species == "Human") %>% 
+  group_by(homeworld) %>% 
+  summarise(mean_mass = mean(mass, na.rm = TRUE))
+```
+
+---
+# Andy's slides
+---
 class: inverse, left, middle
 # Multi layer spatial plots with `ggplot2`
 
 ---
 ## bcdata
-```{r, cache=TRUE, include=FALSE}
+```{r, cache=TRUE}
 nr_district <- bcdc_get_data('natural-resource-nr-district')
 
 lines <- bcdc_get_data('bc-transmission-lines')
 
-fires_2017 <- bcdc_get_data("fire-perimeters-historical") %>%
-  filter(FIRE_YEAR == 2017)
+fires_2017 <- bcdc_query_geodata('fire-perimeters-historical') %>%
+  filter(FIRE_YEAR == 2017) %>% 
+  collect()
 
 big_fires <- fires_2017 %>%
   filter(FIRE_NUMBER %in% c("C10784", "C50647"))
 
-bc <- bcdc_get_data('7-5m-provinces-and-states-the-atlas-of-canada-base-maps-for-bc') %>% 
-  filter(ENGLISH_NAME == "British Columbia")
-```
-
-```{r, eval=FALSE}
-nr_district <- bcdc_get_data('natural-resource-nr-district')
-
-lines <- bcdc_get_data('bc-transmission-lines')
-
-big_fires <- bcdc_get_data("fire-perimeters-historical") %>%
-  filter(FIRE_NUMBER %in% c("C10784", "C50647"))
-
-bc <- bcdc_get_data('7-5m-provinces-and-states-the-atlas-of-canada-base-maps-for-bc') %>% 
-  filter(ENGLISH_NAME == "British Columbia")
+bc <- bcdc_query_geodata('7-5m-provinces-and-states-the-atlas-of-canada-base-maps-for-bc') %>% 
+  filter(ENGLISH_NAME == "British Columbia") %>% 
+  collect()
 ```
 
 ---
 ## Natural Resource Districts, Power Lines and Big Fires
 .pull-left[
-```{r, fig.width=11, fig.height=5.5, dpi = 300}
+```{r}
 m <- ggplot() +
   geom_sf(data = bc, fill = "grey80") +
   geom_sf(data = nr_district, fill = "purple", alpha = 0.5) +
@@ -193,7 +262,7 @@ m <- ggplot() +
 ]
 
 .pull-right[
-```{r}
+```{r, echo=FALSE, dpi = 300}
 m
 ```
 
@@ -204,8 +273,8 @@ class: inverse, left, middle
 # Your turn
 .Large[
 - Using `ggplot2` plot only *two* layers 
-  - fires
-  - only `Stuart Nechako`, `Quesnel`, `Cariboo-Chilcotin`, and `Prince George` natural resource districts
+  - `big_fires` 
+  - `fire_districts` <- only "Stuart Nechako", "Quesnel", "Cariboo-Chilcotin", and "Prince George" natural resource districts
 ]
 ---
 ## Solution
@@ -253,7 +322,7 @@ p
 
 
 ---
-## Geometry Generating Logical Operators
+## Geometric Operators
 ### `st_union`
 
 ```{r}
@@ -285,10 +354,11 @@ sym_differenced <- st_sym_difference(quesnel_district, biggest_fire)
 p + geom_sf(data = sym_differenced, size = 1, fill = NA)
 ```
 ---
+class: inverse, left, middle
 # Your turn
-
+.Large[
 Create a geometry of all transmission lines within the four natural resource districts
-
+]
 ---
 ## Solution
 
@@ -323,7 +393,8 @@ ggplot() +
 ```{r}
 p2 <- ggplot() +
   geom_sf(data = fire_districts, fill = "purple", alpha = 0.5) +
-  geom_sf(data = big_fires, fill = "orange", alpha = 0.5)
+  geom_sf(data = big_fires, fill = "orange", alpha = 0.5) + 
+  geom_sf(data = fire_lines, colour = "yellow")
 p2
 ```
 
@@ -336,11 +407,13 @@ st_intersects(fire_districts, big_fires, sparse = FALSE)
 
 fire_districts %>% 
   filter(st_intersects(geometry, big_fires, sparse = FALSE)[,2])
+
+fire_districts[big_fires, , op = st_intersects]
 ```
 
 ---
 ## Usage
-- Filter for any district that *intersect* this fire
+- Filter for any district that *intersects* this fire
 ```{r}
 res <- fire_districts %>% 
   filter(st_intersects(geometry, big_fires, sparse = FALSE)[,2])
@@ -362,8 +435,32 @@ p2 + geom_sf(data = res, fill = NA, size = 1.5)
 ## Usage
 - Do the transmission line cross any of our fires?
 ```{r}
-st_crosses(big_fires, fire_lines)
+crosses_lines <- big_fires[fire_lines, , op = st_crosses]
+p2 + geom_sf(data = crosses_lines, fill = NA, size = 1.5)
 ```
+---
+
+## Usage
+- Did any transmission lines cross any fires in BC in 2017
+
+```{r}
+all_crosses <- fires_2017[lines, , op = st_crosses]
+
+all_join <- st_join(fires_2017, lines, left = FALSE)
+
+all_crosses <- fires_2017[lines, , op = st_intersects]
+
+
+all_crosses <- fires_2017[lines, , op = st_crosses]
+ggplot() +
+  geom_sf(data = bc, fill = "grey80") +
+  geom_sf(data = nr_district, fill = "purple", alpha = 0.5) +
+  geom_sf(data = fires_2017, fill = "orange", alpha = 0.5) +
+  geom_sf(data = lines, colour = "yellow") + 
+  geom_sf(data = all_crosses, fill = "yellow", alpha = 0.5)
+```
+
+
 ---
 ## higher-level operations: summarise, interpolate, aggregate, st_join
 
