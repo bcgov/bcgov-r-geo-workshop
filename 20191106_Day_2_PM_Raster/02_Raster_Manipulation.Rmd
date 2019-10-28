@@ -316,7 +316,7 @@ plot(rs)
 
 Now we have set up our raster layers, we can use our raster stack to extract values at each point. We can use the entire area aoi.  
 
-```{r}
+```{r extract vals, echo = T, include = T, results = "hide"}
 
 rstack <- stack(dem, re, sl)
 
@@ -332,10 +332,11 @@ raster.xy <- extract(dem, st_coordinates(pts))
 # extract values from single raster 
 raster.xy.s <- extract(rstack, st_coordinates(pts))
 
+
 ```
 
 
-## 6 Challenge Questions : 
+## 6. Challenge Questions : 
 
 
 
