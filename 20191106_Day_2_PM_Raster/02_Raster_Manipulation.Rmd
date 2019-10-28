@@ -35,7 +35,72 @@ Within the [raster](https://cran.r-project.org/web/packages/raster/raster.pdf) p
 
 
 
-## 1. Aggregate & Disaggregate 
+## 1. Raster stacks and Bricks 
+
+An advantage of rasters is that we can stack them together to perform functions on mulitple layers at once. We can use `RasterStacks` or `RasterBricks`. Both of these can hangle multiple layers. It is also important to note other packages are developing methods for storing large raster datasets such as `gdalcubes`. 
+
+Raster Bricks typically correspond to single multispectral satellite image. We will use these later when using remote sensing rasters data sets. 
+
+A `RasterStack` is similar, as it contains multiple layers, however all the layers have the same extent and resolution. 
+
+We can use the previous layers generate in the previous exercise to test these 
+
+```{r set up folders and working dirs, include = F}
+
+library(raster)
+
+# set up the data location --------------------------------------
+zip.file <- "../data/20191106_Day_2_PM_Raster/raster_basics.zip"
+data.dir <-"../data/20191106_Day_2_PM_Raster/raster_basics"
+unzip(zipfile = zip.file, exdir = data.dir)
+
+# see what goodies are in the folder 
+file = list.files(data.dir, "DEM.tif", recursive = T, full.names = T)
+
+```
+
+If not saved we can regenerate the layers 
+
+```{r regenerate basic dem layers, include = F}
+
+dem <- raster(file)
+
+slope <- terrain(dem, opt='slope', unit='radians',  neighbors=8)
+
+aspect <- terrain(dem, opt='aspect', unit='radians',  neighbors=8)
+
+```
+
+We can use stack our layers together into a single object and do some basic checks. 
+
+```{r raster stack parameters, include = T, results = 'hide'}
+# stack our layers together 
+raster.s <- stack(dem, slope, aspect)
+
+# check basic paramters
+raster.s
+
+# check the number of layers 
+nlayers(raster.s)
+
+# as compared to our dem layer 
+nlayers(dem)
+
+# check by plotting 
+plot(raster.s)
+
+# check names 
+names(raster.s)
+
+
+cellStats(raster.s, mean)
+
+
+```
+
+
+
+## 2. Aggregate & Disaggregate 
 
 In order to stack rasters on top of each other they need to be aligned with the same resolution and extents. Commonly we will read in rasters with multiple resolutions, this is important in remote sensing when bands often have a range of pixal values. For example Sentinel contains 60m and 30m bands. 
 
@@ -49,7 +114,7 @@ data.dir <- "C:/Training/R_intermediate/data" #change to common location
 # Get data
 #unzip("data/20191106_Day_2_PM_Raster/raster_basics.zip", exdir = file.path(data.dir,"raster_basics"))
 
-list.files("data/20191106_Day_2_PM_Raster/")
+#list.files("data/20191106_Day_2_PM_Raster/")
 
 ```
 
@@ -136,14 +201,16 @@ re
 # now everything looks good we can stack the rasters together
 rstack <- stack(dem, re)
 
-rstack
+
+# we can also add the slope raster we matched to our dem
+rstack <- stack(dem, re, sl)
 
 ```
 
 Note: We can also use `resample` to transfer values between non matching raster objects. However it is better practice to explore `aggregate` , `disaggregate`, `crop`, `extend` or `merge` before using `resample`.
 
 
-## 2.  Cropping Raster (by vector)
+## 3. Cropping Raster (by vector)
 
 Another common workflow is to crop a raster by a vector layer. This may be a study area (AOI) or catergorical layers such as a BEC zone.
 
@@ -152,7 +219,7 @@ In this example we will use the BEC zone data from `bcmaps` package to define an
 Firstly we will create an area of interest using out raster extent. We will use this to filter out vector data. 
 
 
-```{r crop by vector, echo = T, results = "hide"}
+```{r crop by vector, echo = T, results = "hide", warning=FALSE}
 library(sf)
 library(dplyr)
 library(bcmaps)
@@ -201,7 +268,13 @@ plot(st_geometry(sbs), add = T)
 
 You may notice however in this example we dont exactly have what we want. As raster as based on grids we get the entire grid area, not just that of the vector we wanted. 
 
-Another way to extract the data we want is to `mask` out the areas we dont want. This function created a new raster that has the same values as a defined raster, except for the cells that are NA. These cells will become NA. This works with either another raster or vector data as a sp object. 
+Another way to extract the data we want is to `mask` out the areas we dont want. 
+
+
+
+## 4. Masking 
+
+This function created a new raster that has the same values as a defined raster, except for the cells that are NA. These cells will become NA. This works with either another raster or vector data as a sp object. 
 
 In this case we can use our bec SBSmc2 vector. We firstly need to convert this to a raster object. We can use the `fasterize` package for quick conversions.  
 
@@ -233,65 +306,48 @@ summary(dem)
 We can also perform the `mask` function on raster stacks.  
 
 ```{r mask raster stack, include = T, results = "hide"}
-
 rs <- mask(rstack, sbs.r)
 plot(rs)
 
 ```
 
 
-## 1. Raster stacks and Bricks 
+## 5. Extract values at points 
 
-So far we have been working with raster layers or single rasters. We can combine these into RasterStacks or RasterBricks. Both of these can hangle multiple layers. 
-Raster Bricks are typically correspond to single multispectral satellite image. We will use these later in remote sensing rasters data sets. 
-
-A `RasterStack` is similar in that it contains multiple layers, however all the layers have the same extent and resolution. 
-
-
-```{r }
-
-# Raster stacks and Bricks 
-raster.s <- stack(dem, sl, re)
-
-nlayers(raster.s)
-nlayers(dem)
-
-plot(raster.s)
-
-names(raster.s)
-
-
-cellStats(raster.s, mean)
-
-```
-
-
-We can define a range of values which we want to keep 
+Now we have set up our raster layers, we can use our raster stack to extract values at each point. We can use the entire area aoi.  
 
 ```{r}
-# subset to only include the peaks 
-dem.peaks <- clamp(dem, lower = 1000, useValues = TRUE )
+
+rstack <- stack(dem, re, sl)
+
+plot(rstack)
+
+#Lets generate some sample points within our aoi
+pts <- st_sample(bec_aoi, size = 25) 
 
 
-#or only view the 
-dem.peaks  <- reclassify(dem , cbind(0 , 1000 , NA), right=FALSE)
+# extract values from single raster 
+raster.xy <- extract(dem, st_coordinates(pts))
 
-
-dem.class <- reclassify (dem, c(-Inf, 800, 1,
-                                700, 1000, 2, 
-                                1000, 1250, 3, 
-                                1250, Inf, 4))
-
-plot(dem.class)
-
+# extract values from single raster 
+raster.xy.s <- extract(rstack, st_coordinates(pts))
 
 ```
 
 
+## 6 Challenge Questions : 
 
 
 
-# extract values from XY from a stack of rasters 
+
+
+
+
+
+
+
+
+
 
 
 
