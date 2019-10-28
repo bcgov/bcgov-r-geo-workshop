@@ -14,6 +14,8 @@ output:
       countIncrementalSlides: false
       beforeInit: "https://platform.twitter.com/widgets.js"
       ratio: '16:9'
+editor_options: 
+  chunk_output_type: console
 ---
 
 layout: true
@@ -79,7 +81,11 @@ scale_fill_discrete <- scale_fill_viridis_d
 ## Outline
 
 .VeryLarge[
-- Some outline text
+- Brief review of dplyr
+- 
+- Multi layer plots with `ggplot2`
+- Spatial Operations
+- Making publication plots with `ggplot2`
 ]
 
 
@@ -149,13 +155,10 @@ Artwork by [@allison_horst](https://twitter.com/allison_horst)
 
 ---
 
-```{r,message=FALSE}
-library("dplyr")
-```
-
 ## Using select()
 
 ```{r}
+library(dplyr)
 select(starwars, name, height, hair_color, homeworld)
 ```
 
@@ -221,7 +224,8 @@ class: inverse, left, middle
 starwars %>% 
   filter(species == "Human") %>% 
   group_by(homeworld) %>% 
-  summarise(mean_mass = mean(mass, na.rm = TRUE))
+  summarise(mean_mass = mean(mass, na.rm = TRUE)) %>% 
+  arrange(desc(mean_mass))
 ```
 
 ---
@@ -231,8 +235,10 @@ class: inverse, left, middle
 # Multi layer spatial plots with `ggplot2`
 
 ---
-## bcdata
+## Grabbing data - bcdata
 ```{r, cache=TRUE}
+library(bcdata)
+
 nr_district <- bcdc_get_data('natural-resource-nr-district')
 
 lines <- bcdc_get_data('bc-transmission-lines')
@@ -300,6 +306,13 @@ class: inverse, left, middle
 # Spatial Operations
 ---
 
+## Geometric Operations
+- `st_union`
+- `st_intersection`
+- `st_difference`
+- `st_sym_difference`
+
+
 ## Quesnel Natural Resource District and C10784
 ```{r}
 biggest_fire <- big_fires %>%
@@ -310,7 +323,7 @@ quesnel_district <- nr_district %>%
 ```
 ---
 
-## Spatial Operations
+## Quesnel Natural Resource District and C10784
 ```{r}
 p <- ggplot() +
   geom_sf(data = quesnel_district, fill = "purple", alpha = 0.5) +
@@ -319,52 +332,39 @@ p <- ggplot() +
 p
 ```
 
-
-
 ---
-## Geometric Operators
-### `st_union`
+## `st_union`
 
 ```{r}
 unionized <- st_union(quesnel_district, biggest_fire)
-p + geom_sf(data = unionized, size = 1, fill = NA)
+p + geom_sf(data = unionized, size = 1.5, fill = NA)
 ```
 
 ---
-## geometry generating logical operators
-### `st_intersection`
+## `st_intersection`
 
 ```{r}
 intersected <- st_intersection(quesnel_district, biggest_fire)
-p + geom_sf(data = intersected, size = 1, fill = NA)
+p + geom_sf(data = intersected, size = 1.5, fill = NA)
 ```
 ---
-## geometry generating logical operators
-### `st_difference`
+## `st_difference`
 ```{r}
 differenced <- st_difference(quesnel_district, biggest_fire)
-p + geom_sf(data = differenced, size = 1, fill = NA)
+p + geom_sf(data = differenced, size = 1.5, fill = NA)
 ```
 
----
-## geometry generating logical operators
-### `st_sym_difference`
-```{r}
-sym_differenced <- st_sym_difference(quesnel_district, biggest_fire)
-p + geom_sf(data = sym_differenced, size = 1, fill = NA)
-```
 ---
 class: inverse, left, middle
 # Your turn
 .Large[
-Create a geometry of all transmission lines within the four natural resource districts
+Create a geometry of all transmission lines within the four natural resource districts and create a multi-layer plot
 ]
 ---
 ## Solution
-
 ```{r}
-fire_lines <- fire_districts %>% 
-  st_intersection(lines)
+fire_lines <- lines %>% 
+  st_intersection(fire_districts)
 
 ggplot() +
   geom_sf(data = fire_districts, fill = "purple", alpha = 0.5) +
@@ -374,7 +374,7 @@ ggplot() +
 
 ---
 
-## logical binary geometry predicates
+## Geometry Predicates
 
 - `st_intersects`: touch or overlap
 - `st_disjoint`: !intersects
@@ -401,56 +401,35 @@ p2
 
 ---
 
-## Usage
+## Does any district intersect this fire?
 ```{r}
 st_intersects(fire_districts, big_fires, sparse = FALSE)
-
-fire_districts %>% 
-  filter(st_intersects(geometry, big_fires, sparse = FALSE)[,2])
-
 fire_districts[big_fires, , op = st_intersects]
 ```
 
 ---
-## Usage
-- Filter for any district that *intersects* this fire
+## Does any district *intersects* this fire?
 ```{r}
-res <- fire_districts %>% 
-  filter(st_intersects(geometry, big_fires, sparse = FALSE)[,2])
-
-p2 + geom_sf(data = res, fill = NA, size = 1.5)
+does_intersect <- fire_districts[big_fires, , op = st_intersects]
+p2 + geom_sf(data = does_intersect, fill = NA, size = 1.5)
 ```
 
 ---
-## Usage
-- Filter for any district where this doesn't happen
-```{r}
-res <- fire_districts %>% 
-  filter(st_disjoint(geometry, big_fires, sparse = FALSE)[,2])
-
-p2 + geom_sf(data = res, fill = NA, size = 1.5)
-```
-
----
-## Usage
-- Do the transmission line cross any of our fires?
+## Which polygon in intersected by a transmission line?
 ```{r}
 crosses_lines <- big_fires[fire_lines, , op = st_crosses]
 p2 + geom_sf(data = crosses_lines, fill = NA, size = 1.5)
 ```
 ---
+class: inverse, left, middle
+# Your turn
+.Large[
+Which fires crossed transmission lines in 2017? Using geometry predicates to determine and ggplot2 to plot
+]
+---
 
-## Usage
-- Did any transmission lines cross any fires in BC in 2017
-
+## Solution
 ```{r}
-all_crosses <- fires_2017[lines, , op = st_crosses]
-
-all_join <- st_join(fires_2017, lines, left = FALSE)
-
-all_crosses <- fires_2017[lines, , op = st_intersects]
-
-
 all_crosses <- fires_2017[lines, , op = st_crosses]
 ggplot() +
   geom_sf(data = bc, fill = "grey80") +
@@ -464,15 +443,71 @@ ggplot() +
 ---
 ## higher-level operations: summarise, interpolate, aggregate, st_join
 
+- `summarise` 
+- `aggregate` 
+- `st_interpolate_aw`
+- `st_join` 
+---
+
+## Using summarize() - Calculate `nr_regions`
+```{r}
+nr_region <- nr_district %>% 
+  group_by(REGION_ORG_UNIT_NAME) %>% 
+  summarise() # << defaults to union
+
+ggplot() +
+  geom_sf(data = nr_region, colour = "white", aes(fill = REGION_ORG_UNIT_NAME)) 
+```
+---
+## non spatial join
+What is the mean population of cities that have a courthouse by municipality type?
+```{r}
+courts <- bcdc_get_data('court-locations', resource = '23aa0b75-2715-4ccb-9a36-9a608450dc2d')
+bc_cities <- bcdc_get_data('bc-major-cities-points-1-2-000-000-digital-baseline-mapping')
+
+courts %>% 
+  left_join(bc_cities, by = c("City" = "NAME")) %>% 
+  group_by(LONG_TYPE) %>% 
+  summarise(mean_pop = mean(POP_2000))
+```
 
 ---
-## manipulating geometries
+### `st_join`
+```{r, fig.width = 11, fig.height=4}
+cities_by_nr <- bc_cities %>% 
+  st_join(nr_district, join = st_intersects) %>% 
+  group_by(REGION_ORG_UNIT_NAME) %>% 
+  summarise(nr_pop_2000 = sum(POP_2000))
+
+ggplot(cities_by_nr) +
+  geom_col(aes(x = REGION_ORG_UNIT_NAME, y = nr_pop_2000)) +
+  coord_flip() +
+  theme_minimal()
+```
+
+???
+> Joining two non-spatial datasets relies on a shared ‘key’ variable. Spatial data joining applies the same concept, but instead relies on shared areas of geographic space (it is also know as spatial overlay).
+
+- [Geocomputation with R](https://geocompr.robinlovelace.net/intro.html)
+
+---
+## Manipulating Geometries
+- `st_line_merge`
+- `st_segmentize`
+- `st_voronoi`
+- `st_centroid`
+- `st_convex_hull`
+- `st_triangulate`
+- `st_polygonize`
+- `st_simplify`
+- `st_split`
+- `st_buffer`
+- `st_make_valid`
+- `st_boundary`
 
 ---
 ## Making nice plots
-
-```{r, echo = FALSE,fig.width=11, fig.height=5, dpi = 300, cache=TRUE}
-
+```{r, echo = FALSE, fig.height=7, fig.width=11, cache=TRUE}
 ggplot() +
   geom_sf(data = bc, fill = "grey80") +
   geom_sf(data = nr_district, alpha = 0.5, aes(fill = REGION_ORG_UNIT_NAME)) +
@@ -485,13 +520,77 @@ ggplot() +
   labs(title = "Fire Activity Near Transmission Lines - 2017") +
   theme_void() +
   theme(panel.background = element_rect(fill = "aliceblue"),
-        legend.position = c(.15, .15),
+        #legend.position = c(.15, .15),
         legend.box.background = element_rect(),
         legend.box.margin = margin(6, 6, 6, 6))
+```
+
+---
+## Getting Data
+```{r}
+wna <- bcdc_query_geodata('7-5m-provinces-and-states-the-atlas-of-canada-base-maps-for-bc') %>% 
+  filter(!is.na(NAME)) %>% 
+  collect()
+
+
+```
+
+---
+## Added Western North American
+```{r}
+fancy_plot <- ggplot() +
+  geom_sf(data = wna)
+fancy_plot
+```
+---
+## Natural Resource Districts
+```{r}
+fancy_plot + geom_sf(data = nr_district, alpha = 0.5, aes(fill = REGION_ORG_UNIT_NAME))
+```
+---
+## Natural Resource Districts
+```{r}
+nr_region <- nr_district %>% 
+  group_by(REGION_ORG_UNIT_NAME) %>% 
+  summarise() 
+
+nr_region_int <- nr_region %>% 
+  st_intersection(wna)
+
+fancy_plot <- fancy_plot + geom_sf(data = nr_region_int, alpha = 0.5, aes(fill = REGION_ORG_UNIT_NAME))
+```
+---
+## Cities
+```{r}
+
+fancy_plot + geom_sf(data = bc_cities)
+nrow(bc_cities)
+
+## Grab Biggest City by Natural Resource Region
+cities_by_region <- bc_cities %>% 
+  st_join(nr_district, join = st_intersects) %>% 
+  group_by(REGION_ORG_UNIT_NAME) %>% 
+  filter(POP_2000 == max(POP_2000))
+
+fancy_plot <- fancy_plot + geom_sf(data = cities_by_region)
+
+
+region_names <- st_centroid(nr_region)
+
 
 
 
 ```
+
+---
+## Cities with Name
+
+```{r}
+fancy_plot +
+  geom_sf_label(data = cities_by_region, aes(label = NAME)) +
+  geom_sf_text(data = region_names, aes(label = REGION_ORG_UNIT_NAME))
+```
+
 
 ---
 
