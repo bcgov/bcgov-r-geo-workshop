@@ -37,15 +37,14 @@ Firstly we want to set up our work session by reading in required libraries and 
 library(raster)
 library(usethis)
 
+## if you have not already - download the course content: 
+# use_course("bcgov/bcgov-r-geo-workshop")
+
+
 # set up the data location --------------------------------------
-
-## still need to fix this 
-#usethis::use_course("https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/data/20191106_Day_2_PM_Raster/data1.zip") 
-
 zip.file <- "../data/20191106_Day_2_PM_Raster/raster_basics.zip"
 data.dir <-"../data/20191106_Day_2_PM_Raster/raster_basics"
-unzip(zipfile = zip.file, 
-      exdir=data.dir)
+unzip(zipfile = zip.file, exdir = data.dir)
 
 # see what goodies are in the folder 
 file = list.files(data.dir, "DEM.tif", recursive = T, full.names = T)
