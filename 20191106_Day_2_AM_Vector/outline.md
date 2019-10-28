@@ -24,7 +24,7 @@
             - read in tabular 'spatial' data 
                 - example csv lat/long - (read.csv or st_read??)
                 - example with csv with UTM (zone etc in crs)
-            - read in data using bcdata - using only `bcdc_get_data()`
+            - read in data using bcdata - using only `bcdc_get_data()` & simple `bcdc_query_geodata()`
         - Intro to plotting with ggplot2 with single layer (on second and subsequent read example)
         - transformations (could do crs intro here instead of in Fundamentals)
         - group_by + summarize - highlight aggregating features on different attributes
