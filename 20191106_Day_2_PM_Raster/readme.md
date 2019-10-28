@@ -21,7 +21,7 @@ This session is expect to run from 1:00 pm  to 4:30 pm November 6th, 2019.
 | Raster Manipulation   |   | 
 | | Stacks and Bricks   |  | 
 |   | Aggregate/disaggregate  |  | 
-|  | Cropping to Vectors   |  `sf`, `dplyr`, `bcmaps`, `fasterize` | 
+|  | Cropping to Vectors   |   |   `sf`, `dplyr`, `bcmaps`, `fasterize` | 
 | | Mask to value    |   | 
 |  | Extract   |  |
 |   |  Exercise 2 | 2:30 - 3:00pm |
