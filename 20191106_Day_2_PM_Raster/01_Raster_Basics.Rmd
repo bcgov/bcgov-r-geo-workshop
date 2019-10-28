@@ -66,6 +66,7 @@ dem <- raster(file)
 Once we have read in the raster we can look at the key information; dimension (`dem`), resolution (cell size)(`res`), extents (`extent`), and Co-ordinate Reference System (CRS).
 
 ```{r, echo = T, include = T,eval = FALSE}
+
 # dimension 
 dim(dem)
 
@@ -80,6 +81,7 @@ extent(dem)
 Secondly we can look in detail at the data values. For example we can review the minimum, maximum values and spread of the data (ie. the distribution of values)
 
 ```{r, echo = TRUE, include = TRUE, message = FALSE, eval = FALSE}
+
 summary(dem) # Note this throws an error 
  
 summary(dem, maxsamp = ncell(dem)) # forces to check all raster 
