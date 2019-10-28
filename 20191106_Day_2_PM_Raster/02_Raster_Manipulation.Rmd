@@ -1,5 +1,6 @@
 ---
 title: "02 Raster Manipulation"
+author: G.Perkins
 output: 
   html_document:
     toc: TRUE
