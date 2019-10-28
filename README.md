@@ -22,6 +22,20 @@ Here, you will find:
 - _When_: 1 PM Tuesday November 5th to 5 PM Friday November 8th, 2019
 - _Cost_: Free for participants
 
+------
+
+### Course Materials
+**If you are a course attendant, please that course materials should download only on August 5th**
+
+To download course materials and open an instance of RStudio, please run this code:
+
+```
+library(usethis)
+
+use_course("bcgov/bcgov-r-geo-workshop")
+```
+
+The course materials are by default downloaded to your desktop. If you would like to download to a different location you can set it via the `destdir` argument.
 
 ------
 
