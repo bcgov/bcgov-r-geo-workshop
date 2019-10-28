@@ -51,9 +51,9 @@ We can use the previous layers generate in the previous exercise to test these
 library(raster)
 
 # set up the data location --------------------------------------
-zip.file <- "../data/20191106_Day_2_PM_Raster/raster_basics.zip"
+#zip.file <- "../data/20191106_Day_2_PM_Raster/raster_basics.zip"
 data.dir <-"../data/20191106_Day_2_PM_Raster/raster_basics"
-unzip(zipfile = zip.file, exdir = data.dir)
+#unzip(zipfile = zip.file, exdir = data.dir)
 
 # see what goodies are in the folder 
 file = list.files(data.dir, "DEM.tif", recursive = T, full.names = T)
@@ -110,7 +110,6 @@ In order to stack rasters on top of each other they need to be aligned with the 
 library(raster)
 
 data.dir <- "C:/Training/R_intermediate/data" #change to common location
-#data.dir <- "TO BE FILLED IN "
 
 # Get data
 #unzip("data/20191106_Day_2_PM_Raster/raster_basics.zip", exdir = file.path(data.dir,"raster_basics"))
