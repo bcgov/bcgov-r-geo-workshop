@@ -16,7 +16,7 @@ Here, you will find:
 ------
 
 ### Event Details 
-- _Who_: Current intermediate B.C. Government R users who would like to do more geospatial analysis in R
+- _Who_: Current intermediate B.C. Government and external R users who would like to do more geospatial analysis in R
 - _What_: Workshop & Hackathon to learn about geospatial tools in R
 - _Where_: Aleza Room, Plaza 400, 1011 4th Ave, Prince George, BC V2L 3H9
 - _When_: 1 PM Tuesday November 5th to 5 PM Friday November 8th, 2019
@@ -31,7 +31,6 @@ To download course materials and open an instance of RStudio, please run this co
 
 ```
 library(usethis)
-
 use_course("bcgov/bcgov-r-geo-workshop")
 ```
 
@@ -53,6 +52,10 @@ We expect attendees to have at least the following level of experience:
 - Laptop 
   - **Mandatory**: Wifi 
   - **Mandatory**: Installation privileges
+- Coffe and water
+  - Snacks or drinks will **not** be supplied 
+  - There are coffee shops nearby, please bring a reusable mug.
+  - There is a water fountain, please bring a reusable bottle.
 - R
   - **Mandatory**: Install R and RStudio [link](https://github.com/bcgov/bcgov-data-science-resources/wiki/Installing-R-&-RStudio)
   - **Mandatory**: Install R packages (more to come): <br>
