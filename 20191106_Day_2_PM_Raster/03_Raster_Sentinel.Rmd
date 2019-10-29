@@ -23,35 +23,33 @@ output: md_document
 
 ```{r set-up , echo = TRUE, message= FALSE, results = "hide"}
 
-library(tidyverse)
+# install.packages(c("RStoolbox", "rasterVis", "mapview", 
+#                    "mapedit", "purrr", "geosphere", 
+#                    "RColorBrewer", "smoothr", "sf", 
+#                    "measurements", "ggspatial"))
 
+library(tidyverse)
 library(raster)
 library(RStoolbox)
 library(rasterVis)
-
 library(mapview)
 library(mapedit)
-
 library(purrr)
 library(geosphere)
-
 library(RColorBrewer)
-
 library(smoothr)
 library(sf)
 library(measurements)
 library(ggspatial)
+
 ```
 
 ## Import a Sentinel-2 satellite image using the `raster` package 
 
 ```{r import}
 
-# Make a list of the "TIF" files in a directory of interest (only one multi-band raster in this case)
-  files <- list.files(path = "../data/20191106_Day_2_PM_Raster/raster_sentinel", pattern = ".tif$", full.names = T)
-
 # Import stack 
-  img <- stack(files)
+  img <- stack("../data/20191106_Day_2_PM_Raster/raster_sentinel/T10UEE_20190529T191911_20m.tif")
   img
   
 ```

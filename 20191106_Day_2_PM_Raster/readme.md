@@ -31,7 +31,7 @@ This session is expect to run from 1:00 pm  to 4:30 pm November 6th, 2019.
 |   | Quick classification (kmeans)   |   | `measurements`,`ggspatial` |
 |   | Profile         |   |
 | MODIS Exercise      |   | 3:45-4:30 |
-|  | MODIS NDVI Stack |   |           |
+|  | MODIS NDVI Stack |   |   `magick` |
 |  | Animation        |   | 
 |  | Plot timeseries  |   |
 

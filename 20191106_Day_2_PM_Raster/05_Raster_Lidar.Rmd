@@ -2,7 +2,8 @@
 title: "Raster Exercise - Lidar"
 author: "Alexandre Bevington"
 date: "October 27, 2019"
-output: html_document
+output: md_document
+
 ---
 
 <!--
