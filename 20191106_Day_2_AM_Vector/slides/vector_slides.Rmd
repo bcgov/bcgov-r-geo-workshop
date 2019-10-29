@@ -506,6 +506,36 @@ ggplot(cities_by_nr) +
 - `st_boundary`
 
 ---
+`st_buffer`
+
+```{r}
+c <- ggplot() +
+  geom_sf(data = bc) +
+  geom_sf(data = bc_cities)
+
+bc_cities_buffer <- st_buffer(bc_cities, dist = 10000) ## 10km
+
+c + geom_sf(data = bc_cities_buffer, fill = "green", alpha = 0.5)
+```
+---
+
+## Computing geometric measurements
+- `st_area`
+- `st_length`
+- `st_distance`
+
+"Find the total length of transmission lines by natural resource region"
+```{r}
+lines %>% 
+  st_join(nr_district) %>% 
+  group_by(REGION_ORG_UNIT_NAME) %>% 
+  summarise() %>% 
+  mutate(lines_length = st_length(geometry)) %>% 
+  st_set_geometry(NULL)
+```
+
+
+---
 ## Making nice plots
 ```{r, echo = FALSE, fig.height=7, fig.width=11, cache=TRUE}
 ggplot() +
@@ -564,6 +594,10 @@ fancy_plot <- fancy_plot + geom_sf(data = nr_region_int, alpha = 0.5, aes(fill =
 ```{r}
 
 fancy_plot + geom_sf(data = bc_cities)
+```
+
+---
+```{r}
 nrow(bc_cities)
 
 ## Grab Biggest City by Natural Resource Region
@@ -573,13 +607,10 @@ cities_by_region <- bc_cities %>%
   filter(POP_2000 == max(POP_2000))
 
 fancy_plot <- fancy_plot + geom_sf(data = cities_by_region)
+fancy_plot
 
 
 region_names <- st_centroid(nr_region)
-
-
-
-
 ```
 
 ---
