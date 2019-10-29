@@ -109,5 +109,32 @@ Spatial data divided into two categories: Vector and Raster
 
 ---
 
+class: middle
+
+.pull-left[
+  ## Simple Features: the 'sf' package
+  
+  
+  #### Replaces:
+  - sp
+  - rgdal
+  - rgeos
+]
+
+.pull-right[
+  <center><img src="https://geocompr.robinlovelace.net/figures/sf-classes.png" alt="Simple Features" style="width: 600px;"/></center>
+]
+
+.footnote[
+  sf package: https://cran.r-project.org/package=sf
+  
+  Geocomputation with R, fig 2.2: https://geocompr.robinlovelace.net
+]
+
+???
+
+- represent all common vector geometry types : points, lines, polygons and their respective ‘multi’ versions 
+- supports geometry collections, which can contain multiple geometry types in a single object. 
+-s upersedes the sp ecosystem, which comprises sp , rgdal for data read/write  and rgeos for spatial operations.
 
 
