@@ -25,7 +25,7 @@ Here, you will find:
 ------
 
 ### Course Materials
-**If you are a course attendant, please note that course materials should be downloaded only on August 5th**
+**If you are a course attendant, please note that course materials should be downloaded after November 5th**
 
 To download course materials and open an instance of RStudio, please run this code:
 
