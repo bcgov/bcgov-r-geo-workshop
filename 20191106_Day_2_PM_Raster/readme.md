@@ -25,15 +25,15 @@ This session is expect to run from 1:00 pm  to 4:30 pm November 6th, 2019.
 | | Mask to value    |   | 
 |  | Extract   |  |
 |   |  Exercise 2 | 2:30 - 3:00pm |
-| Remote sensed data | |  3:00-4:00 pm |
-|Exercise 3: Satellite image analysis |   |
-|   |  Spectral indices (NDVI) |
-|   | Quick classification (kmeans)|
-|Exercise 4: Time series with gdalcubes |  | 4:00-4:30|
-|  | MODIS NDVI Stack (pre-package) |  |   |
-|  | Linear trend over time |  | 
-|  | Plot timeseries  |  |
-|  |Export timelapse video |  | 
+| Sentinel-2 satellite imagery   | |  3:00-3:45 pm |
+|   | Spectral indices (NDVI)         |   | `RStoolbox`,`mapview`,`mapedit`,`purrr` |
+|   | Raster to Polygon               |   | `geosphere`,`RColorBrewer`,`smoothr`,`sf` |
+|   | Quick classification (kmeans)   |   | `measurements`,`ggspatial` |
+|   | Profile         |   |
+| MODIS Exercise      |   | 3:45-4:30 |
+|  | MODIS NDVI Stack |   |           |
+|  | Animation        |   | 
+|  | Plot timeseries  |   |
 
 ---------
 

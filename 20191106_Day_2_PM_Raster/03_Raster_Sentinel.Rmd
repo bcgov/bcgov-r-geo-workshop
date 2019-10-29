@@ -2,7 +2,7 @@
 title: "Raster Exercise - Sentinel-2 Satellite Imagery"
 author: "Alexandre Bevington"
 date: "October 27, 2019"
-output: html_document
+output: md_document
 ---
 <!--
 
@@ -28,7 +28,6 @@ library(tidyverse)
 library(raster)
 library(RStoolbox)
 library(rasterVis)
-library(rgdal)
 
 library(mapview)
 library(mapedit)
@@ -44,71 +43,77 @@ library(measurements)
 library(ggspatial)
 ```
 
-## Import a Sentinel-2 satellite image 
+## Import a Sentinel-2 satellite image using the `raster` package 
 
-```{r import, echo = TRUE, message= FALSE}
+```{r import}
 
-# Get data
-  unzip("../data/20191106_Day_2_PM_Raster/raster_sentinel.zip", exdir = "../data/20191106_Day_2_PM_Raster")
-
-# Make a list of the "TIF" files in a directory of interest (only one in this case)
+# Make a list of the "TIF" files in a directory of interest (only one multi-band raster in this case)
   files <- list.files(path = "../data/20191106_Day_2_PM_Raster/raster_sentinel", pattern = ".tif$", full.names = T)
 
 # Import stack 
   img <- stack(files)
+  img
+  
+```
 
-# Plot 
+```{r first-plot-all}
+
+# Plot (Use max pixels to control speed)
   plot(img, maxpixels = 1e5)
 
 ```
 
 ## Change Band Names
 
-```{r band names, echo = TRUE, message = FALSE}
+```{r band-names}
 
-# What are the band names of the stack?
-  print(names(img))
-
-# The correct names, in order, are: 
-  band_names <- c("blue","green","red","nir","rededge1","rededge2","rededge3","swir1","swir2","vre")
+# The correct names, in order, are (not always in this order..): 
+  band_names <- c("blue","green","red","nir","rededge1","rededge2","rededge3","swir1","swir2","vegred")
 
 # Assign new names
   names(img) <- band_names
 
-# The new names: 
-  names(img)
+# Note the new names 
+  img
 
 ```
 
-## Plot multiband raster
+## Plot multi-band RGB raster stack, three different ways
 
-```{r plot, echo = TRUE, message= FALSE, results = "hide"}
+```{r plotRGB, warning = FALSE, results = "hide"}
 
 # raster::plot
-  plotRGB(x = img, r = "red", g = "green", b = "blue", maxpixels = 1e+05, stretch = "lin")
+  plotRGB(x = img, r = "red", g = "green", b = "blue", maxpixels = 1e5, stretch = "lin")
 
 # mapview::viewRGB
-  viewRGB(x = img, r = "nir", g = "red", b = "green", maxpixels = 1e+05)
+  viewRGB(x = img, r = "nir", g = "red", b = "green", maxpixels = 1e5)
 
 # RStoolbox::ggRGB
-  ggRGB(img = img, r = "swir1", g = "nir", b = "red", maxpixels = 1e+05, stretch = "lin") 
+  ggRGB(img = img, r = "swir1", g = "nir", b = "red", maxpixels = 1e5, stretch = "lin") 
   
 
 ```
 
-## Calculat NDVI 
+## Calculat NDVI, two ways
 
-```{r NDVI, echo = TRUE, message= FALSE, results = "hide"}
+```{r ndvi-custom, warning = FALSE}
 
-## Calculate NDVI using custom function
+# Calculate NDVI using custom function 
+# e.g. NDVI = (NIR-RED)/(NIR+RED)
 
   normalized_difference <- function(img, b1, b2){
       out <- (img[[b1]]-img[[b2]])/(img[[b1]]+img[[b2]])
       return(out)}
   ndvi <- normalized_difference(img, "nir", "red")
   plot(ndvi)
-  
-# Calculate NDVI using bu in RStoolbox function
+
+```
+
+```{r ndvi-rstoolbox}
+
+# Calculate NDVI using bu in RStoolbox built in function
+# See https://bleutner.github.io/RStoolbox/rstbx-docu/spectralIndices.html 
+# for available indices
 
   ndvi <- spectralIndices(img, red = "red", nir = "nir", indices = "NDVI")
   ggR(ndvi)
@@ -117,16 +122,25 @@ library(ggspatial)
 
 ## Custom palettes
 
-```{r palette, echo = TRUE, message= FALSE, results = "hide"}
+```{r palette, results = "hide"}
 
-display.brewer.all()
-display.brewer.pal(n = 10, name = "RdYlGn")
-mypal <- brewer.pal(n = 10, name = "RdYlGn")
-plot(ndvi, col = mypal)
+# Lets use RColorBrewer to use a nice color palette
+  display.brewer.all()
+  display.brewer.pal(n = 10, name = "RdYlGn")
 
 ```
 
-## Reclassify NDVI
+```{r ndvipalette, message= FALSE, results = "hide"}
+
+# Define my palette 
+  mypal <- brewer.pal(n = 10, name = "RdYlGn")
+
+# Plot NDVI with new colors
+  plot(ndvi, col = mypal)
+  
+```
+
+## Remove NDVI < 0.4
 
 ```{r reclassify, echo = TRUE, message= FALSE, results = "hide"}
 
@@ -154,7 +168,7 @@ plot(veg, col = brewer.pal(9, "Greens"), add=TRUE, legend=FALSE)
 # Set random number generator seed
   set.seed(23)
 
-# Run cluster analysis for 10 groups
+# Run cluster analysis for 10 groups (can be slow)
   kmncluster <- kmeans(x = na.omit(nr), centers = 10)
 
 # Insert cluster values into the raster structure
@@ -194,48 +208,50 @@ plot(veg, col = brewer.pal(9, "Greens"), add=TRUE, legend=FALSE)
 
 # Extract water class as polygons
 
-```{r water, echo = TRUE, message= FALSE, results = "hide"}
+```{r water, message= FALSE, results = "hide"}
 
 # Make a copy of the classified raster 
   temp <- knr
 
-
-water_class <- as_tibble(zonal_means) %>% 
-  dplyr::filter(nir == min(nir)) %>% 
-  dplyr::select(zone) %>% as.numeric()
+# Assume that the class with the lowest NIR values is water 
+  water_class <- as_tibble(zonal_means) %>% 
+    dplyr::filter(nir == min(nir)) %>% 
+    dplyr::select(zone) %>% as.numeric()
 
 # Set classes that are not water to NA
   temp[temp != water_class] <- NA 
 
 # Mask the classified raster
-  mr <- mask(knr, temp)
-  plot(mr)
-  
-# Set classes that are not water to NA
-  mr[mr > 0] <- 1
+  water <- mask(knr, temp)
+
+# Rclassify the water to '1'
+  water[water > 0] <- 1
 
 # Plot
-  plot(mr)
+  plot(water)
+
 ```
 
-```{r water-poly, echo = TRUE, message= FALSE, results = "hide"}
+## Polygonize the water raster, and clean it up
+
+```{r water-poly, message= FALSE, results = "hide"}
 
 # Convert water class to polygons
-  mypoly <- rasterToPolygons(x = mr, dissolve = T)
+  mypoly <- rasterToPolygons(x = water, dissolve = T)
 
 # Remove small chunks and fill holes
   mypoly_filter <- mypoly %>% 
-    st_as_sf() %>% 
-    st_cast("POLYGON") %>% 
-    st_transform(3005) %>% 
-    fill_holes(threshold = conv_unit(x = 0.1, from = "km2", to = "m2")) %>%
-    mutate(area_m2 = as.numeric(st_area(.))) %>%
-    filter(area_m2 >= conv_unit(x = 0.1, from = "km2", to = "m2")) 
+    st_as_sf() %>% # from sp to sf
+    st_cast("POLYGON") %>% # split multipolygon to polygons
+    st_transform(3005) %>% # project into metres
+    fill_holes(threshold = conv_unit(x = 0.1, from = "km2", to = "m2")) %>% # fill holes
+    mutate(area_m2 = as.numeric(st_area(.))) %>% # calculate area
+    filter(area_m2 >= conv_unit(x = 0.1, from = "km2", to = "m2")) # remove islands
   
 # Plot water polygons over image
   ggRGB(img = img, r = "red", g = "green", b = "blue", maxpixels = 1e+06, stretch = "lin", alpha = 0.4) +
     geom_sf(data = st_transform(mypoly_filter, crs(img)), color = "darkblue", fill = "blue") +
-    theme_classic() +
+    theme_bw() +
     scale_x_continuous(expand = c(0,0)) +
     scale_y_continuous(expand = c(0,0)) + 
     labs(x = "", y = "", title = "Water Mask")
@@ -265,7 +281,7 @@ water_class <- as_tibble(zonal_means) %>%
 
 ```
 
-```{r profile-extract, echo = TRUE, message= FALSE, results = "hide"}
+```{r profile-extract, message= FALSE, results = "hide"}
 
 # Extract values along the lines
   transect <- raster::extract(ndvi_t, line, along = T, cellnumbers=T)
@@ -284,8 +300,7 @@ water_class <- as_tibble(zonal_means) %>%
 
 # Plot the NDVI transect
   ggplot(transect_df, aes(dist, NDVI)) +
-    geom_line() +
-    geom_smooth(method = "loess", span = 0.05)
-
+    geom_line() 
+  
 
 ````

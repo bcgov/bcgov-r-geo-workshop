@@ -1,0 +1,6 @@
+Available at:
+http://opentopo.sdsc.edu/lidarDataset?opentopoID=OTLAS.032012.26911.1
+
+Dataset Acknowledgement:
+Upper & Lower Okanogan River, Methow River, Lake Roosevelt, Wentachee River and John Day River. Prepared by Watershed Sciences, Inc for PLSC, USBR and contributing partners, 2006
+https://doi.org/10.5069/G97H1GGQ
