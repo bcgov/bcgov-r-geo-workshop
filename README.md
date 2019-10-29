@@ -11,7 +11,7 @@ Here, you will find:
 - Friendly workshop reminders
 - Teaching materials
 - Resources & links to learning resources
-- Hackathon project ideas and discussion via the repo [issues](https://github.com/bcgov/bcgov-r-geo-workshop/issues) 
+- Hackathon project ideas and discussion via the repo [issue](https://github.com/bcgov/bcgov-r-geo-workshop/issues?q=is%3Aissue+is%3Aopen+label%3A%22geospatial+hackathon%22) 
 
 ------
 
