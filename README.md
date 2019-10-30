@@ -92,12 +92,12 @@ We expect attendees to have at least the following level of experience:
 
 - **_Some_ Best Practices for Code Sharing** - Tuesday Nov. 5 (1pm - 5pm)
   - **AM Optional:** Open house for software installation & troubleshooting (RStudio, R, Git) and GitHub account creation
-  - **PM:** Git + bcgov GitHub & Project Management with RStudio --- [_course materials_](https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/20191105_Day_1_PM_Intro) [_Instructor: [Steph Hazlitt](https://github.com/stephhazlitt)_]
+  - **PM:** Git + bcgov GitHub & Project Management with RStudio &mdash; [_course materials_](https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/20191105_Day_1_PM_Intro) [_Instructor: [Steph Hazlitt](https://github.com/stephhazlitt)_]
   -	**Evening:** Social ice breaker (_self-pay_)
 
 - **Introduction to Geospatial in R** - Wednesday Nov. 6 (8:30am - 4:30pm)
-  -	**AM:** Vector manipulation and visualization --- [_course materials_](https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/20191106_Day_2_AM_Vector) [_Instructors: [Sam Albers](https://github.com/boshek) & [Andy Teucher](https://github.com/ateucher)_]
-  -	**PM:** Raster manipulation and visualization --- [_course materials_](https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/20191106_Day_2_PM_Raster) [_Instructors: [Alex Bevington](https://github.com/bevingtona) & [Gen Perkins](https://github.com/gcperk)_]
+  -	**AM:** Vector manipulation and visualization &mdash; [_course materials_](https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/20191106_Day_2_AM_Vector) [_Instructors: [Sam Albers](https://github.com/boshek) & [Andy Teucher](https://github.com/ateucher)_]
+  -	**PM:** Raster manipulation and visualization &mdash; [_course materials_](https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/20191106_Day_2_PM_Raster) [_Instructors: [Alex Bevington](https://github.com/bevingtona) & [Gen Perkins](https://github.com/gcperk)_]
   -	**Evening:** Group dinner (_self-pay_)
 
 - **Geocomputation & Machine Learning in R** - Thursday Nov. 7 (8:30am - 4:30pm):  [_Instructor: [Tomislav Hengl](https://github.com/thengl)_]
