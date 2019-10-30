@@ -133,8 +133,10 @@ class: middle
 
 ???
 
+- Simple Features is a standard specification (Open Geospatial Consortium) - 
+agreed-upon way to represent vector spatial data
 - represent all common vector geometry types : points, lines, polygons and their respective ‘multi’ versions 
 - supports geometry collections, which can contain multiple geometry types in a single object. 
--s upersedes the sp ecosystem, which comprises sp , rgdal for data read/write  and rgeos for spatial operations.
+- sf supersedes the sp ecosystem, which comprises sp , rgdal for data read/write  and rgeos for spatial operations.
 
 
