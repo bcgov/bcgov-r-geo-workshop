@@ -25,7 +25,7 @@ Here, you will find:
 ------
 
 ### Course Materials
-**If you are a course attendant, please note that course materials should be downloaded after November 5th**
+**If you are a course attendee, please note that course materials should be downloaded after November 5th**
 
 To download course materials and open an instance of RStudio, please run this code:
 
@@ -54,10 +54,10 @@ We expect attendees to have at least the following level of experience:
   - **Mandatory**: Installation privileges
 - Coffe and water
   - Snacks or drinks will **not** be supplied 
-  - There are coffee shops nearby, please bring a reusable mug.
-  - There is a water fountain, please bring a reusable bottle.
+  - There are coffee shops nearby, please bring a reusable mug
+  - There is a water fountain, please bring a reusable bottle
 - R
-  - **Mandatory**: Install R and RStudio [link](https://github.com/bcgov/bcgov-data-science-resources/wiki/Installing-R-&-RStudio)
+  - **Mandatory**: Install R and RStudio ([_link_](https://github.com/bcgov/bcgov-data-science-resources/wiki/Installing-R-&-RStudio))
   - **Mandatory**: Install R packages (more to come): <br>
       `c("tidyverse", "sf", "sp","raster",`<br>
       `"stars", "lwgeom", "mapview", "ggplot2",`<br>
@@ -76,15 +76,15 @@ We expect attendees to have at least the following level of experience:
     - [Interpretable Machine Learning](https://christophm.github.io/interpretable-ml-book/)
     - [OpenGeoHub 2019 Summer School](https://www.youtube.com/playlist?list=PLXUoTpMa_9s1npXD6S9M0_2pUgnTd6cqV) [Videos]
 - Git + Github
-  - **Mandatory**: Install Git on the laptop you are bringing  [link](https://git-scm.com/)
-  - **Mandatory**: Create a GitHub account at least 1 week before the workshop [link](https://github.com/)
+  - **Mandatory**: Install Git on the laptop you are bringing  ([_link_](https://git-scm.com/))
+  - **Mandatory**: Create a GitHub account at least 1 week before the workshop ([_link_](https://github.com/))
   - Recommended Reading: 
     - [Read Getting Started with Git & GitHub](https://github.com/bcgov/bcgov-data-science-resources/wiki/Getting-Started-with-Git-&-GitHub)
     - [Read Happy Git with R](https://happygitwithr.com/)
 - GIS Tools (For Day 3 with T. Hengl)
-  - **Mandatory**: QGIS [link](https://qgis.org/en/site/forusers/download.html)
-  - **Mandatory**: SAGA [link](https://sourceforge.net/projects/saga-gis/)
-  - **Mandatory**: Google Earth [link](https://support.google.com/earth/answer/21955?hl=en)
+  - **Mandatory**: QGIS ([_link_](https://qgis.org/en/site/forusers/download.html))
+  - **Mandatory**: SAGA ([_link_](https://sourceforge.net/projects/saga-gis/))
+  - **Mandatory**: Google Earth ([_link_](https://support.google.com/earth/answer/21955?hl=en))
   
 ------
 
@@ -92,12 +92,12 @@ We expect attendees to have at least the following level of experience:
 
 - **_Some_ Best Practices for Code Sharing** - Tuesday Nov. 5 (1pm - 5pm)
   - **AM Optional:** Open house for software installation & troubleshooting (RStudio, R, Git) and GitHub account creation
-  - **PM:** Git + bcgov GitHub & Project Management with RStudio [teaching materials](https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/20191105_Day_1_PM_Intro) [_Instructor: [Steph Hazlitt](https://github.com/stephhazlitt)_]
+  - **PM:** Git + bcgov GitHub & Project Management with RStudio --- [_course materials_](https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/20191105_Day_1_PM_Intro) [_Instructor: [Steph Hazlitt](https://github.com/stephhazlitt)_]
   -	**Evening:** Social ice breaker (_self-pay_)
 
 - **Introduction to Geospatial in R** - Wednesday Nov. 6 (8:30am - 4:30pm)
-  -	**AM:** Vector manipulation and visualization [teaching materials](https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/20191106_Day_2_AM_Vector) [_Instructors: [Sam Albers](https://github.com/boshek) & [Andy Teucher](https://github.com/ateucher)_]
-  -	**PM:** Raster manipulation and visualization [teaching materials](https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/20191106_Day_2_PM_Raster) [_Instructors: [Alex Bevington](https://github.com/bevingtona) & [Gen Perkins](https://github.com/gcperk)_]
+  -	**AM:** Vector manipulation and visualization --- [_course materials_](https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/20191106_Day_2_AM_Vector) [_Instructors: [Sam Albers](https://github.com/boshek) & [Andy Teucher](https://github.com/ateucher)_]
+  -	**PM:** Raster manipulation and visualization --- [_course materials_](https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/20191106_Day_2_PM_Raster) [_Instructors: [Alex Bevington](https://github.com/bevingtona) & [Gen Perkins](https://github.com/gcperk)_]
   -	**Evening:** Group dinner (_self-pay_)
 
 - **Geocomputation & Machine Learning in R** - Thursday Nov. 7 (8:30am - 4:30pm):  [_Instructor: [Tomislav Hengl](https://github.com/thengl)_]
