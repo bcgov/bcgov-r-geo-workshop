@@ -76,7 +76,7 @@ scale_fill_continuous <- scale_fill_viridis_c
 scale_colour_discrete <- scale_colour_viridis_d
 scale_fill_discrete <- scale_fill_viridis_d
 
-here_loc <- ifelse(interactive(), ".", "../..")
+here_loc <- ifelse(dir.exists("data"), ".", "../..")
 here::set_here(here_loc)
 
 # read wrapper functions so slides render and work locally without
@@ -174,7 +174,7 @@ airports
 ???
 
 go through sf header info:
-- size (# features and number of columns/attributes)
+- size (# of features and # of columns/attributes)
 - geometry type
 - dimension (XY - can have Z and M)
 - bbox
@@ -183,7 +183,10 @@ go through sf header info:
 
 ---
 
-```{r}
+# Key features of an `sf` object
+
+```{r message=TRUE}
+
 st_geometry(airports)
 
 st_bbox(airports)
@@ -193,11 +196,74 @@ st_crs(airports)
 
 ---
 
+# An `sf` object is a `data.frame`
+
 ```{r}
+class(airports)
 is.data.frame(airports)
-st_drop_geometry(airports)
+summary(airports)
+
 ```
 
 ---
 
-## CRS: make sure highlight units
+## We can turn it into a normal `data.frame`
+
+```{r}
+airports_df <- st_drop_geometry(airports)
+head(airports_df)
+```
+
+---
+
+## Coordinate Reference Systems
+.pull-left[
+### Geographic
+- spherical or ellipsoidal surface; ellipsoid defined by the _datum_
+- lat/long, measured in angular distances (degrees/radians)
+
+<center><img src="https://upload.wikimedia.org/wikipedia/commons/a/af/Azimutalprojektion-schief_kl.jpg" alt="geocrs" /></center>
+]
+
+.pull-right[
+### Projected
+- Cartesian coordinates on a flat plane
+- origin, x and y axes, linear unit of measurement (e.g., m)
+
+<center><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Albers_projection_SW.jpg/1920px-Albers_projection_SW.jpg" alt="geocrs" /></center>
+]
+
+.small.pull-left[https://en.wikipedia.org/wiki/Geographic_coordinate_system]
+.small.pull-right[https://en.wikipedia.org/wiki/Albers_projection]
+
+???
+
+defines how the spatial elements of the data relate to the surface of the Earth
+
+Geographic: 
+- identify any location on the Earth’s surface using two values — longitude and latitude. 
+- Longitude is location in the East-West direction in angular distance from the Prime Meridian plane. 
+- Latitude is angular distance North or South of the equatorial plane. 
+- Distances in geographic CRSs are therefore not measured in meters. This has important consequences
+
+Projected:
+- based on a geographic CRS
+- rely on map projections to convert the three-dimensional surface of the Earth into Easting and Northing (x and y) values in a projected CRS
+- often named based on a property they preserve: equal-area preserves area, azimuthal preserve direction, equidistant preserve distance, and conformal preserve local shape.
+- conic, cylindrical, planar
+
+---
+
+# CRSs in R
+
+```{r}
+st_crs(airports)
+```
+
+???
+
+EPSG codes
+BC Albers
+proj4 string
+- units
+---
