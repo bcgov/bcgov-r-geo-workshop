@@ -63,17 +63,34 @@ library(dplyr)
 library(ggplot2)
 library(bcdata)
 library(ggspatial)
+library(here)
 ```
 
 
 ```{r, theme, warning=FALSE, echo=FALSE}
-theme_set(theme_void())
+suppressWarnings(theme_set(theme_void()))
 
 
 scale_colour_continuous <- scale_colour_viridis_c
 scale_fill_continuous <- scale_fill_viridis_c
 scale_colour_discrete <- scale_colour_viridis_d
 scale_fill_discrete <- scale_fill_viridis_d
+
+here_loc <- ifelse(interactive(), ".", "../..")
+here::set_here(here_loc)
+
+# read wrapper functions so slides render and work locally without
+# explicitly using here::here()
+st_read <- function(dsn, layer, ...) {
+  sf::st_read(dsn = here::here(dsn), layer = layer, ...)
+}
+
+read_sf <- function(..., quiet = TRUE, stringsAsFactors = FALSE,
+  as_tibble = TRUE) {
+  st_read(..., quiet = quiet, stringsAsFactors = stringsAsFactors, 
+        as_tibble = as_tibble)
+}
+
 ```
 
 
@@ -112,10 +129,11 @@ Spatial data divided into two categories: Vector and Raster
 class: middle
 
 .pull-left[
-  ## Simple Features: the 'sf' package
+  # Simple Features
   
+  ### the 'sf' R package
   
-  #### Replaces:
+  #### Replaces
   - sp
   - rgdal
   - rgeos
@@ -139,4 +157,47 @@ agreed-upon way to represent vector spatial data
 - supports geometry collections, which can contain multiple geometry types in a single object. 
 - sf supersedes the sp ecosystem, which comprises sp , rgdal for data read/write  and rgeos for spatial operations.
 
+---
 
+## Reading spatial data
+
+```{r, eval=FALSE}
+library(sf)
+```
+
+
+```{r}
+airports <- st_read("data/20191106_Day_2_AM_Vector/bc_airports.gpkg", quiet = TRUE)
+airports
+```
+
+???
+
+go through sf header info:
+- size (# features and number of columns/attributes)
+- geometry type
+- dimension (XY - can have Z and M)
+- bbox
+- epsg
+- proj4
+
+---
+
+```{r}
+st_geometry(airports)
+
+st_bbox(airports)
+
+st_crs(airports)
+```
+
+---
+
+```{r}
+is.data.frame(airports)
+st_drop_geometry(airports)
+```
+
+---
+
+## CRS: make sure highlight units
