@@ -30,6 +30,7 @@ Here, you will find:
 To download course materials and open an instance of RStudio, please run this code:
 
 ```
+install.packages("usethis")
 library(usethis)
 use_course("bcgov/bcgov-r-geo-workshop")
 ```
@@ -59,7 +60,7 @@ We expect attendees to have at least the following level of experience:
 - R
   - **Mandatory**: Install R and RStudio ([_link_](https://github.com/bcgov/bcgov-data-science-resources/wiki/Installing-R-&-RStudio))
   - **Mandatory**: Install R packages (more to come): <br>
-      `c("tidyverse", "sf", "sp","raster",`<br>
+      `install.packages("tidyverse", "sf", "sp","raster",`<br>
       `"stars", "lwgeom", "mapview", "ggplot2",`<br>
       `"lidR", "gdalcubes")`
   - **Mandatory for R Beginners**: 
