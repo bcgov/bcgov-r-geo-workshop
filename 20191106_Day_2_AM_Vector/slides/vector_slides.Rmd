@@ -95,36 +95,6 @@ class: inverse, left, middle
 
 <center><img src="https://www.r-project.org/logo/Rlogo.png" alt="Drawing" style="width: 450px;" /></center>
 
----
-
-.pull-left[
-## The Problem
-- Many tasks when analyzing environmental data are repetitive yet interactive
-- Typically environmental scientists aren't computer scientists
-- Helpful to abstract away unneeded complexity when possible
-- A clean and easy to remember syntax reduces your cognitive load when doing analysis
-
-
-
-<center><img src="https://www.herocollector.com/Content/ArticleImages/7a716739-72cb-40d5-acfc-dfc35783d8a5.jpg" style="width: 450px;"/></center>
-
-
-
-]
-
---
-
-.pull-right[
-## Enter `dplyr`
-> a consistent set of verbs that help you solve the most common data manipulation challenges
-
-- Independent of the data source
-- Designed for data science
-
-<center><img src="https://raw.githubusercontent.com/rstudio/hex-stickers/master/PNG/dplyr.png" style="width: 300px;"/></center>
-
-]
-
 
 ---
 
@@ -173,13 +143,7 @@ filter(starwars,  homeworld == "Tatooine")
 
 
 ---
-class: inverse, left, middle
-# The pipe 
-
-<center><blockquote class="twitter-tweet"><p lang="en" dir="ltr">This is how I explain the &#39;pipe&#39; to <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> newbies... <a href="https://t.co/VdAFTLzijy">pic.twitter.com/VdAFTLzijy</a></p>&mdash; We are R-Ladies (@WeAreRLadies) <a href="https://twitter.com/WeAreRLadies/status/1172576445794803713?ref_src=twsrc%5Etfw">September 13, 2019</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-</center>
----
-## Combining two statements
+## The pipe: Combining two statements
 
 ```{r}
 starwars %>% 
@@ -215,7 +179,7 @@ class: inverse, left, middle
 # Your turn
 
 .Large[
-- Using the `starwars` data set and `dplyr` syntax find the average mass of humans by homeworld
+- Using the `starwars` data set and `dplyr` syntax find the average mass of humans grouped by homeworld ordered by average_mass column.
 ]
 ---
 
@@ -230,6 +194,45 @@ starwars %>%
 
 ---
 # Andy's slides
+
+---
+## higher-level operations: summarise, interpolate, aggregate, st_join
+
+- `summarise` 
+- `aggregate` 
+- `st_interpolate_aw`
+- `st_join` 
+---
+
+## Using summarize() - Calculate `nr_regions`
+```{r}
+
+nr_district <- bcdc_get_data('natural-resource-nr-district')
+nr_region <- nr_district %>% 
+  group_by(REGION_ORG_UNIT_NAME) %>% 
+  summarise() # << defaults to union
+
+ggplot() +
+  geom_sf(data = nr_region, colour = "white", aes(fill = REGION_ORG_UNIT_NAME)) 
+```
+---
+
+
+## Computing geometric measurements
+- `st_area`
+- `st_length`
+- `st_distance`
+
+"Find the total length of transmission lines by natural resource region"
+```{r}
+lines <- bcdc_get_data('bc-transmission-lines')
+lines %>% 
+  st_join(nr_district) %>% 
+  group_by(REGION_ORG_UNIT_NAME) %>% 
+  summarise() %>% 
+  mutate(lines_length = st_length(geometry)) %>% 
+  st_set_geometry(NULL)
+```
 ---
 class: inverse, left, middle
 # Multi layer spatial plots with `ggplot2`
@@ -240,7 +243,6 @@ class: inverse, left, middle
 library(bcdata)
 
 nr_district <- bcdc_get_data('natural-resource-nr-district')
-
 lines <- bcdc_get_data('bc-transmission-lines')
 
 fires_2017 <- bcdc_query_geodata('fire-perimeters-historical') %>%
@@ -248,10 +250,10 @@ fires_2017 <- bcdc_query_geodata('fire-perimeters-historical') %>%
   collect()
 
 big_fires <- fires_2017 %>%
-  filter(FIRE_NUMBER %in% c("C10784", "C50647"))
+  filter(FIRE_NUMBER %in% c('C10784', 'C50647'))
 
 bc <- bcdc_query_geodata('7-5m-provinces-and-states-the-atlas-of-canada-base-maps-for-bc') %>% 
-  filter(ENGLISH_NAME == "British Columbia") %>% 
+  filter(ENGLISH_NAME == 'British Columbia') %>% 
   collect()
 ```
 
@@ -280,7 +282,7 @@ class: inverse, left, middle
 .Large[
 - Using `ggplot2` plot only *two* layers 
   - `big_fires` 
-  - `fire_districts` <- only "Stuart Nechako", "Quesnel", "Cariboo-Chilcotin", and "Prince George" natural resource districts
+  - `fire_districts` <- only "Stuart Nechako", "Quesnel", "Cariboo-Chilcotin", and "Prince George" natural resource districts (`nr_district`)
 ]
 ---
 ## Solution
@@ -312,11 +314,12 @@ class: inverse, left, middle
 - `st_difference`
 - `st_sym_difference`
 
+--
 
 ## Quesnel Natural Resource District and C10784
 ```{r}
 biggest_fire <- big_fires %>%
-  filter(FIRE_NUMBER %in% c("C10784"))
+  filter(FIRE_NUMBER == "C10784")
 
 quesnel_district <- nr_district %>%
   filter(DISTRICT_NAME == "Quesnel Natural Resource District")
@@ -326,7 +329,7 @@ quesnel_district <- nr_district %>%
 ## Quesnel Natural Resource District and C10784
 ```{r}
 p <- ggplot() +
-  geom_sf(data = quesnel_district, fill = "purple", alpha = 0.5) +
+  geom_sf(data = quesnel_district, fill = "grey80", alpha = 0.5) +
   geom_sf(data = biggest_fire, fill = "orange", alpha = 0.5)
 
 p
@@ -334,10 +337,10 @@ p
 
 ---
 ## `st_union`
-
+TODO - choose colour that stands out better than black
 ```{r}
 unionized <- st_union(quesnel_district, biggest_fire)
-p + geom_sf(data = unionized, size = 1.5, fill = NA)
+p + geom_sf(data = unionized, size = 1.5, fill = NA, colour = "slateblue")
 ```
 
 ---
@@ -345,13 +348,13 @@ p + geom_sf(data = unionized, size = 1.5, fill = NA)
 
 ```{r}
 intersected <- st_intersection(quesnel_district, biggest_fire)
-p + geom_sf(data = intersected, size = 1.5, fill = NA)
+p + geom_sf(data = intersected, size = 1.5, fill = NA, colour = "slateblue")
 ```
 ---
 ## `st_difference`
 ```{r}
 differenced <- st_difference(quesnel_district, biggest_fire)
-p + geom_sf(data = differenced, size = 1.5, fill = NA)
+p + geom_sf(data = differenced, size = 1.5, fill = NA, colour = "slateblue")
 ```
 
 ---
@@ -375,7 +378,8 @@ ggplot() +
 ---
 
 ## Geometry Predicates
-
+TODO: map to ArcGIS names
+These are just subsetting
 - `st_intersects`: touch or overlap
 - `st_disjoint`: !intersects
 - `st_touches`: touch
@@ -440,27 +444,10 @@ ggplot() +
 ```
 
 
----
-## higher-level operations: summarise, interpolate, aggregate, st_join
 
-- `summarise` 
-- `aggregate` 
-- `st_interpolate_aw`
-- `st_join` 
----
-
-## Using summarize() - Calculate `nr_regions`
-```{r}
-nr_region <- nr_district %>% 
-  group_by(REGION_ORG_UNIT_NAME) %>% 
-  summarise() # << defaults to union
-
-ggplot() +
-  geom_sf(data = nr_region, colour = "white", aes(fill = REGION_ORG_UNIT_NAME)) 
-```
 ---
 ## non spatial join
-What is the mean population of cities that have a courthouse by municipality type?
+What is the mean population of cities that have a courthouse, grouped by municipality type?
 ```{r}
 courts <- bcdc_get_data('court-locations', resource = '23aa0b75-2715-4ccb-9a36-9a608450dc2d')
 bc_cities <- bcdc_get_data('bc-major-cities-points-1-2-000-000-digital-baseline-mapping')
@@ -516,22 +503,6 @@ c <- ggplot() +
 bc_cities_buffer <- st_buffer(bc_cities, dist = 10000) ## 10km
 
 c + geom_sf(data = bc_cities_buffer, fill = "green", alpha = 0.5)
-```
----
-
-## Computing geometric measurements
-- `st_area`
-- `st_length`
-- `st_distance`
-
-"Find the total length of transmission lines by natural resource region"
-```{r}
-lines %>% 
-  st_join(nr_district) %>% 
-  group_by(REGION_ORG_UNIT_NAME) %>% 
-  summarise() %>% 
-  mutate(lines_length = st_length(geometry)) %>% 
-  st_set_geometry(NULL)
 ```
 
 
