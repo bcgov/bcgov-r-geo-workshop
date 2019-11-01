@@ -7,7 +7,7 @@ output:
   xaringan::moon_reader:
     keep_md: true
     lib_dir: libs
-    css: ["default", "default-fonts", "hygge"]
+    css: ["default", "default-fonts", "hygge", "custom.css"]
     nature:
       highlightStyle: github
       highlightLines: true
@@ -63,6 +63,7 @@ library(dplyr)
 library(ggplot2)
 library(bcdata)
 library(ggspatial)
+library(bcmaps)
 library(here)
 ```
 
@@ -260,10 +261,59 @@ Projected:
 st_crs(airports)
 ```
 
+.pull-left[
+## BC Albers - B.C.'s standard projection
+- Equal Area conic
+- Centre: c(-126, 54)
+https://epsg.io/3005
+]
+
+.pull-right[
+```{r echo=FALSE}
+
+albers_centre <- st_sfc(st_point(c(-126, 54)), crs = 4326) %>% 
+  st_transform(3005)
+
+ggplot() + 
+  geom_sf(data = bc_bound()) + 
+  geom_sf(data = albers_centre, colour = "blue", size = 5) + 
+  geom_sf(data = bc_cities() %>% filter(NAME == "Burns Lake")) + 
+  geom_sf_text(data = bc_cities() %>% filter(NAME == "Burns Lake"), aes(label = NAME), nudge_x = 100000, nudge_y = 30000)
+  
+```
+]
+
 ???
 
 EPSG codes
 BC Albers
-proj4 string
-- units
+
 ---
+
+## Proj4 String
+
+```{r}
+st_crs(3005)$proj4string
+```
+
+.pull-left[
+- projection (`proj`)
+- standard parallels (`lat_1`, `lat_2`)
+- origin (`lat_0`, `lon_0`, `x_0`, `y_0`)
+- ellipsis (`ellps`)
+- conversion to WGS84 `towgs84`
+- `units`
+- `no_defs` - no defaults are read from the defaults files
+]
+
+.pull-right[
+```{r}
+# one of "have_datum_files", "proj", "ellps", 
+# "datum", "units" or "prime_meridians"
+st_proj_info("proj") %>% head()
+
+```
+]
+
+---
+
