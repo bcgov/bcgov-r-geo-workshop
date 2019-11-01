@@ -16,19 +16,19 @@ This session is expect to run from 1:00 pm  to 4:30 pm November 6th, 2019.
 |  | Summarising  | | 
 |  | Raster calculations | 
 |  | Plotting and Visualising Raster Data   |    |  `mapview`, `rasterVis`, `ggplot2` |
-|    Coffee Break    |   |  1:45 - 2:15pm |
-| Raster Manipulation   |   | 
+| Raster Manipulation   |    |  1:45 - 2:30pm |
 | | Stacks and Bricks   |  | 
 |   | Aggregate/disaggregate  |  | 
 |  | Cropping to Vectors   |   |   `sf`, `dplyr`, `bcmaps`, `fasterize` | 
 | | Mask to value    |   | 
 |  | Extract   |  |
-| Sentinel-2 satellite imagery   | |  3:00-3:45 pm |
+| Coffee Break   |   | 2:30 - 3:00 pm   
+| Sentinel-2 satellite imagery   | |  3:00 - 3:45 pm |
 |   | Spectral indices (NDVI)         |   | `RStoolbox`,`mapview`,`mapedit`,`purrr` |
 |   | Raster to Polygon               |   | `geosphere`,`RColorBrewer`,`smoothr`,`sf` |
 |   | Quick classification (kmeans)   |   | `measurements`,`ggspatial` |
 |   | Profile         |   |
-| MODIS Exercise      |   | 3:45-4:30 |
+| MODIS Exercise      |   | 3:45 - 4:30 pm  |
 |  | MODIS NDVI Stack |   |   `magick` |
 |  | Animation        |   | 
 |  | Plot timeseries  |   |
