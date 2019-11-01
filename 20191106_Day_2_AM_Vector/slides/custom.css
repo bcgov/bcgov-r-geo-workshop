@@ -1,0 +1,4 @@
+pre {
+  /* wrap code instead of scroll */
+  white-space: pre-wrap;
+}

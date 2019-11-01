@@ -7,7 +7,7 @@ output:
   xaringan::moon_reader:
     keep_md: true
     lib_dir: libs
-    css: ["default", "default-fonts", "hygge"]
+    css: ["default", "default-fonts", "hygge", "custom.css"]
     nature:
       highlightStyle: github
       highlightLines: true
