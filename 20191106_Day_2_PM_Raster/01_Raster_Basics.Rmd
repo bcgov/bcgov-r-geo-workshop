@@ -151,6 +151,10 @@ NAvalue(dem) = -9999
 
 ```
 
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+<div class = "blue">
 
 #### _Questions:_ 
 
@@ -163,26 +167,27 @@ slope
 
 ```
 
+2) What code could we use to check the mean values of all cells in the raster? 
 
+</div>
 
 
 ### 3. Coordinate Reference System (CRS)
 
-Coordinate Reference Systems come in three formats (`ESPG`, `proj4string`, `WKT`). Raster data commonly relies on `proj4string` type. In this case the `+` seperates each element (similar to csv is seperated with a comma). Tip: Mapping with leaflet and other web-mapping requires data to be in geographic CRS WGS84 (`EPSG: 4326`).
+Coordinate Reference Systems come in three formats (`ESPG`, `proj4string`, `WKT`). Raster data commonly relies on `proj4string` type. In this case the `+` seperates each element. You can think of this as a common seperating each value in a csv file. Tip: Mapping with leaflet and other web-mapping requires WGS84 (`EPSG: 4326`). We can see the crs when we call the raster by name or directly using the `crs()` command.
 
-```{r projections, include = TRUE,  results = "hide"}
+```{r projections, include = TRUE}
 dem
 crs(dem)
 
 ```
 
-The `crs` gives us important information as to what units the data is in, and as a consequence the cell size. For example our `dem` raster is measured in meters (m). This means out resolution is 25m x 25m cell size. 
+The `crs` gives us important information as to what units the data is in, and as a consequence the cell size. For example our `dem` raster is measured in meters (m). This means out resolution is 25 m x 25 m cell size. 
 This is important to understand when looking at area calculations and cell resolution. 
 
 In many cases we use BCAlbers (`EPSG:3005`) as it is an equal area projection with units in meters. 
 
 ```{r, include = TRUE, results = "hide"}
-
 # we can check the information on our ESPG:3005
 CRS("+init=epsg:3005")
 
@@ -193,9 +198,9 @@ projection(dem)  # gives us the string version proj4string
 
 #### Reprojecting Rasters
 
-Reprojecting is different between rasters and vectors. In vectors, each co-ordinate is projected seperately, however as rasters are based on a grid of cells the same size this method is not possible. Raster projections involves creating a new raster of the desired outputs on which the attributes are re-estimated allowing the new pixal to be assigned with the appropriate value. Note the number of columns and rows will be likely to be different from the original raster. 
+Reprojecting is different between rasters and vectors. In vectors, each coordinate is projected seperately, however as rasters are based on a grid of cells the same size this method is not possible. Raster projections involves creating a new raster with the desired resolution. Each cell is then estimated or assigned a new value. Note the number of columns and rows are likely different from the original raster. 
 
-We can use the `projectRaster()` function. This require a `raster` object and a `crs` argument. This function only accepts `proj4string` definitions of a CRS rather than EPSG codes. 
+We can use the `projectRaster()` function. This require a `raster` object and a `crs` argument. This function only accepts `proj4string` definitions of a CRS rather than EPSG codes directly. 
 
 
 ```{r reproject rasters, include = TRUE, eval = FALSE}
@@ -211,19 +216,28 @@ plot(dem.wgs84)
 nrow(dem)
 nrow(dem.wgs84)
 
-extent(dem)
-extent(dem.wgs84)
-
 res(dem)
 res(dem.wgs84)
 
 ```
 
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+<div class = "blue">
+
+#### _Questions:_ 
+
+1) Compare the extent on the`dem` and `dem.wgs84` ? 
+
+2) Reproject the `dem.wgs84` raster back to `EPGS:3005` and check the crs to confirm ?
+
+</div>
 
 
 ### 4. Visualise Rasters and Raster Data
 
-We can do quick visualisations of our rasters using the `plot()`. We can also use other packages to make this view interactive such as `mapview` or `rasterVis`. Another option to take advantage of the `ggplot2` package is to covert our raster into a data.frame and plot the xy variables. This however can be more time consuming as we see from the code below.
+We can do quick visualisations of our rasters using the `plot()`. We can use `mapview` or `rasterVis` to view the plot interactively. Another option to take advantage of the `ggplot2` package is to covert our raster into a data.frame and plot the xy variables. This however can be more time consuming as we see from the code below.
 
 
 ```{r raster viz, include = TRUE, eval = FALSE, warning= FALSE,  message = FALSE}
@@ -253,6 +267,7 @@ ggplot() +
 We can also do a plot of the raster values. For example we can create a histogram to look for any anomolies.
 
 ```{r histogram, include = TRUE, eval = FALSE}
+
 histogram(dem)
 
 ```
@@ -260,10 +275,10 @@ histogram(dem)
 
 ### 5. Raster Calculations 
 
-We can do very fast calculation on raster objects as they do not contain explicit spatial projections. For example two rasters with the same extent, resolution and projection we can think of them as two matrices. we can perform calculations based at difference scales; Local (per cell), Focal (neighbourhood), Zonal (neighburhood with iregular size and shape), Global (per raster calcualtions). 
+We can do very fast calculations on raster objects as they do not contain explicit spatial projections. We can perform calculations based at difference scales; Local (per cell), Focal (neighbourhood), Zonal (neighburhood with iregular size and shape), Global (per raster calculations). 
 
+```{r, eval = FALSE }
 
-```{r, eval = FALSE}
 # Raster Calculations - per cell 
 dem + dem 
 
@@ -271,36 +286,29 @@ log(dem)
 
 ```
 
-We can reclassify values within the raster. This is useful if we want to bin values into catergories or define a subset of data. Using our `dem` data we can reclassify our values into groups by creating a matrix with defined range and assigned value. We know our minimum value is `r minValue(dem)` and maximum value is `r maxValue(dem)`. 
+We can reclassify values within the raster. This is useful if we want to bin values into catergories or define a subset of data. Using our `dem` raster we can reclassify our values into groups by creating a matrix with defined range and assigned value. We know our minimum value is `r minValue(dem)` and maximum value is `r maxValue(dem)`. 
 
 ```{r reclass raster, results = 'hide'}
 # reclasss a raster to above or below 1000
-rcl <- matrix(c(0, 1000, 1, 1000.0001, 1600, 2), ncol = 3, byrow = TRUE)
+
+rcl <- matrix(c(0, 1000, 1, 1000.0001, 1600, 2), 
+              ncol = 3, 
+              byrow = TRUE)
 rcl 
 
 recl.dem <- reclassify(dem, rcl = rcl)
 plot(recl.dem)
 
-# reclassify into 4 groups. 
-dem.class <- reclassify (dem, c(-Inf, 800, 1,
-                                700, 1000, 2, 
-                                1000, 1250, 3, 
-                                1250, Inf, 4))
-
-plot(dem.class)
-
 ```
 
-
-Focal operations take into account a cell and its neighbours. Typically these include a 3 x 3 cells. This operation applied an aggregate function to all cells within the neighbourhood with the result being the central cell value. 
+Focal operations take into account a cell and its neighbours. Typically these include a 3 x 3 cells. This operation applies an aggregate function to all cells within the neighbourhood with the result being the central cell value. 
 
 We need to define the shape of a moving window with a matrix with corresponding weights. This is commonly summary functions, ie `sum()`, `mean()`, `var()`.
 
 ```{r focal , eval = FALSE, include = TRUE}
-
 #Focal operations
 
-r_focal = focal(dem, w = matrix (1,nrow = 3, ncol = 3), fun = min)
+r_focal = focal(dem, w = matrix (1, nrow = 3, ncol = 3), fun = min)
 
 plot(dem)
 plot(r_focal)
@@ -308,30 +316,71 @@ plot(r_focal)
 ```
 
 
-Using our dem and functions within the raster package, we can apply focal operations to generate slope and aspect. 
+Zonal statistics allows us to calculate summary statistics per data type or number. For example we can calculating mean, max values. The output is in tabular format. As a demonstration we can use out reclassed raster from above as a quick demonstration. 
 
+```{r zonal stats demo, eval = FALSE}
+#zonal calculations 
 
-```{r create a hillshade map, eval = T , results="hide"}
-# create the terrain layers from a dem based on neighbourhood
+plot(recl.dem) 
 
-slope <- terrain(dem, opt='slope', unit='radians',  neighbors=8)
-plot(slope)
+dem.zone <- zonal(dem, recl.dem, fun= "mean")
 
-aspect <- terrain(dem, opt='aspect', unit='radians',  neighbors=8)
-plot(aspect)
+dem.zone
 
 ```
 
-We can use these outputs to create a hillshade 
+We will talk more about zonal statistics for remote sensed datasets. 
+
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+<div class = "blue">
+
+
+#### _Questions_
+
+1) Reclasify the dem raster into four classes ( <800m, 800 - 1000, 1000-1250, 1250 - maximum) and plot the reclassed raster.  
+
+2) Calculate the standard deviation of the dem values in each zone you created. Which zone has the most variation? 
+
+
+3) Create a map shpwing variance over a 9 x 9 neighbourhood.
+
+
+2) Calculate the mean value for the entire raster (hint: see section 1.)
+
+
+</div>
+<style>
+div.green{ background-color:#FFFFE0; border-radius: 5px; padding: 20px;}
+</style>
+<div class = "green">
+
+#### _Bonus Section_
+
+We can use focal operations to generate slope and aspect from our base dem raster. For this we will use the `terrain()` function. Run through this code and plot the outputs. 
+
+```{r create a hillshade map, eval = T , results="hide"}
+
+slope <- terrain(dem, opt='slope', unit='radians',  neighbors=8)
+
+aspect <- terrain(dem, opt='aspect', unit='radians',  neighbors=8)
+
+
+```
+
+We can now use these outputs to create a hillshade. 
 
 ```{r hillshade, results = "hide"} 
-#Create a hill shade 
+
 hs <- hillShade(slope, aspect, angle=30, direction=270)
 plot(hs, col=gray.colors(20))
 
 ```
 
-Bonus:  We can plot hillshade and dem to create nice feature maps.  
+You can adjust the angle and direction above to see the influence it has on the hillshade output.  
+
+We can plot hillshade and dem to create nice feature maps.  
 
 ```{r ggplot mapping, eval = FALSE}
 hs_df <- as.data.frame(hs, xy = TRUE) 
@@ -350,22 +399,7 @@ ggplot() +
 
 ```
 
-
-Raster calculator also allows for zonal statistics, for example we can calculating mean, max values per grouping or type. The output is in tabular format. As a demonstration we can use out reclassed raster from above as a quick demonstration. 
-
-```{r zonal stats demo, eval = FALSE}
-#zonal calculations 
-
-plot(dem.class) 
-
-dem.zone <- zonal(dem, dem.class, fun= "mean")
-
-dem.zone
-```
-
-We will talk more about zonal statistics for remote sensed datasets. 
-
-
+</div>
 
 
 ### Credits & Licensing
