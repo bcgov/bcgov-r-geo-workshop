@@ -30,7 +30,9 @@ Here, you will find:
 To download course materials and open an instance of RStudio, please run this code:
 
 ```
-install.packages("usethis")
+if (requireNamespace("usethis")) {
+  install.packages("usethis")
+}
 library(usethis)
 use_course("bcgov/bcgov-r-geo-workshop")
 ```
@@ -59,10 +61,8 @@ We expect attendees to have at least the following level of experience:
   - There is a water fountain, please bring a reusable bottle
 - R
   - **Mandatory**: Install R and RStudio ([_link_](https://github.com/bcgov/bcgov-data-science-resources/wiki/Installing-R-&-RStudio))
-  - **Mandatory**: Install R packages (more to come): <br>
-      `install.packages("tidyverse", "sf", "sp","raster",`<br>
-      `"stars", "lwgeom", "mapview", "ggplot2",`<br>
-      `"lidR", "gdalcubes")`
+  - **Mandatory**: Install R packages (more to come): 
+      `install.packages(c("tidyverse", "sf", "sp","raster","stars", "lwgeom", "mapview", "ggplot2","lidR", "gdalcubes"))`
   - **Mandatory for R Beginners**: 
     - [Reproducible Scientific Analysis](https://swcarpentry.github.io/r-novice-gapminder/)
   - Recommended Reading (Beginner): 
