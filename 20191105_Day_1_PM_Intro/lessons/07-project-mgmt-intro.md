@@ -121,7 +121,7 @@ Now we have a good directory structure we will now place/save the data file in t
 
 > ## Tip: .RData
 >
-> You can avoid saving and restoring .RData file using  **Tools -> Glocal Options -> Workspace** menu items.
+> You can avoid saving and restoring .RData file using  **Tools -> Global Options -> Workspace** menu items.
 
 
 
