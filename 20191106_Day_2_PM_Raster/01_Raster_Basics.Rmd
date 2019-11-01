@@ -1,6 +1,6 @@
 ---
 title: "01 Raster Basics"
-author: G.Perkins
+author: "G.Perkins (Ministry of Environment and Climate Change Strategy)"
 output: 
   html_document:
     toc: TRUE
@@ -27,7 +27,7 @@ knitr::opts_knit$set(echo = TRUE)
 
 ```
 
-This document outlines some basic operations for rasters. You can follow along by running the code (within markdown or as an R file) or refer to the html version. 
+This document outlines some basic operations for rasters. You can follow along with the HTML or run the code yourself.  
 
 ```{r, eval = FALSE, echo = FALSE}
 library(usethis)
@@ -174,7 +174,7 @@ slope
 
 ### 3. Coordinate Reference System (CRS)
 
-Coordinate Reference Systems come in three formats (`ESPG`, `proj4string`, `WKT`). Raster data commonly relies on `proj4string` type. In this case the `+` seperates each element. You can think of this as a common seperating each value in a csv file. Tip: Mapping with leaflet and other web-mapping requires WGS84 (`EPSG: 4326`). We can see the crs when we call the raster by name or directly using the `crs()` command.
+Coordinate Reference Systems come in three formats (`ESPG`, `proj4string`, `WKT`). Raster data commonly relies on `proj4string` type. In this case the `+` separates each element. You can think of this as a common separating each value in a csv file. Tip: Mapping with leaflet and other web-mapping requires WGS84 (`EPSG: 4326`). We can see the crs when we call the raster by name or directly using the `crs()` command.
 
 ```{r projections, include = TRUE}
 dem
@@ -198,7 +198,7 @@ projection(dem)  # gives us the string version proj4string
 
 #### Reprojecting Rasters
 
-Reprojecting is different between rasters and vectors. In vectors, each coordinate is projected seperately, however as rasters are based on a grid of cells the same size this method is not possible. Raster projections involves creating a new raster with the desired resolution. Each cell is then estimated or assigned a new value. Note the number of columns and rows are likely different from the original raster. 
+Reprojecting is different between rasters and vectors. In vectors, each coordinate is projected separately, however as rasters are based on a grid of cells the same size this method is not possible. Raster projections involves creating a new raster with the desired resolution. Each cell is then estimated or assigned a new value. Note the number of columns and rows are likely different from the original raster. 
 
 We can use the `projectRaster()` function. This require a `raster` object and a `crs` argument. This function only accepts `proj4string` definitions of a CRS rather than EPSG codes directly. 
 
