@@ -23,47 +23,74 @@ See the License for the specific language governing permissions and limitations 
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(echo = TRUE)
+
 ```
 
-This document outlines some basic operations for rasters. You can follow along running the code or refer to the html version. This modual will primarily be usng the `raster` package, however it is worth noting there are a number of other packages currently being developed to handle raster data efficiently. These include;  `stars` and `terra`.  
+This document outlines some basic operations for rasters. You can follow along by running the code (within markdown or as an R file) or refer to the html version. 
+
+```{r, eval = FALSE, echo = FALSE}
+library(usethis)
+
+# 1)  if you have not already - download the course content: 
+ use_course("bcgov/bcgov-r-geo-workshop")
+
+# 2) OPTIONAL : to generate an R script with code only
+
+library(knitr)
+
+purl("20191106_Day_2_PM_Raster/01_Raster_Basics.Rmd", 
+    output = "20191106_Day_2_PM_Raster/01_Raster_Basics_code.R") 
+
+```
+
+
+This modual will primarily be usng the [raster](https://cran.r-project.org/web/packages/raster/index.html) package, however it is worth noting there are a number of other packages currently being developed to handle raster data efficiently. These include; [stars](https://cran.r-project.org/web/packages/stars/index.html) and [terra](https://www.rdocumentation.org/packages/terra/versions/0.3-7/topics/terra-package).  
 
 
 ### 1. Set up 
-Firstly we want to set up our work session by reading in required libraries and dataset. We can use `list.files` to take a look at what file types are available.  
+Firstly we set up our session by reading in required libraries and dataset. We can use `list.files` to take a look at what file types are available.  
 
-```{r set-up , echo = TRUE, message= FALSE, results = "hide"}
+```{r session setup, echo = TRUE, results = "hide", message= FALSE}
 
 library(raster)
-library(usethis)
-
-## if you have not already - download the course content: 
-# use_course("bcgov/bcgov-r-geo-workshop")
-
 
 # set up the data location --------------------------------------
+
 zip.file <- "../data/20191106_Day_2_PM_Raster/raster_basics.zip"
 data.dir <-"../data/20191106_Day_2_PM_Raster/raster_basics"
-unzip(zipfile = zip.file, exdir = data.dir)
 
-# see what goodies are in the folder 
-file = list.files(data.dir, "DEM.tif", recursive = T, full.names = T)
+unzip(zipfile = zip.file, exdir = data.dir)
 
 ```
 
+
+```{r optional local drive, echo = FALSE, eval = FALSE }
+# optional: To run locally within Rmarkdown 
+
+data.dir <-"data/20191106_Day_2_PM_Raster/raster_basics/raster_basics/"
+
+list.files(data.dir)
+
+```
+
+
 ### 2. Loading and checking rasters 
 
-We can read in raster data using the `raster` package. Unlike vectors, Rasters are defined by the location of grid extents, rather than individual vertices. This has some advantages and disadvantages as we will see.  
+We can read in raster data using the `raster` package. Unlike vectors, Rasters are defined by the location of grid extents, rather than individual vertices. This has some advantages and disadvantages. 
 
 
 ```{r load Raster, echo = TRUE, message= FALSE, include = T, results = "hide"}
-# read in a single raster 
+
+# read in a raster 
+
+file = list.files(data.dir, "DEM.tif", recursive = T, full.names = T)
 
 dem <- raster(file)
 
 ```
 
-Once we have read in the raster we can look at the key information; dimension (`dem`), resolution (cell size)(`res`), extents (`extent`), and Co-ordinate Reference System (CRS).
+Once we have read in the raster we can look at the key information; dimension (`dem`), resolution (cell size)(`res`), extents (`extent`), and Coordinate Reference System (CRS).
 
 ```{r, echo = T, include = T,eval = FALSE}
 
@@ -109,6 +136,7 @@ unique(values(dem)) # much more useful
 We also want to take a look to see if the raster data is what we expect. We can do this with a simple `plot()` function. 
 
 ```{r basic plot, results = "hide"}
+
 plot(dem)
 
 ```
@@ -124,7 +152,21 @@ NAvalue(dem) = -9999
 ```
 
 
-### 3. Co-ordinate Reference System (CRS)
+#### _Questions:_ 
+
+1) Given the code below - what is the extent, cell size and maximum value of the raster ? 
+
+```{r, eval = T, echo = FALSE}
+sfile = list.files(data.dir, "slope.tif", recursive = T, full.names = T)
+slope <- raster(sfile)
+slope
+
+```
+
+
+
+
+### 3. Coordinate Reference System (CRS)
 
 Coordinate Reference Systems come in three formats (`ESPG`, `proj4string`, `WKT`). Raster data commonly relies on `proj4string` type. In this case the `+` seperates each element (similar to csv is seperated with a comma). Tip: Mapping with leaflet and other web-mapping requires data to be in geographic CRS WGS84 (`EPSG: 4326`).
 

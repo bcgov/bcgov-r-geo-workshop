@@ -7,7 +7,7 @@ output:
   xaringan::moon_reader:
     keep_md: true
     lib_dir: libs
-    css: ["default", "default-fonts", "hygge"]
+    css: ["default", "default-fonts", "hygge", "custom.css"]
     nature:
       highlightStyle: github
       highlightLines: true
@@ -63,17 +63,35 @@ library(dplyr)
 library(ggplot2)
 library(bcdata)
 library(ggspatial)
+library(bcmaps)
+library(here)
 ```
 
 
 ```{r, theme, warning=FALSE, echo=FALSE}
-theme_set(theme_void())
+suppressWarnings(theme_set(theme_void()))
 
 
 scale_colour_continuous <- scale_colour_viridis_c
 scale_fill_continuous <- scale_fill_viridis_c
 scale_colour_discrete <- scale_colour_viridis_d
 scale_fill_discrete <- scale_fill_viridis_d
+
+here_loc <- ifelse(dir.exists("data"), ".", "../..")
+here::set_here(here_loc)
+
+# read wrapper functions so slides render and work locally without
+# explicitly using here::here()
+st_read <- function(dsn, layer, ...) {
+  sf::st_read(dsn = here::here(dsn), layer = layer, ...)
+}
+
+read_sf <- function(..., quiet = TRUE, stringsAsFactors = FALSE,
+  as_tibble = TRUE) {
+  st_read(..., quiet = quiet, stringsAsFactors = stringsAsFactors, 
+        as_tibble = as_tibble)
+}
+
 ```
 
 
@@ -112,10 +130,11 @@ Spatial data divided into two categories: Vector and Raster
 class: middle
 
 .pull-left[
-  ## Simple Features: the 'sf' package
+  # Simple Features
   
+  ### the 'sf' R package
   
-  #### Replaces:
+  #### Replaces
   - sp
   - rgdal
   - rgeos
@@ -139,4 +158,162 @@ agreed-upon way to represent vector spatial data
 - supports geometry collections, which can contain multiple geometry types in a single object. 
 - sf supersedes the sp ecosystem, which comprises sp , rgdal for data read/write  and rgeos for spatial operations.
 
+---
+
+## Reading spatial data
+
+```{r, eval=FALSE}
+library(sf)
+```
+
+
+```{r}
+airports <- st_read("data/20191106_Day_2_AM_Vector/bc_airports.gpkg", quiet = TRUE)
+airports
+```
+
+???
+
+go through sf header info:
+- size (# of features and # of columns/attributes)
+- geometry type
+- dimension (XY - can have Z and M)
+- bbox
+- epsg
+- proj4
+
+---
+
+# Key features of an `sf` object
+
+```{r message=TRUE}
+
+st_geometry(airports)
+
+st_bbox(airports)
+
+st_crs(airports)
+```
+
+---
+
+# An `sf` object is a `data.frame`
+
+```{r}
+class(airports)
+is.data.frame(airports)
+summary(airports)
+
+```
+
+---
+
+## We can turn it into a normal `data.frame`
+
+```{r}
+airports_df <- st_drop_geometry(airports)
+head(airports_df)
+```
+
+---
+
+## Coordinate Reference Systems
+.pull-left[
+### Geographic
+- spherical or ellipsoidal surface; ellipsoid defined by the _datum_
+- lat/long, measured in angular distances (degrees/radians)
+
+<center><img src="https://upload.wikimedia.org/wikipedia/commons/a/af/Azimutalprojektion-schief_kl.jpg" alt="geocrs" /></center>
+]
+
+.pull-right[
+### Projected
+- Cartesian coordinates on a flat plane
+- origin, x and y axes, linear unit of measurement (e.g., m)
+
+<center><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Albers_projection_SW.jpg/1920px-Albers_projection_SW.jpg" alt="geocrs" /></center>
+]
+
+.small.pull-left[https://en.wikipedia.org/wiki/Geographic_coordinate_system]
+.small.pull-right[https://en.wikipedia.org/wiki/Albers_projection]
+
+???
+
+defines how the spatial elements of the data relate to the surface of the Earth
+
+Geographic: 
+- identify any location on the Earth’s surface using two values — longitude and latitude. 
+- Longitude is location in the East-West direction in angular distance from the Prime Meridian plane. 
+- Latitude is angular distance North or South of the equatorial plane. 
+- Distances in geographic CRSs are therefore not measured in meters. This has important consequences
+
+Projected:
+- based on a geographic CRS
+- rely on map projections to convert the three-dimensional surface of the Earth into Easting and Northing (x and y) values in a projected CRS
+- often named based on a property they preserve: equal-area preserves area, azimuthal preserve direction, equidistant preserve distance, and conformal preserve local shape.
+- conic, cylindrical, planar
+
+---
+
+# CRSs in R
+
+```{r}
+st_crs(airports)
+```
+
+.pull-left[
+## BC Albers - B.C.'s standard projection
+- Equal Area conic
+- Centre: c(-126, 54)
+https://epsg.io/3005
+]
+
+.pull-right[
+```{r echo=FALSE}
+
+albers_centre <- st_sfc(st_point(c(-126, 54)), crs = 4326) %>% 
+  st_transform(3005)
+
+ggplot() + 
+  geom_sf(data = bc_bound()) + 
+  geom_sf(data = albers_centre, colour = "blue", size = 5) + 
+  geom_sf(data = bc_cities() %>% filter(NAME == "Burns Lake")) + 
+  geom_sf_text(data = bc_cities() %>% filter(NAME == "Burns Lake"), aes(label = NAME), nudge_x = 100000, nudge_y = 30000)
+  
+```
+]
+
+???
+
+EPSG codes
+BC Albers
+
+---
+
+## Proj4 String
+
+```{r}
+st_crs(3005)$proj4string
+```
+
+.pull-left[
+- projection (`proj`)
+- standard parallels (`lat_1`, `lat_2`)
+- origin (`lat_0`, `lon_0`, `x_0`, `y_0`)
+- ellipsis (`ellps`)
+- conversion to WGS84 `towgs84`
+- `units`
+- `no_defs` - no defaults are read from the defaults files
+]
+
+.pull-right[
+```{r}
+# one of "have_datum_files", "proj", "ellps", 
+# "datum", "units" or "prime_meridians"
+st_proj_info("proj") %>% head()
+
+```
+]
+
+---
 
