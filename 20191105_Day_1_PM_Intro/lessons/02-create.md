@@ -86,16 +86,18 @@ wording of the output might be slightly different.
 
 #### Removing Git 
 
-Wolfman explains to Dracula that this project folder sdid not need to be udner version control.
+Dracula decides that this project folder did not need to be under version control.
 
 Solution -- USE WITH CAUTION!
 
 Git keeps all of its files in the `.git` directory.
 To recover from this little mistake, Dracula can just remove the `.git`
-folder in the moons subdirectory by running the following command from inside the `planets` directory:
+folder in the okanets directory by running the following command from outside the `planets` directory:
 
 ~~~
-$ rm -rf moons/.git
+pwd
+cd ~/Desktop
+$ rm -rf planets/.git
 ~~~
 
 But be careful! Running this command will remove

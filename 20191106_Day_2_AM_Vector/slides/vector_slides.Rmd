@@ -90,13 +90,6 @@ scale_fill_discrete <- scale_fill_viridis_d
 
 
 ---
-class: inverse, left, middle
-## How to including an image
-
-<center><img src="https://www.r-project.org/logo/Rlogo.png" alt="Drawing" style="width: 450px;" /></center>
-
-
----
 
 ##`dplyr` verbs
 
@@ -143,7 +136,7 @@ filter(starwars,  homeworld == "Tatooine")
 
 
 ---
-## The pipe: Combining two statements
+## The pipe (%>%): Combining two statements
 
 ```{r}
 starwars %>% 
@@ -179,7 +172,7 @@ class: inverse, left, middle
 # Your turn
 
 .Large[
-- Using the `starwars` data set and `dplyr` syntax find the average mass of humans grouped by homeworld ordered by average_mass column.
+- Using the `starwars` data set and `dplyr` syntax find the mean mass of humans grouped by homeworld and arranged by mean mass column.
 ]
 ---
 
@@ -205,9 +198,9 @@ starwars %>%
 ---
 
 ## Using summarize() - Calculate `nr_regions`
-```{r}
-
+```{r, cache=TRUE}
 nr_district <- bcdc_get_data('natural-resource-nr-district')
+
 nr_region <- nr_district %>% 
   group_by(REGION_ORG_UNIT_NAME) %>% 
   summarise() # << defaults to union
@@ -218,20 +211,19 @@ ggplot() +
 ---
 
 
-## Computing geometric measurements
+## Computing geometric measurements - Find the total length of transmission lines by natural resource region
 - `st_area`
 - `st_length`
 - `st_distance`
 
-"Find the total length of transmission lines by natural resource region"
-```{r}
+```{r, cache=TRUE}
 lines <- bcdc_get_data('bc-transmission-lines')
 lines %>% 
   st_join(nr_district) %>% 
   group_by(REGION_ORG_UNIT_NAME) %>% 
   summarise() %>% 
   mutate(lines_length = st_length(geometry)) %>% 
-  st_set_geometry(NULL)
+  st_drop_geometry()
 ```
 ---
 class: inverse, left, middle
@@ -281,8 +273,8 @@ class: inverse, left, middle
 # Your turn
 .Large[
 - Using `ggplot2` plot only *two* layers 
-  - `big_fires` 
-  - `fire_districts` <- only "Stuart Nechako", "Quesnel", "Cariboo-Chilcotin", and "Prince George" natural resource districts (`nr_district`)
+  1. `big_fires` 
+  2. `fire_districts` <- only "Stuart Nechako", "Quesnel", "Cariboo-Chilcotin", and "Prince George" natural resource districts (`nr_district`)
 ]
 ---
 ## Solution
@@ -329,9 +321,8 @@ quesnel_district <- nr_district %>%
 ## Quesnel Natural Resource District and C10784
 ```{r}
 p <- ggplot() +
-  geom_sf(data = quesnel_district, fill = "grey80", alpha = 0.5) +
+  geom_sf(data = quesnel_district, fill = "purple", alpha = 0.5) +
   geom_sf(data = biggest_fire, fill = "orange", alpha = 0.5)
-
 p
 ```
 
@@ -340,7 +331,7 @@ p
 TODO - choose colour that stands out better than black
 ```{r}
 unionized <- st_union(quesnel_district, biggest_fire)
-p + geom_sf(data = unionized, size = 1.5, fill = NA, colour = "slateblue")
+p + geom_sf(data = unionized, size = 1.5, fill = NA, colour = "lightslateblue")
 ```
 
 ---
@@ -348,20 +339,20 @@ p + geom_sf(data = unionized, size = 1.5, fill = NA, colour = "slateblue")
 
 ```{r}
 intersected <- st_intersection(quesnel_district, biggest_fire)
-p + geom_sf(data = intersected, size = 1.5, fill = NA, colour = "slateblue")
+p + geom_sf(data = intersected, size = 1.5, fill = NA, colour = "lightslateblue")
 ```
 ---
 ## `st_difference`
 ```{r}
 differenced <- st_difference(quesnel_district, biggest_fire)
-p + geom_sf(data = differenced, size = 1.5, fill = NA, colour = "slateblue")
+p + geom_sf(data = differenced, size = 1.5, fill = NA, colour = "lightslateblue")
 ```
 
 ---
 class: inverse, left, middle
 # Your turn
 .Large[
-Create a geometry of all transmission lines within the four natural resource districts and create a multi-layer plot
+Create a geometry of all transmission lines that intersect the four natural resource districts and create a multi-layer plot
 ]
 ---
 ## Solution
@@ -378,8 +369,9 @@ ggplot() +
 ---
 
 ## Geometry Predicates
-TODO: map to ArcGIS names
-These are just subsetting
+### Only for subsetting
+### Very similar to ESRI naming
+
 - `st_intersects`: touch or overlap
 - `st_disjoint`: !intersects
 - `st_touches`: touch
@@ -412,17 +404,17 @@ fire_districts[big_fires, , op = st_intersects]
 ```
 
 ---
-## Does any district *intersects* this fire?
+## Does any district intersect this fire?
 ```{r}
 does_intersect <- fire_districts[big_fires, , op = st_intersects]
-p2 + geom_sf(data = does_intersect, fill = NA, size = 1.5)
+p2 + geom_sf(data = does_intersect, fill = NA, colour = "lightslateblue", size = 1.5)
 ```
 
 ---
 ## Which polygon in intersected by a transmission line?
 ```{r}
 crosses_lines <- big_fires[fire_lines, , op = st_crosses]
-p2 + geom_sf(data = crosses_lines, fill = NA, size = 1.5)
+p2 + geom_sf(data = crosses_lines, fill = NA, colour = "lightslateblue", size = 1.5)
 ```
 ---
 class: inverse, left, middle
@@ -496,13 +488,11 @@ ggplot(cities_by_nr) +
 `st_buffer`
 
 ```{r}
-c <- ggplot() +
+bc_cities_buffer <- st_buffer(bc_cities, dist = 20000) ## 20km
+ggplot() +
   geom_sf(data = bc) +
-  geom_sf(data = bc_cities)
-
-bc_cities_buffer <- st_buffer(bc_cities, dist = 10000) ## 10km
-
-c + geom_sf(data = bc_cities_buffer, fill = "green", alpha = 0.5)
+  geom_sf(data = bc_cities) +
+  geom_sf(data = bc_cities_buffer, fill = "green", alpha = 0.5)
 ```
 
 
@@ -532,8 +522,6 @@ ggplot() +
 wna <- bcdc_query_geodata('7-5m-provinces-and-states-the-atlas-of-canada-base-maps-for-bc') %>% 
   filter(!is.na(NAME)) %>% 
   collect()
-
-
 ```
 
 ---
