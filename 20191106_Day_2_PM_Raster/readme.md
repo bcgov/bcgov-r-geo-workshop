@@ -11,7 +11,7 @@ This session is expect to run from 1:00 pm  to 4:30 pm November 6th, 2019.
 |:---------------:|:----------------:|:---------------------------:|:-----:|
 | Raster Basics |                |                 1 - 1:45pm    |        |
 |                |  Main packages and history              |    |     |
-|      | Loading raster (TRIM DEM)  |    |    `raster`   | 
+|      | Loading raster (TRIM DEM)  |    |    `raster` , `knitr`  | 
 | | Checking Projections/extends/cell size/NA’s | | 
 |  | Summarising  | | 
 |  | Raster calculations | 

@@ -29,7 +29,6 @@ See the License for the specific language governing permissions and limitations 
 - Raster Basics
 - Manipulating Rasters 
 - Remote Sensed data 
-- ??
 
 
 
