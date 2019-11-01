@@ -1,16 +1,18 @@
 ---
-title: "Project Management With RStudio"
+title: "Project Management & Using Git With RStudio"
 teaching: 20
 exercises: 10
 questions:
 - "How can I manage my projects in R?"
+- "How can I use Git with RStudio?"
 objectives:
 - Create self-contained projects in RStudio
+- Understand how to use Git from RStudio.
 keypoints:
 - "Use RStudio to create and manage projects with consistent layout."
 - "Treat raw data as read-only."
 - "Treat generated output as disposable."
-- "Separate function definition and application."
+- "Using RStudio's Git integration allows you to version control a project over time."
 ---
 
 
@@ -20,8 +22,6 @@ keypoints:
 The scientific process is naturally incremental, and many projects
 start life as random notes, some code, then a manuscript, and
 eventually everything is a bit mixed together.
-
-![](../fig/buffalo_tweet.png)
 
 Most people tend to organize their projects like this:
 
@@ -54,20 +54,20 @@ functionality. We'll be using this today to create a self-contained, reproducibl
 project.
 
 
-> ## Challenge: Creating a self-contained project
->
-> We're going to create a new project in RStudio:
->
-> 1. Click the "File" menu button, then "New Project".
-> 2. Click "New Directory".
-> 3. Click "New Project".
-> 4. Type in the name of the directory to store your project, e.g. "my_project".
-> 5. If available, select the checkbox for "Create a git repository."
-> 6. Click the "Create Project" button.
-{: .challenge}
+## Challenge: Creating a self-contained project
+
+We're going to create a new project in RStudio:
+1. Click the "File" menu button, then "New Project".
+2. Click "New Directory".
+3. Click "New Project".
+4. Type in the name of the directory to store your project, e.g. "my_project".
+5. If available, select the checkbox for "Create a git repository."
+6. Click the "Create Project" button.
+
 
 Now when we start R in this project directory, or open this project with RStudio,
 all of our work on this project will be entirely self-contained in this directory.
+
 
 ## Best practices for project organization
 
@@ -101,6 +101,7 @@ analysis. This makes it easier later, as many of my analyses are exploratory
 and don't end up being used in the final project, and some of the analyses
 get shared between projects.
 
+
 > ## Tip: Good Enough Practices for Scientific Computing
 >
 > [Good Enough Practices for Scientific Computing](https://github.com/swcarpentry/good-enough-practices-in-scientific-computing/blob/gh-pages/good-enough-practices-for-scientific-computing.pdf) gives the following recommendations for project organization:
@@ -110,117 +111,95 @@ get shared between projects.
 > 3. Put raw data and metadata in the `data` directory, and files generated during cleanup and analysis in a `results` directory.
 > 4. Put source for the project's scripts and programs in the `src` directory, and programs brought in from elsewhere or compiled locally in the `bin` directory.
 > 5. Name all files to reflect their content or function.
->
-{: .callout}
 
-### Separate function definition and application
-
-One of the more effective ways to work with R is to start by writing the code you want to run directly in an .R script, and then running the selected lines (either using the keyboard shortcuts in RStudio or clicking the "Run" button) in the interactive R console.
-
-When your project is in its early stages, the initial .R script file usually contains many lines
-of directly executed code. As it matures, reusable chunks get pulled into their
-own functions. It's a good idea to separate these functions into two separate folders; one
-to store useful functions that you'll reuse across analyses and projects, and
-one to store the analysis scripts.
-
-> ## Tip: avoiding duplication
->
-> You may find yourself using data or analysis scripts across several projects.
-> Typically you want to avoid duplication to save space and avoid having to
-> make updates to code in multiple places.
->
-> In this case I find it useful to make "symbolic links", which are essentially
-> shortcuts to files somewhere else on a filesystem. On Linux and OS X you can
-> use the `ln -s` command, and on Windows you can either create a shortcut or
-> use the `mklink` command from the windows terminal.
-{: .callout}
 
 ### Save the data in the data directory
 
 Now we have a good directory structure we will now place/save the data file in the `data/` directory.
 
-> ## Challenge 1
-> Download the gapminder data from [here](https://raw.githubusercontent.com/swcarpentry/r-novice-gapminder/gh-pages/_episodes_rmd/data/gapminder_data.csv).
->
-> 1. Download the file (CTRL + S, right mouse click -> "Save as", or File -> "Save page as")
-> 2. Make sure it's saved under the name `gapminder_data.csv`
-> 3. Save the file in the `data/` folder within your project.
->
-> We will load and inspect these data later.
-{: .challenge}
 
-> ## Challenge 2
-> It is useful to get some general idea about the dataset, directly from the
-> command line, before loading it into R. Understanding the dataset better
-> will come in handy when making decisions on how to load it in R. Use the command-line
-> shell to answer the following questions:
-> 1. What is the size of the file?
-> 2. How many rows of data does it contain?
-> 3. What kinds of values are stored in this file?
+
+> ## Tip: .RData
 >
-> > ## Solution to Challenge 2
-> >
-> > By running these commands in the shell:
-> > 
-> > ~~~
-> > ls -lh data/gapminder_data.csv
-> > ~~~
-> > {: .language-r}
-> > 
-> > 
-> > 
-> > 
-> > ~~~
-> > -rw-r--r--  1 naupaka  staff    80K Jan 29 08:04 data/gapminder_data.csv
-> > ~~~
-> > {: .output}
-> > The file size is 80K.
-> > 
-> > ~~~
-> > wc -l data/gapminder_data.csv
-> > ~~~
-> > {: .language-r}
-> > 
-> > 
-> > 
-> > 
-> > ~~~
-> >     1705 data/gapminder_data.csv
-> > ~~~
-> > {: .output}
-> > There are 1705 lines. The data looks like:
-> > 
-> > ~~~
-> > head data/gapminder_data.csv
-> > ~~~
-> > {: .language-r}
-> > 
-> > 
-> > 
-> > 
-> > ~~~
-> > country,year,pop,continent,lifeExp,gdpPercap
-> > Afghanistan,1952,8425333,Asia,28.801,779.4453145
-> > Afghanistan,1957,9240934,Asia,30.332,820.8530296
-> > Afghanistan,1962,10267083,Asia,31.997,853.10071
-> > Afghanistan,1967,11537966,Asia,34.02,836.1971382
-> > Afghanistan,1972,13079460,Asia,36.088,739.9811058
-> > Afghanistan,1977,14880372,Asia,38.438,786.11336
-> > Afghanistan,1982,12881816,Asia,39.854,978.0114388
-> > Afghanistan,1987,13867957,Asia,40.822,852.3959448
-> > Afghanistan,1992,16317921,Asia,41.674,649.3413952
-> > ~~~
-> > {: .output}
-> {: .solution}
-{: .challenge}
+> You can avoid saving and restoring .RData file using  **Tools -> Glocal Options -> Workspace** menu items.
+
+
+
+### Version Control
+
+[RStudio][rstudio]  has built-in
+integration with Git. While some advanced Git features still require the
+command-line, RStudio has a nice interface for many common Git operations. Let's take our planets directory and turn it into a RStudio project.
+
+
+To get started using Git in RStudio, we create a new project:
+
+![](../fig/RStudio_screenshot_newproject.png)
+
+This will open a dialog asking us how we want to create the project. We have
+some options here. Let's say that we want to use RStudio with the planets
+repository that we already made. Since that repository lives in a directory on
+our computer, we choose the option "Existing Directory":
+
+![](../fig/RStudio_screenshot_existingdirectory.png)
+
+
+Next, RStudio will ask which existing directory we want to use. Click
+"Browse..." and navigate to the correct directory, then click "Create Project":
+
+![](../fig/RStudio_screenshot_navigateexisting.png)
+
+Ta-da! We have created a new project in RStudio within the existing planets
+repository. Notice the vertical "Git" menu in the menu bar. RStudio has
+recognized that the current directory is a Git repository, and gives us a
+number of tools to use Git:
+
+![](../fig/RStudio_screenshot_afterclone.png)
+
+To edit the existing files in the repository, we can click on them in the
+"Files" panel on the lower right. Now let's add some additional information
+about Pluto:
+
+![](../fig/RStudio_screenshot_editfiles.png)
+
+Once we have saved our edited files, we can use RStudio to commit the changes
+by clicking on "Commit..." in the Git menu:
+
+![](../fig/RStudio_screenshot_commit.png)
+
+This will open a dialogue where we can select which files to commit (by
+checking the appropriate boxes in the "Staged" column), and enter a commit
+message (in the upper right panel). The icons in the "Status" column indicate
+the current status of each file. Clicking on a file shows information about
+changes in the lower panel (using output of `git diff`). Once everything is the
+way we want it, we click "Commit":
+
+![](../fig/RStudio_screenshot_review.png)
+
+The changes can be pushed by selecting "Push Branch" from the Git menu. There
+are also options to pull from the remote repository, and to view the commit
+history:
+
+![](../fig/RStudio_screenshot_history.png)
+
+> ## Are the Push/Pull Commands Grayed Out?
+>
+> Grayed out Push/Pull commands generally mean that RStudio doesn't know the
+> location of your remote repository (e.g. on GitHub). To fix this, open a
+> terminal to the repository and enter the command: `git push -u origin
+> master`. Then restart RStudio.
+
 
 > ## Tip: command line in R Studio
 >
 > You can quickly open up a shell in RStudio using the **Tools -> Shell...** menu item.
-{: .callout}
 
-### Version Control
+RStudio creates a number of files that it uses to keep track of a project. We
+often don't want to track these, in which case we add them to our `.gitignore`
+file:
 
-It is important to use version control with projects.  Go [here for a good lesson which describes using Git with RStudio](https://swcarpentry.github.io/git-novice/14-supplemental-rstudio/).
+![](../fig/RStudio_screenshot_gitignore.png)
 
 
+[rstudio]: https://www.rstudio.com/
+[rstudio-projects]: https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects
