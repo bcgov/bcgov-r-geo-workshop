@@ -158,7 +158,7 @@ div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
 
 #### _Questions:_ 
 
-1) Given the code below - what is the extent, cell size and maximum value of the raster ? 
+1) Given the code below: what is the extent, cell size and maximum value of the raster ? 
 
 ```{r, eval = T, echo = FALSE}
 sfile = list.files(data.dir, "slope.tif", recursive = T, full.names = T)
