@@ -29,7 +29,7 @@ knitr::opts_knit$set(echo = TRUE)
 
 This document outlines some basic operations for rasters. You can follow along by running the code (within markdown or as an R file) or refer to the html version. 
 
-```{r, eval = FALSE}
+```{r, eval = FALSE, echo = FALSE}
 library(usethis)
 
 # 1)  if you have not already - download the course content: 
@@ -60,31 +60,37 @@ library(raster)
 zip.file <- "../data/20191106_Day_2_PM_Raster/raster_basics.zip"
 data.dir <-"../data/20191106_Day_2_PM_Raster/raster_basics"
 
-#data.dir <-"data/20191106_Day_2_PM_Raster/raster_basics/raster_basics/"
 unzip(zipfile = zip.file, exdir = data.dir)
-
-#data.dir <-"data/20191106_Day_2_PM_Raster/raster_basics/raster_basics/"
-list.files(data.dir)
-
-file = list.files(data.dir, "DEM.tif", recursive = T, full.names = T)
-
-
 
 ```
 
+
+```{r optional local drive, echo = FALSE, eval = FALSE }
+# optional: To run locally within Rmarkdown 
+
+data.dir <-"data/20191106_Day_2_PM_Raster/raster_basics/raster_basics/"
+
+list.files(data.dir)
+
+```
+
+
 ### 2. Loading and checking rasters 
 
-We can read in raster data using the `raster` package. Unlike vectors, Rasters are defined by the location of grid extents, rather than individual vertices. This has some advantages and disadvantages as we will see.  
+We can read in raster data using the `raster` package. Unlike vectors, Rasters are defined by the location of grid extents, rather than individual vertices. This has some advantages and disadvantages. 
 
 
 ```{r load Raster, echo = TRUE, message= FALSE, include = T, results = "hide"}
-# read in a single raster 
+
+# read in a raster 
+
+file = list.files(data.dir, "DEM.tif", recursive = T, full.names = T)
 
 dem <- raster(file)
 
 ```
 
-Once we have read in the raster we can look at the key information; dimension (`dem`), resolution (cell size)(`res`), extents (`extent`), and Co-ordinate Reference System (CRS).
+Once we have read in the raster we can look at the key information; dimension (`dem`), resolution (cell size)(`res`), extents (`extent`), and Coordinate Reference System (CRS).
 
 ```{r, echo = T, include = T,eval = FALSE}
 
@@ -130,6 +136,7 @@ unique(values(dem)) # much more useful
 We also want to take a look to see if the raster data is what we expect. We can do this with a simple `plot()` function. 
 
 ```{r basic plot, results = "hide"}
+
 plot(dem)
 
 ```
@@ -145,7 +152,21 @@ NAvalue(dem) = -9999
 ```
 
 
-### 3. Co-ordinate Reference System (CRS)
+#### _Questions:_ 
+
+1) Given the code below - what is the extent, cell size and maximum value of the raster ? 
+
+```{r, eval = T, echo = FALSE}
+sfile = list.files(data.dir, "slope.tif", recursive = T, full.names = T)
+slope <- raster(sfile)
+slope
+
+```
+
+
+
+
+### 3. Coordinate Reference System (CRS)
 
 Coordinate Reference Systems come in three formats (`ESPG`, `proj4string`, `WKT`). Raster data commonly relies on `proj4string` type. In this case the `+` seperates each element (similar to csv is seperated with a comma). Tip: Mapping with leaflet and other web-mapping requires data to be in geographic CRS WGS84 (`EPSG: 4326`).
 
