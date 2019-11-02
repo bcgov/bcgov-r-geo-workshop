@@ -522,36 +522,45 @@ ggplot() +
 wna <- bcdc_query_geodata('7-5m-provinces-and-states-the-atlas-of-canada-base-maps-for-bc') %>% 
   filter(!is.na(NAME)) %>% 
   collect()
+
+nr_region <- nr_district %>% 
+  group_by(REGION_ORG_UNIT_NAME) %>% 
+  summarise() 
 ```
 
 ---
-## Added Western North American
+## + Western North American
 ```{r}
 fancy_plot <- ggplot() +
   geom_sf(data = wna)
 fancy_plot
 ```
 ---
-## Natural Resource Districts
+## + Natural Resource Regions
 ```{r}
-fancy_plot + geom_sf(data = nr_district, alpha = 0.5, aes(fill = REGION_ORG_UNIT_NAME))
+fancy_plot + 
+  geom_sf(data = nr_region, alpha = 0.5, aes(fill = REGION_ORG_UNIT_NAME))
 ```
 ---
-## Natural Resource Districts
+## + Intersect Natural Resource Districts
 ```{r}
-nr_region <- nr_district %>% 
-  group_by(REGION_ORG_UNIT_NAME) %>% 
-  summarise() 
-
 nr_region_int <- nr_region %>% 
   st_intersection(wna)
 
 fancy_plot <- fancy_plot + geom_sf(data = nr_region_int, alpha = 0.5, aes(fill = REGION_ORG_UNIT_NAME))
+fancy_plot
 ```
 ---
-## Cities
-```{r}
 
+## + Add some lines
+```{r}
+fancy_plot <- fancy_plot +
+  geom_sf(data = lines, colour = "yellow")
+```
+
+---
+## + Cities
+```{r}
 fancy_plot + geom_sf(data = bc_cities)
 ```
 
@@ -559,28 +568,113 @@ fancy_plot + geom_sf(data = bc_cities)
 ```{r}
 nrow(bc_cities)
 
-## Grab Biggest City by Natural Resource Region
 cities_by_region <- bc_cities %>% 
-  st_join(nr_district, join = st_intersects) %>% 
+  st_join(nr_region, join = st_intersects) %>% 
   group_by(REGION_ORG_UNIT_NAME) %>% 
   filter(POP_2000 == max(POP_2000))
 
-fancy_plot <- fancy_plot + geom_sf(data = cities_by_region)
-fancy_plot
-
-
-region_names <- st_centroid(nr_region)
+fancy_plot + geom_sf(data = cities_by_region)
 ```
 
 ---
-## Cities with Name
+## + Cities with Name
 
 ```{r}
+fancy_plot <- fancy_plot +
+  geom_sf(data = cities_by_region) +
+  geom_sf_label(data = cities_by_region, aes(label = NAME), nudge_y = 3E4, nudge_x = 4E4) 
+fancy_plot
+```
+---
+## + Labelling the Regions
+```{r}
+region_names <- st_centroid(nr_region) %>% 
+  mutate(REGION_ORG_UNIT_NAME = gsub(" Natural Resource Region", "", REGION_ORG_UNIT_NAME))
+
 fancy_plot +
-  geom_sf_label(data = cities_by_region, aes(label = NAME)) +
-  geom_sf_text(data = region_names, aes(label = REGION_ORG_UNIT_NAME))
+  geom_sf_text(data = region_names, aes(label = REGION_ORG_UNIT_NAME), size = 6)
+
+```
+---
+## + Map Components
+```{r}
+library(ggspatial)
+fancy_plot +
+  geom_sf_text(data = region_names, aes(label = REGION_ORG_UNIT_NAME), size = 6) +
+  coord_sf(datum = NA, expand = FALSE) +
+  annotation_scale(pad_x = unit(2, "cm"), pad_y = unit(1, "cm"),
+                   location = "bl",  style = "ticks", width_hint = 0.2) +
+  annotation_north_arrow(location = "bl", which_north = "grid")
+  
+```
+---
+## + Legends and titles
+```{r}
+text_box <- paste(strwrap("Some text that explains why I am plotting so things here and then find another thing to talk about again.", width = 40), collapse = "\n")
+
+fancy_plot +
+  geom_sf_text(data = region_names, aes(label = REGION_ORG_UNIT_NAME), size = 6) +
+  coord_sf(datum = NA, expand = FALSE) +
+  annotation_scale(pad_x = unit(2, "cm"), pad_y = unit(1, "cm"),
+                   location = "bl",  style = "ticks", width_hint = 0.2) +
+  annotation_north_arrow(location = "bl", which_north = "grid") +
+  labs(title = "British Columbia Natural Resource Regions",
+       subtitle = "Major transmission lines displayed using yellow",
+       caption = "Data retrieved from the BC Data Catalogue using the bcdata package") +
+  guides(fill = FALSE) +
+  annotate("label", x = 4E5, y = 4E5, label = text_box)
+```
+---
+
+## + Themes and Colours
+```{r}
+out <- fancy_plot +
+  geom_sf_text(data = region_names, aes(label = REGION_ORG_UNIT_NAME), size = 6) +
+  coord_sf(datum = NA, expand = FALSE) +
+  annotation_scale(pad_x = unit(2, "cm"), pad_y = unit(1, "cm"),
+                   location = "bl",  style = "ticks", width_hint = 0.2) +
+  annotation_north_arrow(location = "bl", which_north = "grid") +
+  labs(title = "British Columbia Natural Resource Regions",
+       subtitle = "Major transmission lines displayed in yellow",
+       caption = "Data retrieved from the BC Data Catalogue using the bcdata package") +
+  guides(fill = FALSE) +
+  annotate("label", x = 4E5, y = 4E5, label = text_box) +
+  theme_void() +
+  theme(panel.background = element_rect(fill = "aliceblue"),
+        panel.border = element_rect(size = 2, fill = NA))
+out
+```
+---
+
+## + export
+```{r, eval=FALSE}
+ggsave(out, file = "fancy_plot.pdf", height = 15, width = 15)
 ```
 
+---
+
+## + Some additional tweaking
+```{r, eval=FALSE}
+out <- fancy_plot +
+  geom_sf_text(data = region_names, aes(label = REGION_ORG_UNIT_NAME), size = 6) +
+  coord_sf(datum = NA, expand = FALSE) +
+  annotation_scale(pad_x = unit(2, "cm"), pad_y = unit(1, "cm"),
+                   location = "bl",  style = "ticks", width_hint = 0.2) +
+  annotation_north_arrow(location = "bl", which_north = "grid") +
+  labs(title = "British Columbia Natural Resource Regions",
+       subtitle = "Major transmission lines displayed in yellow",
+       caption = "Data retrieved from the BC Data Catalogue using the bcdata package") +
+  guides(fill = FALSE) +
+  annotate("label", x = 4E5, y = 4E5, label = text_box) +
+  theme_void() +
+  theme(panel.background = element_rect(fill = "aliceblue"),
+        panel.border = element_rect(size = 2, fill = NA), 
+        plot.title = element_text(size = 20),
+        plot.subtitle = element_text(size = 18),
+        plot.caption = element_text(size = 15))
+
+ggsave(out, file = "fancy_plot.pdf", height = 15, width = 15)
+```
 
 ---
 
