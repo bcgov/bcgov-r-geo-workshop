@@ -65,6 +65,7 @@ library(bcdata)
 library(ggspatial)
 library(bcmaps)
 library(here)
+library(mapview)
 ```
 
 
@@ -160,15 +161,40 @@ agreed-upon way to represent vector spatial data
 
 ---
 
-## Reading spatial data
+## Reading and previewing spatial data
 
+.pull-left[
 ```{r, eval=FALSE}
 library(sf)
+library(mapview)
 ```
-
 
 ```{r}
 airports <- st_read("data/20191106_Day_2_AM_Vector/bc_airports.gpkg", quiet = TRUE)
+```
+]
+
+.pull-right[
+```{r fig.width=5}
+mapview(airports)
+```
+]
+
+---
+
+# mapview
+
+
+```{r fig.width=10}
+mapview(airports, zcol = "NUMBER_OF_RUNWAYS")
+```
+
+
+---
+
+# Structure of an `sf` object
+
+```{r}
 airports
 ```
 
@@ -304,6 +330,7 @@ st_crs(3005)$proj4string
 - conversion to WGS84 `towgs84`
 - `units`
 - `no_defs` - no defaults are read from the defaults files
+- `datum`
 ]
 
 .pull-right[
@@ -316,4 +343,44 @@ st_proj_info("proj") %>% head()
 ]
 
 ---
+
+class: inverse, left, middle
+
+# Your turn
+
+.Large[
+Read in the electoral districts data in the `data` folder.
+- What type of geometry is it?
+- What is the CRS?
+- What is the EPSG code?
+]
+
+---
+
+## Solution
+
+```{r message=TRUE}
+elec_bc <- read_sf("data/20191106_Day_2_AM_Vector/bc_electoral_districts.shp")
+st_geometry(elec_bc)
+st_crs(elec_bc)
+```
+
+https://epsg.io/4326
+
+---
+
+# Use `ggplot2::geom_sf()` to make nice maps
+
+```{r eval=FALSE}
+library(ggplot2)
+```
+
+
+```{r}
+ggplot() + # leave this empty!
+  geom_sf(data = elec_bc)
+```
+
+---
+
 
