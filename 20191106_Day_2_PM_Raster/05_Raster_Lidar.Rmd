@@ -2,8 +2,9 @@
 title: "Raster Exercise - Lidar"
 author: "Alexandre Bevington"
 date: "October 27, 2019"
-output: md_document
-
+output: html_document
+editor_options:
+  chunk_output_type: console
 ---
 
 <!--
@@ -25,13 +26,12 @@ output: md_document
 
 
 ```{r cars}
-# install.packages(c("lidR"))
+# install.packages(c("lidR","rlas))
 
 library(lidR)
 library(rlas)
 library(raster)
 library(sf)
-  
 # library(rLiDAR)
 
 ```
@@ -40,14 +40,9 @@ library(sf)
 
 ```{r}
 # Get data from OpenTopography (http://opentopo.sdsc.edu)
-# download.file("https://cloud.sdsc.edu/v1/AUTH_opentopography/PC_Bulk/USBR_UCRB_East/Okanogan/CAN/49119-A4-nw-BB.laz", 
-#               destfile = "../data/20191106_Day_2_PM_Raster/l.laz")
+# download.file("https://cloud.sdsc.edu/v1/AUTH_opentopography/PC_Bulk/USBR_UCRB_East/Okanogan/CAN/49119-A4-nw-BB.laz"
 
-# OR 
-
-  unzip("../data/20191106_Day_2_PM_Raster/raster_lidar.zip", exdir = "../data/20191106_Day_2_PM_Raster")
-
-  las <- readLAS("../data/20191106_Day_2_PM_Raster/raster_lidar/49119-A4-nw-BB.laz")
+  las <- readLAS("data/20191106_Day_2_PM_Raster/raster_lidar/49119-A4-nw-BB.laz")
   
   las
   las@data
@@ -85,21 +80,23 @@ library(sf)
   ymax = e[4]
 
   cellsize <- 2
-  r <- raster(e, ncol=(xmax-xmin)/cellsize, nrow=(ymax - ymin)/cellsize)
+  
+  r <- raster(e, ncol=(xmax-xmin)/cellsize, nrow=(ymax - ymin)/cellsize, crs = crs(las))
 
 # .Las to .Tif
   r_min <- rasterize(las@data[, 1:2], r, las@data[,3], fun=min)
   r_max <- rasterize(las@data[, 1:2], r, las@data[,3], fun=max)
   r_dif <- r_max-r_min
 
-  crs(r_dif) <- crs(las)
-
 # Reclassify Canopy height model (r_max - r_min) to drop <5m as NA
   r_dif_cl <-reclassify(r_dif, rcl = c(-Inf,5,NA))
 
 # View and Export
-  mapview::mapview(r_dif_cl)
-  writeRaster(x = r_dif_cl, filename = "../data/20191106_Day_2_PM_Raster/49119-A4-nw-BB_conpyGt5m.tif")
+  mapview::mapview(r_dif_cl,map.types="Esri.WorldImagery", na.color = NA)
+  
+  # writeRaster(x = r_min, filename = "data/20191106_Day_2_PM_Raster/raster_lidar/49119-A4-nw-BB_conpy_min.tif")
+  # writeRaster(x = r_max, filename = "data/20191106_Day_2_PM_Raster/raster_lidar/49119-A4-nw-BB_conpy_max.tif")
+  # writeRaster(x = r_dif_cl, filename = "data/20191106_Day_2_PM_Raster/raster_lidar/49119-A4-nw-BB_canopy.tif")
 
 ```
 

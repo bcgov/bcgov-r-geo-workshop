@@ -2,8 +2,9 @@
 title: "Raster Exercise - MODIS Satellite Imagery"
 author: "Alexandre Bevington"
 date: "October 27, 2019"
-output: md_document
-
+output: html_document
+editor_options:
+  chunk_output_type: console
 ---
 
 <!--
@@ -27,6 +28,8 @@ output: md_document
 
 ```{r}
 
+# install.packages(c("magick","RStoolbox","sf","tidyverse","bcmaps","raster"))
+
 library(magick)
 library(RStoolbox)
 library(sf)
@@ -41,7 +44,7 @@ library(raster)
 ```{r}
 
 # Make a list of the "TIF" files in a directory of interest (only one in this case)
-  files <- list.files(path = "../data/20191106_Day_2_PM_Raster/raster_modis", pattern = ".tif$", full.names = T)
+  files <- list.files(path = "data/20191106_Day_2_PM_Raster/raster_modis", pattern = "*.tif$", full.names = T)
   files
 
 # Raster stack
@@ -98,7 +101,7 @@ library(raster)
           }
         
         if(save){ 
-          ggsave(plot = final.plot, filename = paste0("../data/20191106_Day_2_PM_Raster/raster_modis/",name,"_",as.character(maxpix),"_",outdpi,"_","out.png"),
+          ggsave(plot = final.plot, filename = paste0("data/20191106_Day_2_PM_Raster/raster_modis/",name,"_",as.character(maxpix),"_",outdpi,"_","out.png"),
            width = 8, height=8, dpi = outdpi, device = "png")
           print(paste0("saving plot ", names(raster)))
         }
@@ -124,7 +127,7 @@ library(raster)
 ```{r plots-to-gif, eval=F}
 
 # List png iles
-  exported_png <- list.files(path = "../data/20191106_Day_2_PM_Raster/raster_modis/", 
+  exported_png <- list.files(path = "data/20191106_Day_2_PM_Raster/raster_modis/", 
                              pattern = "*.png", full.names = T) 
   exported_png
   
@@ -133,7 +136,7 @@ library(raster)
     map(image_read) %>%
     image_join() %>% 
     image_animate(fps=4) %>% 
-    image_write( "../data/20191106_Day_2_PM_Raster/raster_modis/ndvi_timelapse.gif")
+    image_write( "data/20191106_Day_2_PM_Raster/raster_modis/ndvi_timelapse.gif")
 
 ```
 
@@ -144,6 +147,9 @@ library(raster)
 # Import points for Prince George and Victoria
   cities <- bcmaps::bc_cities() %>% 
     filter(NAME %in% c("Prince George", "Victoria"))
+
+# View sites
+  mapview(cities,map.types="Esri.WorldImagery")
 
 # Extract raster values for each point 
   cities_modis <- raster::extract(modis_mask, cities, sp = T) %>% as_tibble()
