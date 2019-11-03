@@ -18,7 +18,7 @@ Here, you will find:
 ### Event Details 
 - _Who_: Current intermediate B.C. Government and external R users who would like to do more geospatial analysis in R
 - _What_: Workshop & Hackathon to learn about geospatial tools in R
-- _Where_: Aleza Room, Plaza 400, 1011 4th Ave, Prince George, BC V2L 3H9
+- _Where_: Aleza Room, 4th floor, Plaza 400, 1011 4th Ave, Prince George, BC V2L 3H9 (entrance at Queensway and 4th Ave)
 - _When_: 1 PM Tuesday November 5th to 5 PM Friday November 8th, 2019
 - _Cost_: Free for participants
 
@@ -84,8 +84,8 @@ We expect attendees to have at least the following level of experience:
     - [Read Happy Git with R](https://happygitwithr.com/)
 - GIS Tools (For Day 3 with T. Hengl)
   - **Mandatory**: QGIS ([_link_](https://qgis.org/en/site/forusers/download.html))
-  - **Mandatory**: SAGA ([_link_](https://sourceforge.net/projects/saga-gis/))
   - **Mandatory**: Google Earth ([_link_](https://support.google.com/earth/answer/21955?hl=en))
+  - **Recommended**: SAGA ([_link_](https://sourceforge.net/projects/saga-gis/))
   
 ------
 
