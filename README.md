@@ -92,7 +92,7 @@ We expect attendees to have at least the following level of experience:
 ### Workshop Schedule
 
 - **_Some_ Best Practices for Code Sharing** - Tuesday Nov. 5 (1pm - 5pm)
-  - **AM Optional:** Open house for software installation & troubleshooting (RStudio, R, Git) and GitHub account creation
+  - **AM Optional (9am - 1pm):** Open house for software installation & troubleshooting (RStudio, R, Git) and GitHub account creation
   - **PM:** Git + bcgov GitHub & Project Management with RStudio &mdash; [_course materials_](https://github.com/bcgov/bcgov-r-geo-workshop/tree/master/20191105_Day_1_PM_Intro) [_Instructor: [Steph Hazlitt](https://github.com/stephhazlitt)_]
   -	**Evening:** Social ice breaker (_self-pay_)
 
