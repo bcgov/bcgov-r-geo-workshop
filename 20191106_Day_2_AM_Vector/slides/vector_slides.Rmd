@@ -96,6 +96,7 @@ scale_fill_discrete <- scale_fill_viridis_d
    - Understand sf objects in R
    - Perform spatial operation, manipulations and joins
 - Plot vector data in R (`ggplot2` & `mapview`)
+- Use `bcdata` package to retrieve spatial data from the Bc data catalogue
 
 
 ---
@@ -198,12 +199,11 @@ starwars %>%
 # Andy's slides
 
 ---
-## higher-level operations: summarise, interpolate, aggregate, st_join
+## higher-level operations: summarise, interpolate, aggregate
 
 - `summarise` 
 - `aggregate` 
 - `st_interpolate_aw`
-- `st_join` 
 ---
 
 ## Using summarize() - Calculate `nr_regions`
@@ -226,14 +226,10 @@ ggplot() +
 - `st_distance`
 
 ```{r, cache=TRUE}
-lines <- bcdc_get_data('bc-transmission-lines')
-lines %>% 
-  st_join(nr_district) %>% 
-  group_by(REGION_ORG_UNIT_NAME) %>% 
-  summarise() %>% 
-  mutate(lines_length = st_length(geometry)) %>% 
-  st_drop_geometry()
+nr_region %>% 
+  mutate(lines_length = st_area(geometry))
 ```
+
 ---
 class: inverse, left, middle
 # Multi layer spatial plots with `ggplot2`
@@ -477,6 +473,15 @@ ggplot(cities_by_nr) +
 > Joining two non-spatial datasets relies on a shared ‘key’ variable. Spatial data joining applies the same concept, but instead relies on shared areas of geographic space (it is also know as spatial overlay).
 
 - [Geocomputation with R](https://geocompr.robinlovelace.net/intro.html)
+
+---
+class: inverse, left, middle
+# Your turn
+.Large[
+- Using `ggplot2` plot only *two* layers 
+  1. `big_fires` 
+  2. `fire_districts` <- only "Stuart Nechako", "Quesnel", "Cariboo-Chilcotin", and "Prince George" natural resource districts (`nr_district`)
+]
 
 ---
 ## Manipulating Geometries
