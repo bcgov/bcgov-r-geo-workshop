@@ -227,7 +227,7 @@ ggplot() +
 
 ```{r, cache=TRUE}
 nr_region %>% 
-  mutate(lines_length = st_area(geometry))
+  mutate(region_area = st_area(geometry))
 ```
 
 ---

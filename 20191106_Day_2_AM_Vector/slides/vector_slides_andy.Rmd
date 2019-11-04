@@ -403,11 +403,60 @@ ggplot() + # leave this empty!
   geom_sf(data = elec_bc)
 ```
 
+???
+
+- Notice strange orientation of BC - north is greatly exaggerated
+- because in WGS84 (lat/long) 
+- global CRS centred at lon 0 (Greenwich) and lat 0 (equator)
+- good for web mapping, not good for BC
+
+---
+
+## Transforming coordinate systems
+
+```{r}
+elec_bc_albers <- st_transform(elec_bc, 3005)
+
+# OR
+albers <- "+proj=aea +lat_1=50 +lat_2=58.5 +lat_0=45 +lon_0=-126 +x_0=1000000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
+elec_bc_albers <- st_transform(elec_bc, albers)
+
+# OR (very handy)
+
+elec_bc_albers <- st_transform(elec_bc, st_crs(airports))
+
+st_crs(elec_bc_albers)
+```
+
+---
+
+.pull-left[
+## WGS 84 (EPSG: 4326)
+<br/>
+
+    
+```{r}
+ggplot() + 
+  geom_sf(data = elec_bc)
+
+```
+]
+
+.pull-right[
+## BC Albers (EPSG: 3005)
+
+```{r}
+elec_bc_albers <- st_transform(elec_bc, 3005)
+ggplot() + 
+  geom_sf(data = elec_bc_albers)
+```
+]
+
 ---
 
 class: inverse, left, middle
 
-## Your turn
+# Your turn
 
 ### Load `"data/20191106_Day_2_AM_Vector/ski_resorts.csv"` as an `sf` object
 
@@ -445,9 +494,10 @@ head(ski_resorts)
 
 ---
 
-## Use `ggplot2` `aes()`
+## Use `ggplot2` `aes()` to style maps
 
 ```{r}
-ggplot() + geom_sf(data = ski_resorts, aes(colour = elevation))
+ggplot() + 
+  geom_sf(data = ski_resorts, aes(colour = elevation), size = 5)
 ```
 
