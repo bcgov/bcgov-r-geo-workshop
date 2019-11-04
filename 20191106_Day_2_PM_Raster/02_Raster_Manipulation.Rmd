@@ -270,7 +270,7 @@ re
 rstack <- stack(dem, re)
 
 # we can also add the slope raster we matched to our dem
-rstack <- stack(dem, sl)
+rstack <- stack(dem, re, sl)
 
 ```
 
@@ -281,10 +281,9 @@ Note: We can also use `resample` to transfer values between non matching raster 
 
 Another common workflow is to crop a raster by a vector layer. This may be a study area (AOI) or catergorical layers such as a BEC zone.
 
-In this example we will use our raster extent to create an aoi. We will then extract the BEC zone data from `bcmaps` package and extract the SBSmc2 area within our raster extent. 
+In this example we will create an areas of interest from our raster, then extract the BEC zone data from `bcmaps` package and subset to identify the SBSmc2 subzone.
 
 Firstly we will create an area of interest using out raster extent. 
-
 
 ```{r load libraries, echo = T, results = "hide", warning=FALSE}
 library(sf)
@@ -311,6 +310,9 @@ bec_aoi <- st_cast(bec_aoi, "MULTIPOLYGON")
 
 plot(bec_aoi)
 
+names(bec_aoi) 
+bec_aoi
+
 # We are only interested in the SBSmc2 type : lets assign a number 
 sbs <- bec_aoi %>%
   filter(MAP_LABEL == "SBSmc2") %>%
@@ -323,7 +325,6 @@ plot(st_geometry(sbs))
 We now have a vector or area of interest, which we can use to crop our raster or raster stack.  
 
 ```{r crop raster by vector, include =TRUE, results = "hide"}
-
 dem.c <- crop(x = dem, y = as(sbs , "Spatial"))
 
 plot(dem.c)
@@ -332,12 +333,15 @@ plot(dem.c)
 
 You may notice however in this example we dont exactly have what we want. As raster as based on grids we get the entire grid area, not just that of the vector we wanted. 
 
-
 ```{r plots dem and clip, echo = TRUE, eval = FALSE}
+par(mfrow=c(1,2))
+
 plot(dem)
-plot(dem.c, col = "red", add = T)
+
+plot(dem.c, col = "red")
 plot(st_geometry(sbs), add = T)
 
+dev.off()
 ```
 
 Another way to extract the data we want is to `mask` out the areas we dont want. 
@@ -345,7 +349,7 @@ Another way to extract the data we want is to `mask` out the areas we dont want.
 
 ## 4. Masking Rasters
 
-This function created a new raster that has the same values as a defined raster, except where the cells are NA. These cells will become `NA`'s. 
+This function creates a new raster that has the same values as a defined raster, except where the cells are NA. These cells will become `NA`'s. 
 
 In this example we will use our BEC SBSmc2 vector we created above. We firstly convert this to a raster object using the `fasterize` package.   
 
@@ -407,7 +411,6 @@ raster.xy.s <- extract(rstack, st_coordinates(pts))
 raster.xy.s <- cbind(raster.xy.s, pts.xy)
 
 
-
 ```
 
 </div>
@@ -423,6 +426,8 @@ div.green{ background-color:#FFFFE0; border-radius: 5px; padding: 20px;}
 1) Create a raster stack of the SBSdk BEC zone? 
 
 2) Calculate the mean value for each MAP_LABEL within the dem raster in a table format.
+
+
 
 </div>
 
