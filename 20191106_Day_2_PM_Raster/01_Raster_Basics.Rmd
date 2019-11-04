@@ -28,7 +28,7 @@ knitr::opts_knit$set(echo = TRUE)
 ```
 
 
-This document outlines some basic operations for rasters. You can follow along with the HTML or run the code yourself.  
+This document outlines some basic operations for rasters. You can follow along with the HTML version or run the code yourself in `R`.   
 
 ```{r, eval = FALSE, echo = FALSE}
 library(usethis)
@@ -48,18 +48,19 @@ purl("20191106_Day_2_PM_Raster/01_Raster_Basics.Rmd",
 
 ### Package history and tools
 
-- `raster` (first released in 2010 Robert Hijmans)
-- `sp` including  `SpatialGridDataFrame` & `SpatialPixalsDataFrame` data structure
+- `raster` (first released in 2010 Robert Hijmans).
+- `sp` including  `SpatialGridDataFrame` & `SpatialPixalsDataFrame` data structure.
 - `stars` : Spatiotemporal Arrays, Raster and Vector Data Cubes (Edzer Pebesma).
-- helper packages : `fasterize`, `rgdal`, `mapview` 
-- tools and bridges (RSAGA, RQGIS, RPYGeon)
+- `terra` : Updated `raster` package (Robert Hijmans).
+- helper packages : `fasterize`, `rgdal`, `mapview` etc.....
+- tools and bridges (RSAGA, RQGIS, RPYGeo).
 
 
-This modual will primarily be usng the [raster](https://cran.r-project.org/web/packages/raster/index.html) package, however it is worth noting there are a number of other packages currently being developed to handle raster data efficiently. These include; [stars](https://cran.r-project.org/web/packages/stars/index.html) and [terra](https://www.rdocumentation.org/packages/terra/versions/0.3-7/topics/terra-package).  
+This modual will primarily be using the [raster](https://cran.r-project.org/web/packages/raster/index.html) package, however it is worth noting there are a number of other packages currently being developed to handle raster data efficiently. These includes [stars](https://cran.r-project.org/web/packages/stars/index.html) and [terra](https://www.rdocumentation.org/packages/terra/versions/0.3-7/topics/terra-package).  
 
 
 ### 1. Set up 
-Firstly we set up our session by reading in required libraries and dataset. We can use `list.files` to take a look at what file types are available.  
+Firstly we set up our session by reading in required libraries and dataset.
 
 ```{r session setup, echo = TRUE, results = "hide", message= FALSE}
 
@@ -76,6 +77,7 @@ unzip(zipfile = zip.file, exdir = data.dir)
 
 
 ```{r optional local drive, echo = FALSE, eval = FALSE }
+
 # optional: To run locally within Rmarkdown 
 
 data.dir <-"data/20191106_Day_2_PM_Raster/raster_basics/raster_basics/"
@@ -87,7 +89,7 @@ list.files(data.dir)
 
 ### 2. Loading and checking rasters 
 
-We can read in raster data using the `raster` package. Unlike vectors, Rasters are defined by the location of grid extents, rather than individual vertices. This has some advantages and disadvantages. 
+We will use the `raster` package to read in our raster dataset. Unlike vectors, rasters are defined by the location of grid extents, rather than individual vertices. This has some advantages and disadvantages as we will see. 
 
 
 ```{r load Raster, echo = TRUE, message= FALSE, include = T, results = "hide"}
@@ -100,7 +102,7 @@ dem <- raster(file)
 
 ```
 
-Once we have read in the raster we can look at the key information; dimension (`dem`), resolution (cell size)(`res`), extents (`extent`), and Coordinate Reference System (CRS).
+Once we have read in the raster we can look at the key information; dimension (`dem`), resolution (cell size)(`res`), extent (`extent`), and Coordinate Reference System (CRS).
 
 ```{r, echo = T, include = T,eval = FALSE}
 
@@ -115,13 +117,13 @@ extent(dem)
 
 ```
 
-Secondly we can look in detail at the data values. For example we can review the minimum, maximum values and spread of the data (ie. the distribution of values)
+Secondly we can look in detail at the values of the raster. For example the minimum, maximum values and spread of the data (ie. the distribution of values).
 
 ```{r, echo = TRUE, include = TRUE, message = FALSE, eval = FALSE}
 
 summary(dem) # Note this throws an error 
  
-summary(dem, maxsamp = ncell(dem)) # forces to check all raster 
+summary(dem, maxsamp = ncell(dem)) # forces to check all raster cells
 
 cellStats(dem, sd)
 
@@ -143,7 +145,7 @@ unique(values(dem)) # much more useful
 
 ```
 
-We also want to take a look to see if the raster data is what we expect. We can do this with a simple `plot()` function. 
+We can also look to see if the raster data is what we expect. We can do this with a simple `plot()` function. 
 
 ```{r basic plot, results = "hide"}
 
@@ -151,10 +153,11 @@ plot(dem)
 
 ```
 
-When reading in rasters it is also important to check how NA's are treated. In this case our `NA`'s are correctly assigned as we see the min and max values do not include NA's. If we read in a raster as see `NA`'s in the min and max values summary we can assign `NA` or reassign to a specific value. For example we can assign all `NA` values a value of 0 or -9999.
+When reading in rasters it is also important to check how NA's are treated. In this case our `NA`'s are correctly assigned. We can tell this as the min and max values do not include NA's. If we read in a raster as see `NA`'s in the min and max values summary we can assign `NA` or reassign to a specific value. For example we can assign all `NA` values a value of 0 or -9999. We will touch on this later in the remote sensed data section. 
 
 
 ```{r, include = TRUE, results = "hide"}
+
 dem <- setMinMax(dem)  
 
 NAvalue(dem) = -9999
@@ -168,7 +171,7 @@ div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
 
 #### _Questions:_ 
 
-1) Given the code below: what is the extent, cell size and maximum value of the raster ? 
+1) Given the code below: what is the extent, cell size and maximum value of the raster? 
 
 ```{r, eval = T, echo = FALSE}
 sfile = list.files(data.dir, "slope.tif", recursive = T, full.names = T)
@@ -184,21 +187,27 @@ slope
 
 ### 3. Coordinate Reference System (CRS)
 
-Coordinate Reference Systems come in three formats (`ESPG`, `proj4string`, `WKT`). Raster data commonly relies on `proj4string` type. In this case the `+` separates each element. You can think of this as a common separating each value in a csv file. Tip: Mapping with leaflet and other web-mapping requires WGS84 (`EPSG: 4326`). We can see the crs when we call the raster by name or directly using the `crs()` command.
+Coordinate Reference Systems come in three formats (`EPSG`, `proj4string`, `WKT`). These represent European Petroleum Survey Group (EPSG), PROJ.4 library and Wel known text format. Raster data commonly relies on `proj4string` type. In this case the `+` separates each element. You can think of this as a common separating each value in a csv file. We can see the crs when we call the raster by name or directly using the `crs()` command.  
+
+*_Tip: Mapping with leaflet and other web-mapping requires WGS84 (`EPSG: 4326`)._
 
 ```{r projections, include = TRUE}
+
 dem
+
 crs(dem)
 
 ```
 
 The `crs` gives us important information as to what units the data is in, and as a consequence the cell size. For example our `dem` raster is measured in meters (m). This means out resolution is 25 m x 25 m cell size. 
-This is important to understand when looking at area calculations and cell resolution. 
+This is important when calculating areas.
 
 In many cases we use BCAlbers (`EPSG:3005`) as it is an equal area projection with units in meters. 
 
 ```{r, include = TRUE, results = "hide"}
+
 # we can check the information on our ESPG:3005
+
 CRS("+init=epsg:3005")
 
 projection(dem)  # gives us the string version proj4string
@@ -220,8 +229,11 @@ wgs84 <- "+init=epsg:4326"
 
 dem.wgs84 = projectRaster(dem, crs = wgs84)
 
+par(mfrow=c(1,2))  
 plot(dem)
 plot(dem.wgs84)
+
+dev.off()
 
 nrow(dem)
 nrow(dem.wgs84)
@@ -238,16 +250,16 @@ div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
 
 #### _Questions:_ 
 
-1) Compare the extent on the`dem` and `dem.wgs84` ? 
+1) Compare the extent on the`dem` and `dem.wgs84`. Why are they different?  
 
-2) Reproject the `dem.wgs84` raster back to `EPGS:3005` and check the crs to confirm ?
+2) Reproject the `dem.wgs84` raster back to `EPGS:3005` and check the crs. How can you tell it is in BC Albers?
 
 </div>
 
 
 ### 4. Visualise Rasters and Raster Data
 
-We can do quick visualisations of our rasters using the `plot()`. We can use `mapview` or `rasterVis` to view the plot interactively. Another option to take advantage of the `ggplot2` package is to covert our raster into a data.frame and plot the xy variables. This however can be more time consuming as we see from the code below.
+We can do quick visualisations of our rasters using the `plot()`. We can use `mapview` or `rasterVis` to view the plot interactively. Another option to take advantage of the `ggplot2` package is to convert our raster into a data.frame and plot the xy variables. This can be time consuming as we see from the code below.
 
 
 ```{r raster viz, include = TRUE, eval = FALSE, warning= FALSE,  message = FALSE}
@@ -353,11 +365,10 @@ div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
 
 2) Calculate the standard deviation of the dem values in each zone you created. Which zone has the most variation? 
 
+3) Create a map showing the dem variance over a 9 x 9 neighbourhood.
 
-3) Create a map shpwing variance over a 9 x 9 neighbourhood.
+4) Calculate the min and max variance value using your variance raster created in Q3.
 
-
-2) Calculate the mean value for the entire raster (hint: see section 1.)
 
 
 </div>
@@ -420,4 +431,63 @@ The contents presented here is drawn from a number of sources including:
 
 * [Geocomputation in R](https://geocompr.robinlovelace.net/) - Licences under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
 
+
+```{r answers to questions, eval = FALSE, echo = FALSE}
+## Answers to Questions 
+# Section 1: 
+#1) Given the code below: what is the extent, cell size and maximum value of the raster? 
+sfile = list.files(data.dir, "slope.tif", recursive = T, full.names = T)
+slope <- raster(sfile)
+slope
+
+extent(slope)
+res(slope)
+maxValue(slope)
+
+#2) What code could we use to check the mean values of all cells in the raster? 
+cellStats(slope, mean)
+
+# Section 2: 
+# 1) Compare the extent on the`dem` and `dem.wgs84` ? 
+extent(dem)
+extent(dem.wgs84)
+
+#2) Reproject the `dem.wgs84` raster back to `EPGS:3005` and check the crs to confirm ?
+bcalbs <- "+init=epsg:3005"
+new.rast <- projectRaster(dem.wgs84, crs =  bcalbs)
+crs(new.rast)
+
+
+# Section 3: 
+
+#1) Reclasify the dem raster into four classes ( <800 m, 800 - 1000, 1000-1250, 1250 - maximum) and plot the reclassed raster.  
+rcl <- matrix(c(-Inf, 800, 1, 
+                800.001, 1000, 2, 
+                1000.001, 1250, 3,
+                1250.001, Inf, 4),
+              ncol = 3, 
+              byrow = TRUE)
+recl.dem <- reclassify(dem, rcl = rcl)
+plot(recl.dem)
+
+#2) Calculate the standard deviation of the dem values in each zone you created. Which zone has the most variation?
+plot(recl.dem) 
+dem.zone <- zonal(dem, recl.dem, fun= "sd")
+dem.zone # zone 3 (1000 -1250m has the largest variability)
+
+
+#3) Create a map showing the dem variance over a 9 x 9 neighbourhood.
+
+r_focal = focal(dem, w = matrix (1, nrow = 9, ncol = 9), fun = var)
+
+plot(dem)
+plot(r_focal)
+
+#4) Calculate the min and max variance value using your variance map created in Q3.(hint: see section 1.)
+
+cellStats(r_focal, min)
+cellStats(r_focal, max)
+
+
+```
 
