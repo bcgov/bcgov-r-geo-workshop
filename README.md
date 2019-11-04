@@ -11,7 +11,7 @@ Here, you will find:
 - Friendly workshop reminders
 - Teaching materials
 - Resources & links to learning resources
-- Hackathon project ideas and discussion via the repo [issue](https://github.com/bcgov/bcgov-r-geo-workshop/issues?q=is%3Aissue+is%3Aopen+label%3A%22geospatial+hackathon%22) 
+- Hackathon project ideas and discussion via the repo [issues](https://github.com/bcgov/bcgov-r-geo-workshop/issues?q=is%3Aissue+is%3Aopen+label%3A%22geospatial+hackathon%22) 
 
 ------
 
@@ -112,6 +112,7 @@ We expect attendees to have at least the following level of experience:
   -	**AM:** Pick projects and separate into groups of 4. Hands on collaboration for all levels of users. To submit a hackathon project or idea, or comment on an existing project, please submit an  [issue](https://github.com/bcgov/bcgov-r-geo-workshop/issues?q=is%3Aissue+is%3Aopen+label%3A%22geospatial+hackathon%22).
   -	**PM:** End of day -> report back to group
   -	**Evening:** No event
+  - Note: Hackathon projects will be hosted in the [bcgov-datasci-labs](https://github.com/bcgov-datasci-labs) GitHub organization. See Andy Teucher to get added.
  
 ------
 
