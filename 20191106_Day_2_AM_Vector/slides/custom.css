@@ -2,3 +2,10 @@ pre {
   /* wrap code instead of scroll */
   white-space: pre-wrap;
 }
+
+.remark-slide .inverse thead,
+.remark-slide .inverse tfoot,
+.remark-slide .inverse tr:nth-child(even) {
+  color: #272822;
+  text-shadow: none;
+}

@@ -66,6 +66,7 @@ library(ggspatial)
 library(bcmaps)
 library(here)
 library(mapview)
+library(kableExtra)
 ```
 
 
@@ -91,6 +92,10 @@ read_sf <- function(..., quiet = TRUE, stringsAsFactors = FALSE,
   as_tibble = TRUE) {
   st_read(..., quiet = quiet, stringsAsFactors = stringsAsFactors, 
         as_tibble = as_tibble)
+}
+
+read.csv <- function(file, ...) {
+  utils::read.csv(file = here(file), ...)
 }
 
 ```
@@ -369,6 +374,23 @@ https://epsg.io/4326
 
 ---
 
+## Basic plotting
+
+.pull-left[
+```{r}
+plot(elec_bc)
+```
+]
+
+.pull-right[
+```{r}
+plot(elec_bc["ED_NAME"])
+```
+]
+
+
+---
+
 # Use `ggplot2::geom_sf()` to make nice maps
 
 ```{r eval=FALSE}
@@ -383,4 +405,49 @@ ggplot() + # leave this empty!
 
 ---
 
+class: inverse, left, middle
+
+## Your turn
+
+### Load `"data/20191106_Day_2_AM_Vector/ski_resorts.csv"` as an `sf` object
+
+```{r echo=FALSE}
+kable(head(read.csv("data/20191106_Day_2_AM_Vector/ski_resorts.csv"), 
+             format = "html"))
+```
+
+---
+
+class: inverse, left, middle
+
+## Hints:
+
+### Load `"data/20191106_Day_2_AM_Vector/ski_resorts.csv"` as an `sf` object
+
+```{r, eval=FALSE}
+ski_resorts <- read.csv("data/20191106_Day_2_AM_Vector/ski_resorts.csv")
+ski_resorts <- st_as_sf(ski_resorts, ...)
+```
+
+---
+
+## Solution
+
+```{r}
+ski_resorts <- read.csv("data/20191106_Day_2_AM_Vector/ski_resorts.csv", 
+                        stringsAsFactors = FALSE)
+
+ski_resorts <- st_as_sf(ski_resorts, coords = c("longitude", "latitude"), 
+                        crs = 4326)
+
+head(ski_resorts)
+```
+
+---
+
+## Use `ggplot2` `aes()`
+
+```{r}
+ggplot() + geom_sf(data = ski_resorts, aes(colour = elevation))
+```
 
