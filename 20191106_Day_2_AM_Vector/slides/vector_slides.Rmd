@@ -88,6 +88,15 @@ scale_fill_discrete <- scale_fill_viridis_d
 - Making publication plots with `ggplot2`
 ]
 
+---
+## What are you going to come away with?
+- Review of dplyr
+- Use `sf` package to:
+   - Read a variety of vector data into R
+   - Understand sf objects in R
+   - Perform spatial operation, manipulations and joins
+- Plot vector data in R (`ggplot2` & `mapview`)
+
 
 ---
 
