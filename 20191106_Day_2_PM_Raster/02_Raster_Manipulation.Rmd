@@ -95,7 +95,7 @@ file = list.files(data.dir, "DEM.tif", recursive = T, full.names = T)
 We can generate multiple rasters with the same alignment using the terrain functions  (See details in [Bonus Section](https://github.com/bcgov/bcgov-r-geo-workshop/blob/master/20191106_Day_2_PM_Raster/01_Raster_Basics.Rmd)). 
 These functions use focal calculations with a DEM `raster` to create slope and aspect rasters. 
 
-```{r regenerate basic dem layers, include = F}
+```{r regenerate basic dem layers, include = T, results = "hide"}
 
 dem <- raster(file)
 
@@ -150,8 +150,6 @@ Lets read in another data layer (slope.tiff) and build a stack with our `dem` ra
 
 ```{r load slope raster, eval = TRUE, echo = T}
 
-dem 
-
 file = list.files(data.dir, "slope.tif", recursive = T, full.names = T)
 
 slope <- raster(file)
@@ -160,7 +158,7 @@ slope <- raster(file)
 
 We can check a number of basic paramaters to see if these two rasters can be stacked. 
 
-```{r check rasters with different extent, include = FALSE}
+```{r check rasters with different extent, include = TRUE, results = "hide"}
 
 #  crs
 crs(slope)
@@ -185,23 +183,14 @@ stack(dem, slope)
 
 We get a fairly helpful error message! So what can we use to ensure the extents match? 
 
-```{r, eval = TRUE, echo = TRUE}
+```{r, eval = TRUE, echo = TRUE, results = "hide"}
 
 # Crop the extents
 
 sl <- crop(slope, dem)
 
-```
-
-
-Now check the extents and if they match try to `stack` the rasters. 
-
-
-```{r, eval = FALSE}
-
 extent(sl)
 extent(dem)
-
 
 stack(dem, sl) # success!
 
@@ -217,10 +206,11 @@ div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
 
 #### _Questions:_ 
 
-1) Read in "aspect.tif" from the data.dir ? 
+1) Read in "aspect.tif" from the data.dir. 
 
 2) Compare the resolution, extent, crs with the dem raster and predict if stack will be successful/ not successful and why? 
 
+* check the Rmd code if you have trouble with this step
 
 </div>
 
@@ -263,9 +253,6 @@ re <- crop(aspect, dem)
 # we then aggregate up by a factor of 5. This means our value will be 5 cells in each direction. 
 re <- aggregate(re, fact = 5, fun = mean, expand = TRUE) # Factor 5 * 5 =  25m.
 
-# we can then check the resolution 
-re
-
 # now everything looks good we can stack the rasters together
 rstack <- stack(dem, re)
 
@@ -285,7 +272,8 @@ In this example we will create an areas of interest from our raster, then extrac
 
 Firstly we will create an area of interest using out raster extent. 
 
-```{r load libraries, echo = T, results = "hide", warning=FALSE}
+```{r load libraries, include = TRUE, results = "hide", message= FALSE, warning = FALSE}
+
 library(sf)
 library(dplyr)
 library(bcmaps)
@@ -310,10 +298,8 @@ bec_aoi <- st_cast(bec_aoi, "MULTIPOLYGON")
 
 plot(bec_aoi)
 
-names(bec_aoi) 
-bec_aoi
+# We are only interested in the SBSmc2 type : lets assign a number value
 
-# We are only interested in the SBSmc2 type : lets assign a number 
 sbs <- bec_aoi %>%
   filter(MAP_LABEL == "SBSmc2") %>%
   mutate(id = 1) 
@@ -325,15 +311,16 @@ plot(st_geometry(sbs))
 We now have a vector or area of interest, which we can use to crop our raster or raster stack.  
 
 ```{r crop raster by vector, include =TRUE, results = "hide"}
+
 dem.c <- crop(x = dem, y = as(sbs , "Spatial"))
 
-plot(dem.c)
+#plot(dem.c)
 
 ```
 
 You may notice however in this example we dont exactly have what we want. As raster as based on grids we get the entire grid area, not just that of the vector we wanted. 
 
-```{r plots dem and clip, echo = TRUE, eval = FALSE}
+```{r plots dem and clip, echo = TRUE, eval = TRUE}
 par(mfrow=c(1,2))
 
 plot(dem)
@@ -354,7 +341,7 @@ This function creates a new raster that has the same values as a defined raster,
 In this example we will use our BEC SBSmc2 vector we created above. We firstly convert this to a raster object using the `fasterize` package.   
 
 
-```{r polygon to raster, echo = T, results = "hide"}
+```{r polygon to raster, echo = T, results = "hide", warning = FALSE, message = FALSE}
 
 library(fasterize)
 
@@ -374,7 +361,7 @@ plot(dem.m)
 
 We can also perform the `mask` function on raster stacks.  
 
-```{r mask raster stack, include = T, results = "hide"}
+```{r mask raster stack, include = T, eval = FALSE}
 
 rs <- mask(rstack, sbs.r)
 
