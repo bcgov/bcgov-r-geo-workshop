@@ -232,10 +232,10 @@ nr_region %>%
 
 ---
 class: inverse, left, middle
-# Multi layer spatial plots with `ggplot2`
 
+<img src="https://raw.githubusercontent.com/bcgov/bcdata/master/inst/sticker/bcdata.png" style="width: 400px;"/>
 ---
-## Grabbing data - bcdata
+## Grabbing our data
 ```{r, cache=TRUE}
 library(bcdata)
 
@@ -253,11 +253,17 @@ bc <- bcdc_query_geodata('7-5m-provinces-and-states-the-atlas-of-canada-base-map
   filter(ENGLISH_NAME == 'British Columbia') %>% 
   collect()
 ```
+---
+class: inverse, left, middle
+# Multi layer spatial plots with `ggplot2`
+
 
 ---
 ## Natural Resource Districts, Power Lines and Big Fires
 .pull-left[
 ```{r}
+library(ggplot2)
+
 m <- ggplot() +
   geom_sf(data = bc, fill = "grey80") +
   geom_sf(data = nr_district, fill = "purple", alpha = 0.5) +
@@ -333,8 +339,8 @@ p
 
 ---
 ## `st_union`
-TODO - choose colour that stands out better than black
 ```{r}
+library(sf)
 unionized <- st_union(quesnel_district, biggest_fire)
 p + geom_sf(data = unionized, size = 1.5, fill = NA, colour = "lightslateblue")
 ```
@@ -357,7 +363,7 @@ p + geom_sf(data = differenced, size = 1.5, fill = NA, colour = "lightslateblue"
 class: inverse, left, middle
 # Your turn
 .Large[
-Create a geometry of all transmission lines that intersect the four natural resource districts and create a multi-layer plot
+Create a geometry of all transmission lines that intersect the four natural resource districts (`fire_districts`) and create a multi-layer plot
 ]
 ---
 ## Solution
@@ -374,9 +380,8 @@ ggplot() +
 ---
 
 ## Geometry Predicates
-### Only for subsetting
-### Very similar to ESRI naming
 
+.pull-left[
 - `st_intersects`: touch or overlap
 - `st_disjoint`: !intersects
 - `st_touches`: touch
@@ -388,7 +393,13 @@ ggplot() +
 - `st_covered_by`: covered by
 - `st_equals`: equals
 - `st_equals_exact`: equals, with some fuzz
-        
+]
+
+.pull-right[
+### Only for subsetting
+### Based on PostGIS
+### Very similar to ESRI naming
+]
 ---
 ## Usage
 ```{r}
@@ -425,7 +436,7 @@ p2 + geom_sf(data = crosses_lines, fill = NA, colour = "lightslateblue", size = 
 class: inverse, left, middle
 # Your turn
 .Large[
-Which fires crossed transmission lines in 2017? Using geometry predicates to determine and ggplot2 to plot
+Which fires crossed transmission lines in 2017? Use geometry predicates to determine and ggplot2 to plot
 ]
 ---
 
@@ -478,10 +489,21 @@ ggplot(cities_by_nr) +
 class: inverse, left, middle
 # Your turn
 .Large[
-- Using `ggplot2` plot only *two* layers 
-  1. `big_fires` 
-  2. `fire_districts` <- only "Stuart Nechako", "Quesnel", "Cariboo-Chilcotin", and "Prince George" natural resource districts (`nr_district`)
+- Which natural resource district contains the greatest length of transmission lines?
+- Hint - use the `lines` and `nr_district` datasets
 ]
+
+---
+## Solution
+```{r}
+lines %>% 
+  st_join(nr_district) %>% 
+  mutate(length_lines = st_length(geometry)) %>% 
+  group_by(DISTRICT_NAME) %>% 
+  summarise(district_length_lines = sum(length_lines)) %>% 
+  arrange(desc(district_length_lines))
+```
+
 
 ---
 ## Manipulating Geometries
