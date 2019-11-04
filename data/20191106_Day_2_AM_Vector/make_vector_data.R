@@ -1,6 +1,8 @@
 library(bcdata)
 library(sf)
 library(glue)
+library(rmapshaper)
+library(elevatr)
 
 dir <- "data/20191106_Day_2_AM_Vector"
 
@@ -26,8 +28,17 @@ fix_epsg(dir, "temp.gpkg", "bc_airports.gpkg", "bc_airports", "3005")
 bcdc_get_data("current-provincial-electoral-districts-of-british-columbia",
               resource = "89de1e77-9e33-41dd-bf6f-34e6d664b89a") %>%
   st_transform(4326) %>%
+  ms_simplify() %>%
   st_write(glue("{dir}/temp.shp"),
            layer = "bc_electoral_districts", delete_layer = TRUE)
 
 fix_epsg(dir, "temp.shp", "bc_electoral_districts.shp",
          "bc_electoral_districts", "4326")
+
+# ski resorts csv
+bcdc_get_data("db1489d4-4304-4203-99bf-11b2b23179eb") %>%
+  get_elev_point(src = "aws") %>%
+  select(FACILITY_NAME, LOCALITY, LATITUDE, LONGITUDE, elevation) %>%
+  rename_all(tolower) %>%
+  st_drop_geometry() %>%
+  readr::write_csv("data/20191106_Day_2_AM_Vector/ski_resorts.csv")
