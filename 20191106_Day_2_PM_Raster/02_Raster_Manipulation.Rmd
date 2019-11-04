@@ -1,6 +1,6 @@
 ---
 title: "02 Raster Manipulation"
-author: G.Perkins
+author: "G.Perkins (Ministry of Environment and Climate Change Strategy)"
 output: 
   html_document:
     toc: TRUE
@@ -27,13 +27,23 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```
 
+```{r generate code only version , eval = FALSE, echo = FALSE}
+
+library(knitr)
+
+purl("20191106_Day_2_PM_Raster/01_Raster_Manipulation.Rmd", 
+    output = "20191106_Day_2_PM_Raster/01_Raster_Manipulation_code.R") 
+
+```
+
+
 We now know how to read in raster data, check parameters and do basic data visualisation and calculations. For most analysis however, we typically work with more than one raster from different sources. Consequentially rasters are often not aligned due to differences in resolution, CRS or extent. We also commonly work with both raster and vector data in an analysis workflow. 
 
-In this section we will work through a typical workflow to preparing multiple rasters, manipulating them to get an common raster alignment (stack). We will also explore using vector data as a boundary and to extract values from a stacked raster at XY points. 
-
+In this section we will work through a typical workflow to preprocess multiple rasters to enable rasters to be stacked together (same extent, resolution, crs). We will also explore using vector data with raster data and extracting values from a stacked raster at XY point locations. 
 
 Within the [raster](https://cran.r-project.org/web/packages/raster/raster.pdf) package there are a number of functions to manipulate the resolution and extent of a raster. 
 
+**Table 1**: Manipulation functions within the `raster` package (replicated from Hijmans, 2011).
 
 | Function         |  Details                   | 
 |:---------------|:----------------|
@@ -51,17 +61,17 @@ Within the [raster](https://cran.r-project.org/web/packages/raster/raster.pdf) p
 |  `t`  |   Transpose a Raster* object   |
 
 
-
 ## 1. Raster stacks and Bricks 
 
-An advantage of rasters is that we can stack them together to perform functions on mulitple layers at once. We can use `RasterStacks` or `RasterBricks`. Both of these can handle multiple layers. It is also important to note other packages are developing methods for storing large raster datasets such as `gdalcubes`. 
+An advantage of rasters is that we can stack them together to perform functions on mulitple layers at once. We can use either `RasterStacks` or `RasterBricks`. Note other packages are developing methods for storing large raster datasets such as `gdalcubes`. 
 
-Raster Bricks typically correspond to single multispectral satellite image. We will use these when dealing with remote sensed datasets. 
+`RasterBricks` typically correspond to single multispectral satellite image. We will use these when dealing with remote sensed datasets. 
 
 A `RasterStack` is similar, as it contains multiple layers, however all the layers have the same extent and resolution. 
 
 
 ```{r set up folders and working dirs, include = F}
+
 library(raster)
 
 data.dir <-"../data/20191106_Day_2_PM_Raster/raster_basics/raster_basics"
@@ -71,7 +81,8 @@ file = list.files(data.dir, "DEM.tif", recursive = T, full.names = T)
 ```
 
 
-```{r optional local drive,  eval = FALSE }
+```{r optional local drive,  eval = FALSE, include = FALSE}
+
 # optional: To run locally within Rmarkdown 
 
 #data.dir <-"data/20191106_Day_2_PM_Raster/raster_basics/raster_basics/"
@@ -81,13 +92,14 @@ file = list.files(data.dir, "DEM.tif", recursive = T, full.names = T)
 ```
 
 
-We will read in the dem `raster` and generate slope and aspect using the terrain function. (See details in [Bonus Section](https://github.com/bcgov/bcgov-r-geo-workshop/blob/master/20191106_Day_2_PM_Raster/01_Raster_Basics.Rmd). 
+We can generate multiple rasters with the same alignment using the terrain functions  (See details in [Bonus Section](https://github.com/bcgov/bcgov-r-geo-workshop/blob/master/20191106_Day_2_PM_Raster/01_Raster_Basics.Rmd)). 
+These functions use focal calculations with a DEM `raster` to create slope and aspect rasters. 
 
-```{r regenerate basic dem layers, include = F}
+```{r regenerate basic dem layers, include = T, results = "hide"}
 
 dem <- raster(file)
 
-slope <- terrain(dem, opt='slope', unit='radians',  neighbors=8)
+rad.slope <- terrain(dem, opt='slope', unit='radians',  neighbors=8)
 
 aspect <- terrain(dem, opt='aspect', unit='radians',  neighbors=8)
 
@@ -96,8 +108,9 @@ aspect <- terrain(dem, opt='aspect', unit='radians',  neighbors=8)
 We can `stack` our layers together into a single object and do some basic checks. 
 
 ```{r raster stack parameters, echo= T, results = 'hide'}
+
 # stack our layers together 
-raster.s <- stack(dem, slope, aspect)
+raster.s <- stack(dem, rad.slope, aspect)
 
 # check basic paramters
 raster.s
@@ -120,9 +133,9 @@ div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
 
 #### _Questions:_ 
 
-1) What function would we use to check the names of the rasters within a stack ? 
+1) What function would we use to check the names of the rasters within a stack? 
 
-2) Using the `cellStats()` function, calculate the mean and sd of each raster in the stack. Hint : check the required parameters by using `?cellStats`.
+2) Calculate the mean and sd of each raster in the stack?
 
 
 </div>
@@ -131,13 +144,11 @@ div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
 
 ## 2. Aggregate & Disaggregate 
 
-In practice, we normall obtain raster data from multiple sources and it is common to preprocess rasters to the same extents and cell size before they can be used in an analysis. 
+In practice, we often obtain raster datasets from multiple sources which are rarely aligned. This means preprocesing is a common requirements in most raster analysis. 
 
-Lets read in a slope layer and build a stack with our `dem` raster. Firstly we need to compare the resolution, extents and crs for each raster. 
+Lets read in another data layer (slope.tiff) and build a stack with our `dem` raster. Firstly we need to compare the resolution, extents and crs for each raster. 
 
 ```{r load slope raster, eval = TRUE, echo = T}
-
-dem 
 
 file = list.files(data.dir, "slope.tif", recursive = T, full.names = T)
 
@@ -147,7 +158,8 @@ slope <- raster(file)
 
 We can check a number of basic paramaters to see if these two rasters can be stacked. 
 
-```{r check rasters with different extent, include = FALSE}
+```{r check rasters with different extent, include = TRUE, results = "hide"}
+
 #  crs
 crs(slope)
 crs(dem)
@@ -165,28 +177,20 @@ We can see the extents dont match for these two rasters. What if we try to stack
 
 ```{r stack error, eval = FALSE, include = TRUE}
 
-#stack(dem, slope)
+stack(dem, slope)
 
 ```
 
 We get a fairly helpful error message! So what can we use to ensure the extents match? 
 
+```{r, eval = TRUE, echo = TRUE, results = "hide"}
 
-```{r, eval = TRUE, echo = TRUE}
 # Crop the extents
 
 sl <- crop(slope, dem)
 
-```
-
-
-Now check the extents and if they match try to `stack` the rasters. 
-
-
-```{r, eval = FALSE}
 extent(sl)
 extent(dem)
-
 
 stack(dem, sl) # success!
 
@@ -202,14 +206,15 @@ div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
 
 #### _Questions:_ 
 
-1) Read in "aspect.tif" from the data.dir ? 
+1) Read in "aspect.tif" from the data.dir. 
 
-2) Compare the resolution, extent, crs with the dem raster and predict if stack will be suceesful/ not succesful and why? 
+2) Compare the resolution, extent, crs with the dem raster and predict if stack will be successful/ not successful and why? 
 
+* check the Rmd code if you have trouble with this step
 
 </div>
 
-```{r dissagregation part1, eval = TRUE, echo = FALSE}
+```{r dissagregation part1, eval = TRUE, echo = FALSE, include = FALSE}
 
 file = list.files(data.dir, "aspect.tif", recursive = T, full.names = T)
 
@@ -229,10 +234,11 @@ extent(aspect)
 # If we try to stack these they wont stack 
 #stack(dem, aspect)
 
+#When we try to stack theses two rasters we get a fairly helpful error message. `Error in compareRaster(x) : different extent`#
+
+
 ```
 
-
-When we try to stack theses two rasters we get a fairly helpful error message. `Error in compareRaster(x) : different extent`
 
 We need to manipulate these rasters to ensure the resolution and extents match. We can use the `aggregate` function to reduce the resolution (make larger cells), or `dissagrate` to resample the raster (make smaller cells). 
 When using the `aggregate` function we can specify how we want our raster values aggregated. This will depend primarily on the type of data we have (i.e. catergorical or continuous).
@@ -247,14 +253,11 @@ re <- crop(aspect, dem)
 # we then aggregate up by a factor of 5. This means our value will be 5 cells in each direction. 
 re <- aggregate(re, fact = 5, fun = mean, expand = TRUE) # Factor 5 * 5 =  25m.
 
-# we can then check the resolution 
-re
-
 # now everything looks good we can stack the rasters together
 rstack <- stack(dem, re)
 
 # we can also add the slope raster we matched to our dem
-rstack <- stack(dem, sl)
+rstack <- stack(dem, re, sl)
 
 ```
 
@@ -265,12 +268,12 @@ Note: We can also use `resample` to transfer values between non matching raster 
 
 Another common workflow is to crop a raster by a vector layer. This may be a study area (AOI) or catergorical layers such as a BEC zone.
 
-In this example we will use our raster extent to create an aoi. We will then extract the BEC zone data from `bcmaps` package and extract the SBSmc2 area within our raster extent. 
+In this example we will create an areas of interest from our raster, then extract the BEC zone data from `bcmaps` package and subset to identify the SBSmc2 subzone.
 
 Firstly we will create an area of interest using out raster extent. 
 
+```{r load libraries, include = TRUE, results = "hide", message= FALSE, warning = FALSE}
 
-```{r load libraries, echo = T, results = "hide", warning=FALSE}
 library(sf)
 library(dplyr)
 library(bcmaps)
@@ -295,7 +298,8 @@ bec_aoi <- st_cast(bec_aoi, "MULTIPOLYGON")
 
 plot(bec_aoi)
 
-# We are only interested in the SBSmc2 type : lets assign a number 
+# We are only interested in the SBSmc2 type : lets assign a number value
+
 sbs <- bec_aoi %>%
   filter(MAP_LABEL == "SBSmc2") %>%
   mutate(id = 1) 
@@ -310,18 +314,21 @@ We now have a vector or area of interest, which we can use to crop our raster or
 
 dem.c <- crop(x = dem, y = as(sbs , "Spatial"))
 
-plot(dem.c)
+#plot(dem.c)
 
 ```
 
 You may notice however in this example we dont exactly have what we want. As raster as based on grids we get the entire grid area, not just that of the vector we wanted. 
 
+```{r plots dem and clip, echo = TRUE, eval = TRUE}
+par(mfrow=c(1,2))
 
-```{r plots dem and clip, echo = TRUE, eval = FALSE}
 plot(dem)
-plot(dem.c, col = "red", add = T)
+
+plot(dem.c, col = "red")
 plot(st_geometry(sbs), add = T)
 
+dev.off()
 ```
 
 Another way to extract the data we want is to `mask` out the areas we dont want. 
@@ -329,12 +336,12 @@ Another way to extract the data we want is to `mask` out the areas we dont want.
 
 ## 4. Masking Rasters
 
-This function created a new raster that has the same values as a defined raster, except where the cells are NA. These cells will become `NA`'s. 
+This function creates a new raster that has the same values as a defined raster, except where the cells are NA. These cells will become `NA`'s. 
 
 In this example we will use our BEC SBSmc2 vector we created above. We firstly convert this to a raster object using the `fasterize` package.   
 
 
-```{r polygon to raster, echo = T, results = "hide"}
+```{r polygon to raster, echo = T, results = "hide", warning = FALSE, message = FALSE}
 
 library(fasterize)
 
@@ -354,7 +361,7 @@ plot(dem.m)
 
 We can also perform the `mask` function on raster stacks.  
 
-```{r mask raster stack, include = T, results = "hide"}
+```{r mask raster stack, include = T, eval = FALSE}
 
 rs <- mask(rstack, sbs.r)
 
@@ -391,7 +398,6 @@ raster.xy.s <- extract(rstack, st_coordinates(pts))
 raster.xy.s <- cbind(raster.xy.s, pts.xy)
 
 
-
 ```
 
 </div>
@@ -408,6 +414,8 @@ div.green{ background-color:#FFFFE0; border-radius: 5px; padding: 20px;}
 
 2) Calculate the mean value for each MAP_LABEL within the dem raster in a table format.
 
+
+
 </div>
 
 ### Credits & Licensing
@@ -417,3 +425,34 @@ The contents presented here is drawn from a number of sources including:
 * [Data Carpentary](https://datacarpentry.org/) - Licensed under CC-BY 4.0 2018–2019 by The Carpentries
 
 * [Geocomputation in R](https://geocompr.robinlovelace.net/) - Licences under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
+
+
+
+```{r answers, eval = FALSE, include = FALSE}
+# Section 1: 
+
+#1) What function would we use to check the names of the rasters within a stack ? 
+
+names(raster.s)
+
+#2) Calculate the mean and sd of each raster in the stack?  
+
+cellStats(raster.s, mean)
+cellStats(raster.s, sd)
+
+# Section 2: 
+
+#### _Questions:_ 
+
+#1) Read in "aspect.tif" from the data.dir ? 
+
+# see inline code above 
+
+#2) Compare the resolution, extent, crs with the dem raster and predict if stack will be successful/ not successful and why? 
+
+# see inline code above 
+
+# Will not align as resolutions and extents are different 
+
+```
+
