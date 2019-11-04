@@ -27,6 +27,7 @@ knitr::opts_knit$set(echo = TRUE)
 
 ```
 
+
 This document outlines some basic operations for rasters. You can follow along with the HTML or run the code yourself.  
 
 ```{r, eval = FALSE, echo = FALSE}
@@ -43,6 +44,15 @@ purl("20191106_Day_2_PM_Raster/01_Raster_Basics.Rmd",
     output = "20191106_Day_2_PM_Raster/01_Raster_Basics_code.R") 
 
 ```
+
+
+### Package history and tools
+
+- `raster` (first released in 2010 Robert Hijmans)
+- `sp` including  `SpatialGridDataFrame` & `SpatialPixalsDataFrame` data structure
+- `stars` : Spatiotemporal Arrays, Raster and Vector Data Cubes (Edzer Pebesma).
+- helper packages : `fasterize`, `rgdal`, `mapview` 
+- tools and bridges (RSAGA, RQGIS, RPYGeon)
 
 
 This modual will primarily be usng the [raster](https://cran.r-project.org/web/packages/raster/index.html) package, however it is worth noting there are a number of other packages currently being developed to handle raster data efficiently. These include; [stars](https://cran.r-project.org/web/packages/stars/index.html) and [terra](https://www.rdocumentation.org/packages/terra/versions/0.3-7/topics/terra-package).  
