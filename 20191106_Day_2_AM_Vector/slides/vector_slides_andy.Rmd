@@ -66,7 +66,7 @@ library(ggspatial)
 library(bcmaps)
 library(here)
 library(mapview)
-library(kableExtra)
+library(units)
 ```
 
 
@@ -79,6 +79,9 @@ scale_fill_continuous <- scale_fill_viridis_c
 scale_colour_discrete <- scale_colour_viridis_d
 scale_fill_discrete <- scale_fill_viridis_d
 
+```
+
+```{r hacks, warning=FALSE, echo=FALSE}
 here_loc <- ifelse(dir.exists("data"), ".", "../..")
 here::set_here(here_loc)
 
@@ -97,7 +100,6 @@ read_sf <- function(..., quiet = TRUE, stringsAsFactors = FALSE,
 read.csv <- function(file, ...) {
   utils::read.csv(file = here(file), ...)
 }
-
 ```
 
 
@@ -174,13 +176,13 @@ library(sf)
 library(mapview)
 ```
 
-```{r}
+```{r, cache=TRUE}
 airports <- st_read("data/20191106_Day_2_AM_Vector/bc_airports.gpkg", quiet = TRUE)
 ```
 ]
 
 .pull-right[
-```{r fig.width=5}
+```{r fig.width=5, cache=TRUE}
 mapview(airports)
 ```
 ]
@@ -190,7 +192,7 @@ mapview(airports)
 # mapview
 
 
-```{r fig.width=10}
+```{r fig.width=10, cache=TRUE}
 mapview(airports, zcol = "NUMBER_OF_RUNWAYS")
 ```
 
@@ -300,7 +302,7 @@ https://epsg.io/3005
 ]
 
 .pull-right[
-```{r echo=FALSE}
+```{r echo=FALSE, cache=TRUE}
 
 albers_centre <- st_sfc(st_point(c(-126, 54)), crs = 4326) %>% 
   st_transform(3005)
@@ -364,7 +366,7 @@ Read in the electoral districts data in the `data` folder.
 
 ## Solution
 
-```{r message=TRUE}
+```{r message=TRUE, cache=TRUE}
 elec_bc <- read_sf("data/20191106_Day_2_AM_Vector/bc_electoral_districts.shp")
 st_geometry(elec_bc)
 st_crs(elec_bc)
@@ -377,7 +379,7 @@ https://epsg.io/4326
 ## Basic plotting
 
 .pull-left[
-```{r}
+```{r cache=TRUE}
 plot(elec_bc)
 ```
 ]
@@ -398,7 +400,7 @@ library(ggplot2)
 ```
 
 
-```{r}
+```{r cache=TRUE}
 ggplot() + # leave this empty!
   geom_sf(data = elec_bc)
 ```
@@ -414,7 +416,7 @@ ggplot() + # leave this empty!
 
 ## Transforming coordinate systems
 
-```{r}
+```{r cache=TRUE}
 elec_bc_albers <- st_transform(elec_bc, 3005)
 
 # OR
@@ -435,7 +437,7 @@ st_crs(elec_bc_albers)
 <br/>
 
     
-```{r}
+```{r cache=TRUE}
 ggplot() + 
   geom_sf(data = elec_bc)
 
@@ -445,7 +447,7 @@ ggplot() +
 .pull-right[
 ## BC Albers (EPSG: 3005)
 
-```{r}
+```{r cache=TRUE}
 elec_bc_albers <- st_transform(elec_bc, 3005)
 ggplot() + 
   geom_sf(data = elec_bc_albers)
@@ -461,7 +463,7 @@ class: inverse, left, middle
 ### Load `"data/20191106_Day_2_AM_Vector/ski_resorts.csv"` as an `sf` object
 
 ```{r echo=FALSE}
-kable(head(read.csv("data/20191106_Day_2_AM_Vector/ski_resorts.csv"), 
+knitr::kable(head(read.csv("data/20191106_Day_2_AM_Vector/ski_resorts.csv"), 
              format = "html"))
 ```
 
@@ -482,7 +484,7 @@ ski_resorts <- st_as_sf(ski_resorts, ...)
 
 ## Solution
 
-```{r}
+```{r cache=TRUE}
 ski_resorts <- read.csv("data/20191106_Day_2_AM_Vector/ski_resorts.csv", 
                         stringsAsFactors = FALSE)
 
@@ -494,10 +496,127 @@ head(ski_resorts)
 
 ---
 
-## Use `ggplot2` `aes()` to style maps
+## Use `ggplot2` aesthetics to style maps
+
+```{r cache=TRUE}
+ggplot() + 
+  geom_sf(data = ski_resorts, aes(colour = elevation), size = 5)
+```
+
+---
+
+class: inverse, middle
+
+.large.pull-left[
+<br/>
+- **`bcdc_browse()`** 
+  - Open the catalogue in your default browser
+- **`bcdc_search()`** 
+  - Search records in the catalogue
+- **`bcdc_search_facets()`** 
+  - List catalogue facet search options
+- **`bcdc_get_record()`** 
+  - Print a catalogue record
+- **`bcdc_get_data()`** 
+  - Get catalogue data
+- **`bcdc_query_geodata()`** 
+  - Get & query catalogue geospatial data available through a [Web Service](https://www2.gov.bc.ca/gov/content?id=95D78D544B244F34B89223EF06DF74E)
+]
+
+.pull-right[
+<img src="https://github.com/bcgov/bcdata/raw/master/inst/sticker/bcdata.png" alt="bcdata" />
+]
+
+.footnote[https://bcgov.github.io/bcdata]
+
+---
+
+## Get data with `bcdata`
+
+https://catalogue.data.gov.bc.ca/dataset/railway-track-line
+
+```{r eval=FALSE}
+library(bcdata)
+```
+
+```{r eval=FALSE}
+railways <- bcdc_get_data("railway-track-line",
+                          resource = "bf30d34e-1f6b-4034-a35c-1cf7c9707ae7")
+```
+
+OR
+
+```{r cache=TRUE}
+railways <- bcdc_get_data("WHSE_BASEMAPPING.GBA_RAILWAY_TRACKS_SP")
+
+railways
+```
+
+---
 
 ```{r}
 ggplot() + 
-  geom_sf(data = ski_resorts, aes(colour = elevation), size = 5)
+  geom_sf(data = railways, aes(colour = USE_TYPE))
+```
+
+---
+
+## Using `dplyr` with `sf` objects
+
+select: geometry is "sticky"
+
+```{r}
+railways <- select(railways, TRACK_NAME, TRACK_CLASSIFICATION, 
+                   USE_TYPE)
+railways
+```
+
+---
+
+## Computing geometric measurements
+
+- `st_area`
+- `st_length`
+- `st_distance`
+
+```{r}
+st_length(railways)
+```
+
+```{r}
+railways <- mutate(railways, track_length = st_length(geometry))
+```
+
+---
+
+class: inverse, middle
+
+## Your turn
+
+Create an `sf` object from railways containing only track segments 
+longer than 5 km
+
+---
+
+## Solution
+
+### Note geometric measures return `units`
+
+```{r}
+long_railways <- filter(railways, as.numeric(track_length) > 5000)
+```
+
+OR 
+
+```{r}
+library(units)
+long_railways <- filter(railways, track_length > as_units(5000, "m"))
+```
+
+---
+
+```{r cache=TRUE}
+ggplot() +
+  geom_sf(data = long_railways, aes(colour = as.numeric(track_length)))
 ```
 
