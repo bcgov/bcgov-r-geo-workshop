@@ -605,7 +605,7 @@ head(ski_resorts)
 
 ## Use `ggplot2` aesthetics to style maps
 
-```{r cache=TRUE}
+```{r cache=TRUE, fig.width=10, fig.height=6}
 ggplot() + 
   geom_sf(data = ski_resorts, aes(colour = elevation), size = 5)
 ```
@@ -661,7 +661,7 @@ railways
 
 ---
 
-```{r}
+```{r fig.width=11, fig.height=7}
 ggplot() + 
   geom_sf(data = railways, aes(colour = USE_TYPE))
 ```
@@ -722,7 +722,7 @@ long_railways <- filter(railways, track_length > as_units(5000, "m"))
 
 ---
 
-```{r cache=TRUE}
+```{r cache=TRUE, fig.width=11, fig.height=7}
 ggplot() +
   geom_sf(data = long_railways, aes(colour = as.numeric(track_length)))
 ```
@@ -738,10 +738,15 @@ nr_district <- bcdc_get_data('natural-resource-nr-district')
 nr_region <- nr_district %>% 
   group_by(REGION_ORG_UNIT_NAME) %>% 
   summarise() # << defaults to union
+```
 
+---
+
+```{r cache=TRUE, fig.width=11, fig.height=7}
 ggplot() +
   geom_sf(data = nr_region, colour = "white", aes(fill = REGION_ORG_UNIT_NAME)) 
 ```
+
 ---
 
 class: inverse
