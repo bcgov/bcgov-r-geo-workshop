@@ -62,7 +62,7 @@ We expect attendees to have at least the following level of experience:
 - R
   - **Mandatory**: Install R and RStudio ([_link_](https://github.com/bcgov/bcgov-data-science-resources/wiki/Installing-R-&-RStudio))
   - **Mandatory**: Install R packages (more to come): 
-      `install.packages(c("tidyverse", "sf", "sp","raster","stars", "lwgeom", "mapview", "ggplot2","lidR", "gdalcubes", "ggspatial"))`
+      `install.packages(c("tidyverse", "sf", "sp","raster","stars", "lwgeom", "mapview", "ggplot2","lidR", "gdalcubes", "ggspatial", "bcdata"))`
   - **Mandatory for R Beginners**: 
     - [Reproducible Scientific Analysis](https://swcarpentry.github.io/r-novice-gapminder/)
   - Recommended Reading (Beginner): 
