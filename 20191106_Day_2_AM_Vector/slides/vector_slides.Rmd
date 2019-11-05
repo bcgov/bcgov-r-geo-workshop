@@ -5,7 +5,6 @@ author: "Andy Teucher <br> Ministry of Environment and Climate Change Strategy <
 date: 2019-11-06
 output:
   xaringan::moon_reader:
-    keep_md: true
     lib_dir: libs
     css: ["default", "default-fonts", "hygge", "custom.css"]
     nature:
@@ -69,19 +68,12 @@ library(mapview)
 library(units)
 ```
 
-
-```{r, theme, warning=FALSE, echo=FALSE}
-suppressWarnings(theme_set(theme_void()))
-
-
+```{r hacks, warning=FALSE, echo=FALSE}
 scale_colour_continuous <- scale_colour_viridis_c
 scale_fill_continuous <- scale_fill_viridis_c
 scale_colour_discrete <- scale_colour_viridis_d
 scale_fill_discrete <- scale_fill_viridis_d
 
-```
-
-```{r hacks, warning=FALSE, echo=FALSE}
 here_loc <- ifelse(dir.exists("data"), ".", "../..")
 here::set_here(here_loc)
 
@@ -106,28 +98,33 @@ read.csv <- function(file, ...) {
 
 ## Outline
 
-.VeryLarge[
+.Large[
 - Brief review of dplyr
-- 
-- Multi layer plots with `ggplot2`
+- Introduction to Simple Features and the `sf` package
+- Coordinate Reference Systems
+- Reading various spatial data formats
+- Basic manipulation, summarization, visualization
+- Multi-layer plots with `ggplot2`
 - Spatial Operations
 - Making publication plots with `ggplot2`
 ]
 
 ---
 ## What are you going to come away with?
+
+.Large[
 - Review of dplyr
 - Use `sf` package to:
    - Read a variety of vector data into R
    - Understand sf objects in R
-   - Perform spatial operation, manipulations and joins
+   - Perform spatial operations, manipulations and joins with `dplyr`
 - Plot vector data in R (`ggplot2` & `mapview`)
-- Use `bcdata` package to retrieve spatial data from the Bc data catalogue
-
+- Use `bcdata` package to retrieve spatial data from the B.C. data catalogue
+]
 
 ---
 
-##`dplyr` verbs
+## `dplyr` verbs
 
 Functions with English meanings that map directly to the action being taken when that function is called
 
@@ -135,14 +132,14 @@ Installation: `install.packages("dplyr")`
 
 
 .pull-left[
-- `%>%` a special symbol to chain operations. Read it as "then"
 - `select()` picks variables based on their names.
 - `filter()` picks cases based on their values.
 - `summarise()` reduces multiple values down to a single summary.
 - `arrange()` changes the ordering of the rows.
 - `mutate()` adds new variables that are functions of existing variables
+- `%>%` a special symbol to chain operations. Read it as "then"
 
-For a offline tutorial: http://swcarpentry.github.io/r-novice-gapminder/13-dplyr/index.html
+For an offline tutorial: http://swcarpentry.github.io/r-novice-gapminder/13-dplyr/index.html
 ]
 
 
@@ -165,7 +162,7 @@ select(starwars, name, height, hair_color, homeworld)
 
 ## Using filter()
 
-To select on some subset of rows:
+To retain only a subset of rows:
 ```{r}
 filter(starwars,  homeworld == "Tatooine")
 ```
@@ -418,7 +415,8 @@ ggplot() +
   geom_sf(data = bc_bound()) + 
   geom_sf(data = albers_centre, colour = "blue", size = 5) + 
   geom_sf(data = bc_cities() %>% filter(NAME == "Burns Lake")) + 
-  geom_sf_text(data = bc_cities() %>% filter(NAME == "Burns Lake"), aes(label = NAME), nudge_x = 100000, nudge_y = 30000)
+  geom_sf_text(data = bc_cities() %>% filter(NAME == "Burns Lake"), aes(label = NAME), nudge_x = 100000, nudge_y = 30000) + 
+  theme_void()
   
 ```
 ]
@@ -441,7 +439,7 @@ st_crs(3005)$proj4string
 - standard parallels (`lat_1`, `lat_2`)
 - origin (`lat_0`, `lon_0`, `x_0`, `y_0`)
 - ellipsis (`ellps`)
-- conversion to WGS84 `towgs84`
+- conversion to WGS84 (`towgs84`)
 - `units`
 - `no_defs` - no defaults are read from the defaults files
 - `datum`
@@ -567,7 +565,7 @@ class: inverse, left, middle
 
 # Your turn
 
-### Load `"data/20191106_Day_2_AM_Vector/ski_resorts.csv"` as an `sf` object
+.Large[Load `"data/20191106_Day_2_AM_Vector/ski_resorts.csv"` as an `sf` object]
 
 ```{r echo=FALSE}
 knitr::kable(head(read.csv("data/20191106_Day_2_AM_Vector/ski_resorts.csv")), 
@@ -646,16 +644,10 @@ https://catalogue.data.gov.bc.ca/dataset/railway-track-line
 library(bcdata)
 ```
 
-```{r eval=FALSE}
+```{r cache=TRUE}
 railways <- bcdc_get_data("railway-track-line",
                           resource = "bf30d34e-1f6b-4034-a35c-1cf7c9707ae7")
-```
-
-OR
-
-```{r cache=TRUE}
-railways <- bcdc_get_data("WHSE_BASEMAPPING.GBA_RAILWAY_TRACKS_SP")
-
+# OR: railways <- bcdc_get_data("WHSE_BASEMAPPING.GBA_RAILWAY_TRACKS_SP")
 railways
 ```
 
@@ -696,12 +688,12 @@ railways <- mutate(railways, track_length = st_length(geometry))
 
 ---
 
-class: inverse, middle
+class: inverse, left, middle
 
-## Your turn
+# Your turn
 
-Create an `sf` object from railways containing only track segments 
-longer than 5 km
+.Large[Create an `sf` object from railways containing only track segments 
+longer than 5 km]
 
 ---
 
@@ -744,14 +736,36 @@ nr_region <- nr_district %>%
 
 ```{r cache=TRUE, fig.width=11, fig.height=7}
 ggplot() +
-  geom_sf(data = nr_region, colour = "white", aes(fill = REGION_ORG_UNIT_NAME)) 
+  geom_sf(data = nr_region, colour = "white", 
+          aes(fill = REGION_ORG_UNIT_NAME)) 
 ```
 
 ---
 
-class: inverse
+.pull-left[
+```{r cache=TRUE}
+nr_region_multi <- nr_district %>% 
+  group_by(REGION_ORG_UNIT_NAME) %>% 
+  summarise(do_union = FALSE) # <<--
 
-## Your turn: Find the total area of each NR region
+nr_region_multi
+```
+]
+
+.pull-right[
+```{r cache=TRUE}
+ggplot() +
+  geom_sf(data = nr_region_multi, colour = "white", 
+          aes(fill = REGION_ORG_UNIT_NAME)) 
+```
+]
+
+---
+class: inverse, left, middle
+
+# Your turn
+
+.Large[Find the total area of each NR region]
 
 ---
 
@@ -764,6 +778,10 @@ nr_region %>%
 
 ---
 class: inverse, left, middle
+
+```{r, theme, warning=FALSE, echo=FALSE}
+suppressWarnings(theme_set(theme_void()))
+```
 
 <img src="https://raw.githubusercontent.com/bcgov/bcdata/master/inst/sticker/bcdata.png" style="width: 400px;"/>
 ---
