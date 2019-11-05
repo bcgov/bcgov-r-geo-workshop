@@ -199,16 +199,12 @@ starwars %>%
 # Andy's slides
 
 ---
-## higher-level operations: summarise, interpolate, aggregate
-
-- `summarise` 
-- `aggregate` 
-- `st_interpolate_aw`
----
+## dplyr::summarise
 
 ## Using summarize() - Calculate `nr_regions`
 ```{r, cache=TRUE}
 nr_district <- bcdc_get_data('natural-resource-nr-district')
+
 
 nr_region <- nr_district %>% 
   group_by(REGION_ORG_UNIT_NAME) %>% 
@@ -219,11 +215,13 @@ ggplot() +
 ```
 ---
 
+class: inverse
 
-## Computing geometric measurements - Find the total length of transmission lines by natural resource region
-- `st_area`
-- `st_length`
-- `st_distance`
+## Your turn: Find the total area of each NR region
+
+---
+
+## Solution
 
 ```{r, cache=TRUE}
 nr_region %>% 
