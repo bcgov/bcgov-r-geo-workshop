@@ -12,7 +12,6 @@ output:
       highlightLines: true
       countIncrementalSlides: false
       beforeInit: "https://platform.twitter.com/widgets.js"
-      ratio: '16:9'
 editor_options: 
   chunk_output_type: console
 ---
@@ -139,7 +138,6 @@ Installation: `install.packages("dplyr")`
 - `mutate()` adds new variables that are functions of existing variables
 - `%>%` a special symbol to chain operations. Read it as "then"
 
-For an offline tutorial: http://swcarpentry.github.io/r-novice-gapminder/13-dplyr/index.html
 ]
 
 
@@ -565,7 +563,7 @@ class: inverse, left, middle
 
 # Your turn
 
-.Large[Load `"data/20191106_Day_2_AM_Vector/ski_resorts.csv"` as an `sf` object]
+Load `"data/20191106_Day_2_AM_Vector/ski_resorts.csv"` as an `sf` object
 
 ```{r echo=FALSE}
 knitr::kable(head(read.csv("data/20191106_Day_2_AM_Vector/ski_resorts.csv")), 
@@ -578,7 +576,7 @@ class: inverse, left, middle
 
 ## Hints:
 
-### Load `"data/20191106_Day_2_AM_Vector/ski_resorts.csv"` as an `sf` object
+Load `"data/20191106_Day_2_AM_Vector/ski_resorts.csv"` as an `sf` object
 
 ```{r, eval=FALSE}
 ski_resorts <- read.csv("data/20191106_Day_2_AM_Vector/ski_resorts.csv")
@@ -593,7 +591,8 @@ ski_resorts <- st_as_sf(ski_resorts, ...)
 ski_resorts <- read.csv("data/20191106_Day_2_AM_Vector/ski_resorts.csv", 
                         stringsAsFactors = FALSE)
 
-ski_resorts <- st_as_sf(ski_resorts, coords = c("longitude", "latitude"), 
+ski_resorts <- st_as_sf(ski_resorts, 
+                        coords = c("longitude", "latitude"), 
                         crs = 4326)
 
 head(ski_resorts)
@@ -630,9 +629,11 @@ class: inverse, middle
 
 .pull-right[
 <img src="https://github.com/bcgov/bcdata/raw/master/inst/sticker/bcdata.png" alt="bcdata" />
-]
 
 .footnote[https://bcgov.github.io/bcdata]
+]
+
+
 
 ---
 
@@ -777,13 +778,34 @@ nr_region %>%
 ```
 
 ---
-class: inverse, left, middle
+
+class: inverse, middle
 
 ```{r, theme, warning=FALSE, echo=FALSE}
 suppressWarnings(theme_set(theme_void()))
 ```
 
-<img src="https://raw.githubusercontent.com/bcgov/bcdata/master/inst/sticker/bcdata.png" style="width: 400px;"/>
+.large.pull-left[
+<br/>
+- **`bcdc_browse()`** 
+  - Open the catalogue in your default browser
+- **`bcdc_search()`** 
+  - Search records in the catalogue
+- **`bcdc_search_facets()`** 
+  - List catalogue facet search options
+- **`bcdc_get_record()`** 
+  - Print a catalogue record
+- <span style="color:blue"> **`bcdc_get_data()`** 
+  - Get catalogue data </span>
+- <span style="color:blue"> **`bcdc_query_geodata()`** 
+  - Get & query catalogue geospatial data available through a [Web Service](https://www2.gov.bc.ca/gov/content?id=95D78D544B244F34B89223EF06DF74E) </span>
+]
+
+.pull-right[
+<img src="https://github.com/bcgov/bcdata/raw/master/inst/sticker/bcdata.png" alt="bcdata" />
+
+.footnote[https://bcgov.github.io/bcdata]
+]
 ---
 ## Grabbing our data
 ```{r, cache=TRUE}
@@ -1195,7 +1217,7 @@ fancy_plot +
 ```
 ---
 ## + Legends and titles
-```{r}
+```{r, echo=FALSE}
 text_box <- paste(strwrap("Some text that explains why I am plotting so things here and then find another thing to talk about again.", width = 40), collapse = "\n")
 
 fancy_plot +
@@ -1228,6 +1250,11 @@ out <- fancy_plot +
   theme_void() +
   theme(panel.background = element_rect(fill = "aliceblue"),
         panel.border = element_rect(size = 2, fill = NA))
+```
+
+---
+
+```{r}
 out
 ```
 ---
